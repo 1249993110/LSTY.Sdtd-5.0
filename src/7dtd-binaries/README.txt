@@ -10,8 +10,11 @@ from your dedicated server in this folder.
 
 Put the
 System.Xml.Linq.dll
-System.Runtime.Serialization.dll
 Microsoft.CSharp.dll
 System.Dynamic
+System.ServiceModel.Internals.dll
+SMDiagnostics.dll
+System.Net.Http.dll
+System.Runtime.Serialization.dll
 from C:\Windows\Microsoft.NET\Framework\v4.0.30319
 
