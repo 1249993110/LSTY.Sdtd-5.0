@@ -1,0 +1,92 @@
+﻿using Nancy;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using System.Text;
+
+namespace LSTY.Sdtd.PatronsMod.WebApi
+{
+    /// <summary>
+    /// Custom status code in controller and module
+    /// </summary>
+    public enum StatusCode
+    {
+        /// <summary>
+        /// Succeeded
+        /// </summary>
+        Succeeded = 200,
+
+        /// <summary>
+        /// 重定向
+        /// </summary>
+        Redirect = 302,
+
+        /// <summary>
+        /// Failed
+        /// </summary>
+        Failed = 500,
+
+        /// <summary>
+        /// Refresh page
+        /// </summary>
+        Refresh = 1000
+    }
+
+    /// <summary>
+    /// Custom response result
+    /// </summary>
+    public class ResponseResult
+    {
+        /// <summary>
+        /// Custom status code in controller and module
+        /// </summary>
+        [JsonProperty("code")]
+        public StatusCode Code;
+
+        /// <summary>
+        /// Title
+        /// </summary>
+        [JsonProperty("title")]
+        public string Title;
+
+        /// <summary>
+        /// Message
+        /// </summary>
+        [JsonProperty("message")]
+        public string Message;
+
+        /// <summary>
+        /// Data
+        /// </summary>
+        [JsonProperty("data")]
+        public object Data;
+
+        public ResponseResult()
+        {
+            Code = StatusCode.Failed;
+        }
+
+        private static readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings()
+        {
+            ContractResolver = new CamelCasePropertyNamesContractResolver(),
+            DateFormatString = "yyyy-MM-dd HH:mm:ss.fff",
+            // NullValueHandling = NullValueHandling.Ignore
+        };
+
+        public Response ToResponse(HttpStatusCode httpStatusCode)
+        {
+            return new Response()
+            {
+                StatusCode = httpStatusCode,
+                ContentType = "application/json;charset=utf-8",
+                Contents = (stream) =>
+                {
+                    string json = JsonConvert.SerializeObject(this, _jsonSerializerSettings);
+
+                    byte[] data = Encoding.UTF8.GetBytes(json);
+
+                    stream.Write(data, 0, data.Length);
+                }
+            };
+        }
+    }
+}

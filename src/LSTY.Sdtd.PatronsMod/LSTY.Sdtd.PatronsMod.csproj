@@ -1,0 +1,120 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net452</TargetFramework>
+    <Version>5.0.0.4</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="LSTY.Sdtd.PatronsMod.crproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.9.4" />
+    <PackageReference Include="Confuser.MSBuild" Version="1.5.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Nancy" Version="2.0.0" />
+    <PackageReference Include="Nancy.Hosting.Self" Version="2.0.0" />
+    <PackageReference Include="Nancy.Swagger" Version="2.2.59-alpha" />
+    <PackageReference Include="PostSharp" Version="6.9.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <Private>false</Private>
+      <HintPath>..\7dtd-binaries\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <Private>false</Private>
+      <HintPath>..\7dtd-binaries\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
+    <Reference Include="LogLibrary">
+      <Private>false</Private>
+      <HintPath>..\7dtd-binaries\LogLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib">
+      <Private>false</Private>
+      <HintPath>..\7dtd-binaries\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Private>false</Private>
+      <HintPath>..\7dtd-binaries\System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Private>false</Private>
+      <HintPath>..\7dtd-binaries\System.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <Private>false</Private>
+      <HintPath>..\7dtd-binaries\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <Private>false</Private>
+      <HintPath>..\7dtd-binaries\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <Private>false</Private>
+      <HintPath>..\7dtd-binaries\UnityEngine.ImageConversionModule.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Xml.Linq">
+      <HintPath>..\7dtd-binaries\System.Xml.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp">
+      <HintPath>..\7dtd-binaries\Microsoft.CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Dynamic">
+      <HintPath>..\7dtd-binaries\System.Dynamic.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ServiceModel.Internals">
+      <HintPath>..\7dtd-binaries\System.ServiceModel.Internals.dll</HintPath>
+    </Reference>
+    <Reference Include="SMDiagnostics">
+      <HintPath>..\7dtd-binaries\SMDiagnostics.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+      <HintPath>..\7dtd-binaries\System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization">
+      <HintPath>..\7dtd-binaries\System.Runtime.Serialization.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LSTY.Sdtd.PatronsMod.Data\LSTY.Sdtd.PatronsMod.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Changelog.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ModInfo.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Licenses.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="wwwroot\index.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="wwwroot\swagger-ui\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <Obfuscate>true</Obfuscate>
+    <!-- Default values. The following lines can be removed, unless they are changed. -->
+    <ConfuserReplaceOutput>true</ConfuserReplaceOutput>
+    <ConfuserProject>$(MSBuildProjectDirectory)\$(MSBuildProjectName).crproj</ConfuserProject>
+    <ConfuserKeyFile>$(AssemblyOriginatorKeyFile)</ConfuserKeyFile>
+    <ConfuserIntermediateOutputPath>$(IntermediateOutputPath)bin\confused\</ConfuserIntermediateOutputPath>
+    <!--<ConfuserOutDir>$(OutDir)confused\</ConfuserOutDir>-->
+    <ConfuserSymbolFileName>symbols.map</ConfuserSymbolFileName>
+  </PropertyGroup>
+
+</Project>

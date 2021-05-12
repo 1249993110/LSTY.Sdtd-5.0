@@ -1,0 +1,35 @@
+5.0.0-alpha.3 (2021-03-25)
+Features:
+1. Fix mod loading error
+2. Add server manage api
+Breaking Changes:
+1. You need delete dir: 7 Days to Die Dedicated Server\LSTY
+2. You need delete dir: {save}\LSTY
+3. You need delete dir: 7 Days to Die Dedicated Server\Mods\LSTY.Sdtd.PatronsMod
+
+5.0.0-alpha.3 (2021-03-25)
+Features:
+1. Add api about teleport city
+Breaking Changes:
+1. You need delete dir: 7 Days to Die Dedicated Server\LSTY
+2. You need delete dir: {save}\LSTY
+
+5.0.0-alpha.2 (2021-03-25)
+Features:
+1. Add api about points system
+2. Add a custom content root path add gzip to NancyFx web
+Breaking Changes:
+1. You need delete dir: 7 Days to Die Dedicated Server\LSTY\functionConfig.xml
+2. You need delete dir: {save}\LSTY
+
+5.0.0-alpha.1 (2021-03-22)
+Overview:
+1. The first release
+2. The purpose is test the running status on different machines
+New Features:
+1. Add api about player information
+2. Add api about game notice
+Bug Fix:
+Breaking Changes:
+Internal:
+Documentation:

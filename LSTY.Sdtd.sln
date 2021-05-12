@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00-Data", "00-Data", "{B820C32C-F12E-4BBE-853B-3934B531295B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LSTY.Sdtd.PatronsMod.Data", "src\LSTY.Sdtd.PatronsMod.Data\LSTY.Sdtd.PatronsMod.Data.csproj", "{5E4524CC-7672-4388-A0EF-2F592F2B9CEF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LSTY.Sdtd.PatronsMod", "src\LSTY.Sdtd.PatronsMod\LSTY.Sdtd.PatronsMod.csproj", "{1E6D4788-A00A-486D-8CD8-0E1E235DEDE5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5E4524CC-7672-4388-A0EF-2F592F2B9CEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E4524CC-7672-4388-A0EF-2F592F2B9CEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E4524CC-7672-4388-A0EF-2F592F2B9CEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E4524CC-7672-4388-A0EF-2F592F2B9CEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E6D4788-A00A-486D-8CD8-0E1E235DEDE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E6D4788-A00A-486D-8CD8-0E1E235DEDE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E6D4788-A00A-486D-8CD8-0E1E235DEDE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E6D4788-A00A-486D-8CD8-0E1E235DEDE5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5E4524CC-7672-4388-A0EF-2F592F2B9CEF} = {B820C32C-F12E-4BBE-853B-3934B531295B}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DFC98DA0-0915-4915-A4E4-B526B8899F94}
+	EndGlobalSection
+EndGlobal
