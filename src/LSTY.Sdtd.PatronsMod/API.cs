@@ -7,6 +7,8 @@ using Nancy.Hosting.Self;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace LSTY.Sdtd.PatronsMod
 {
@@ -16,6 +18,8 @@ namespace LSTY.Sdtd.PatronsMod
 
         private const string _nancyTargetPath = "7DaysToDieServer_Data/Managed/Nancy.dll";
 
+        private const string _magickNativeTargetPath = "7DaysToDieServer_Data/Plugins/Magick.Native-Q8-x64.dll";
+
         private static NancyHost _nancyHost;
 
         /// <summary>
@@ -24,28 +28,21 @@ namespace LSTY.Sdtd.PatronsMod
         [CatchException("Initialize mod LSTY.Sdtd.PatronsMod error")]
         public void InitMod()
         {
+            Task.Run(InternalInit);
+        }
+
+        [CatchException("LSTY.Sdtd.PatronsMod internal init error", true)]
+        private static void InternalInit()
+        {
             CustomLogger.Info("Initializing mod LSTY.Sdtd.PatronsMod");
 
-            if (LicenseManager.Check() == false)
+            if (LicenseManager.CheckPermission() == false)
             {
                 return;
             }
 
-            InitDirectory();
-
-            FunctionManager.Init();
-
-            RegisterModEventHandlers();
-
-            CustomLogger.Info("Mod LSTY.Sdtd.PatronsMod initialized successfully");
-        }
-
-        /// <summary>
-        /// About to try create directory and copy files
-        /// </summary>
-        [CatchException("Initialize mod LSTY.Sdtd.PatronsMod error", true)]
-        private static void InitDirectory()
-        {
+            #region Init directory. Try create directory and copy files
+            
             if (Directory.Exists("LSTY") == false)
             {
                 Directory.CreateDirectory("LSTY");
@@ -55,13 +52,19 @@ namespace LSTY.Sdtd.PatronsMod
 
             if (File.Exists(_sqliteInteropTargetPath) == false)
             {
-                File.Copy(modPath + "\\x64\\SQLite.Interop.dll", _sqliteInteropTargetPath);
+                File.Copy(modPath + "/x64/SQLite.Interop.dll", _sqliteInteropTargetPath);
             }
 
             if (File.Exists(_nancyTargetPath) == false)
             {
-                File.Copy(modPath + "\\Nancy.dll", _nancyTargetPath);
+                File.Copy(modPath + "/Nancy.dll", _nancyTargetPath);
             }
+
+            if (File.Exists(_magickNativeTargetPath) == false)
+            {
+                File.Copy(modPath + "/x64/Magick.Native-Q8-x64.dll", _magickNativeTargetPath);
+            }
+
 
             string saveGameDir = GameUtils.GetSaveGameDir();
 
@@ -77,6 +80,12 @@ namespace LSTY.Sdtd.PatronsMod
             CustomLogger.Info("Initializing database");
 
             DataManager.InitializeDatabase(databasePath);
+
+            #endregion
+
+            RegisterModEventHandlers();
+
+            CustomLogger.Info("Mod LSTY.Sdtd.PatronsMod initialized successfully");
         }
 
         /// <summary>
@@ -86,16 +95,16 @@ namespace LSTY.Sdtd.PatronsMod
         private static void RegisterModEventHandlers()
         {
             CustomLogger.Info("Register mod event handlers");
-
-            ModEvents.GameAwake.RegisterHandler(GameAwake);
-            ModEvents.GameStartDone.RegisterHandler(GameStartDone);
+            ModEvents.GameAwake.RegisterHandler(() => Task.Run(GameAwake));
+            ModEvents.GameStartDone.RegisterHandler(() => Task.Run(GameStartDone));
             ModEvents.GameShutdown.RegisterHandler(GameShutdown);
-
         }
 
         [CatchException("Error in GameAwake")]
         private static void GameAwake()
         {
+            FunctionManager.Init();
+
             ConfigManager.LoadAll();
 
             var webConfig = FunctionManager.CommonConfig.WebConfig;

@@ -62,7 +62,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 return SucceededResult();
             });
 
-            HttpGet("/RetrieveAvailableVariables", "RetrieveAvailableVariables", _ =>
+            HttpGet("/RetrieveAvailableVariables_TeleportCity", "RetrieveAvailableVariables_TeleportCity", _ =>
             {
                 return SucceededResult(FunctionManager.TeleportCity.AvailableVariables);
             });

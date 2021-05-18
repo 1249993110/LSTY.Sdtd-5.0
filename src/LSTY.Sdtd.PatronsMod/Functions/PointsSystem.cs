@@ -133,7 +133,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
         protected override bool OnPlayerChatHooked(OnlinePlayer player, string message)
         {
             string steamId = player.SteamId;
-            if (message == SignCmd)
+            if (string.Equals(message, SignCmd, StringComparison.OrdinalIgnoreCase))
             {
                 int currentDay = GameUtils.WorldTimeToDays(GameManager.Instance.World.worldTime);
                 int lastSignDay = 0;
@@ -155,7 +155,6 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                     if (points.LastSignDay != 0 && currentDay - points.LastSignDay < SignInterval)// If player have signed
                     {
                         ModHelper.SendMessageToPlayer(steamId, this.FormatCmd(player, SignFailTips, points.Count));
-                        return true;
                     }
                     else//  If player have not signed in today 
                     {
@@ -171,10 +170,8 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                 ModHelper.SendMessageToPlayer(steamId, this.FormatCmd(player, SignSucceedTips, points.Count));
 
                 CustomLogger.Info(string.Format("Player sign in, steamId: {0}, current day: {1}, last sign in day: {2}", steamId, currentDay, lastSignDay));
-
-                return true;
             }
-            else if (message == QueryPointsCmd)
+            else if (string.Equals(message, QueryPointsCmd, StringComparison.OrdinalIgnoreCase))
             {
                 var points = _pointsRepository.QueryBySteamId(steamId);
 
@@ -187,8 +184,12 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                     ModHelper.SendMessageToPlayer(steamId, this.FormatCmd(player, QueryPointsTips, points.Count));
                 }
             }
+            else
+            {
+                return false;
+            }
 
-            return false;
+            return true;
         }
     }
 }

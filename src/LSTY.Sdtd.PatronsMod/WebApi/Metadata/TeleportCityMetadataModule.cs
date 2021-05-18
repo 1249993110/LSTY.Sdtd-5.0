@@ -3,6 +3,7 @@ using LSTY.Sdtd.PatronsMod.Functions;
 using LSTY.Sdtd.PatronsMod.LiveData;
 using LSTY.Sdtd.PatronsMod.Primitives;
 using LSTY.Sdtd.PatronsMod.WebApi.ViewModels;
+using Nancy;
 using Nancy.Metadata.Modules;
 using Nancy.Swagger;
 using Swagger.ObjectModel;
@@ -35,16 +36,16 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
                             .Summary("更新公共回城配置")
                             .Description("")
                             .BodyParameter(p => p.Description("A config object").Name(nameof(TeleportCityConfigViewModel)).Schema<TeleportCityConfigViewModel>())
-                            .Response(200, r => r.Description("Succeeded or failed"))));
+                            .Response((int)HttpStatusCode.OK, r => r.Description("Succeeded or failed"))));
 
-            Describe["RetrieveAvailableVariables"] = description => description.AsSwagger(
+            Describe["RetrieveAvailableVariables_TeleportCity"] = description => description.AsSwagger(
                 with => with.Operation(
                     op => op.SecurityRequirement(SecuritySchemes.ApiKey)
-                            .OperationId("RetrieveAvailableVariables")
+                            .OperationId("RetrieveAvailableVariables_TeleportCity")
                             .Tag("TeleportCity")
                             .Summary("获取可用变量")
                             .Description("Get the availableVariables")
-                            .Response(200, r => r.Description("Succeeded or failed"))));
+                            .Response((int)HttpStatusCode.OK, r => r.Description("Succeeded or failed"))));
             
             Describe["CreateCityPosition"] = description => description.AsSwagger(
                 with => with.Operation(
@@ -54,7 +55,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
                             .Summary("创建公共回城点")
                             .BodyParameter(p => p.Description("A object").Name(nameof(CityPositionViewModelBase)).Schema<CityPositionViewModelBase>())
                             .Description("")
-                            .Response(200, r => r.Description("Succeeded or failed"))));
+                            .Response((int)HttpStatusCode.OK, r => r.Description("Succeeded or failed"))));
 
             Describe["RetrieveCityPosition"] = description => description.AsSwagger(
                 with => with.Operation(
@@ -64,7 +65,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
                             .Summary("获取公共回城点")
                             .Parameter(new Parameter() { Name = "cityPositionId", In = ParameterIn.Query })
                             .Description("If the parameter city position id is null then return all city positions, otherwise returns the specified city position")
-                            .Response(200, r => r.Description("Succeeded or failed"))));
+                            .Response((int)HttpStatusCode.OK, r => r.Description("Succeeded or failed"))));
 
             Describe["UpdateCityPosition"] = description => description.AsSwagger(
                 with => with.Operation(
@@ -74,7 +75,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
                             .Summary("更新公共回城点")
                             .Description("")
                             .BodyParameter(p => p.Description("A object").Name(nameof(CityPositionViewModel)).Schema<CityPositionViewModel>())
-                            .Response(200, r => r.Description("Succeeded or failed"))));
+                            .Response((int)HttpStatusCode.OK, r => r.Description("Succeeded or failed"))));
         }
     }
 }

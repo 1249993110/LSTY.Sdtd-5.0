@@ -8,7 +8,7 @@ namespace LSTY.Sdtd.PatronsMod
 {
     static class LicenseManager
     {
-        public static bool Check()
+        public static bool CheckPermission()
         {
             if (DateTime.Now < new DateTime(2021, 6, 1))
             {

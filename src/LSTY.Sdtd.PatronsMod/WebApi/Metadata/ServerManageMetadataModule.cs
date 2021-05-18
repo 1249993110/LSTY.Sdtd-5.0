@@ -1,4 +1,5 @@
 ﻿using LSTY.Sdtd.PatronsMod.WebApi.ViewModels;
+using Nancy;
 using Nancy.Metadata.Modules;
 using Nancy.Swagger;
 using Swagger.ObjectModel;
@@ -36,7 +37,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
                            .Tag("ServerManage")
                            .Summary("获取所有控制台命令")
                            .Description("")
-                           .Response(200, r => r.Schema<IEnumerable<ConsoleCommand>>(modelCatalog).Description("A list of all console command"))));
+                           .Response((int)HttpStatusCode.OK, r => r.Schema<IEnumerable<ConsoleCommand>>(modelCatalog).Description("A list of all console command"))));
 
             Describe["RetrieveServerInfo"] = description => description.AsSwagger(
               with => with.Operation(
@@ -45,7 +46,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
                           .Tag("ServerManage")
                           .Summary("获取服务器信息")
                           .Description("")
-                          .Response(200, r => r.Description("The server' information"))));
+                          .Response((int)HttpStatusCode.OK, r => r.Description("The server' information"))));
 
             Describe["RetrieveServerStats"] = description => description.AsSwagger(
               with => with.Operation(
@@ -54,7 +55,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
                           .Tag("ServerManage")
                           .Summary("获取服务器统计")
                           .Description("")
-                          .Response(200, r => r.Schema<GameStats>().Description("The server' stats"))));
+                          .Response((int)HttpStatusCode.OK, r => r.Schema<GameStats>().Description("The server' stats"))));
         }
     }
 }

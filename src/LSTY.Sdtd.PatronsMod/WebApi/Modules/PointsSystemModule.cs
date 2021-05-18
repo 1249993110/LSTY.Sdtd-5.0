@@ -64,7 +64,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 return SucceededResult();
             });
 
-            HttpGet("/RetrieveAvailableVariables", "RetrieveAvailableVariables", _ =>
+            HttpGet("/RetrieveAvailableVariables_PointsSystem", "RetrieveAvailableVariables_PointsSystem", _ =>
             {
                 var pointsSystem = FunctionManager.PointsSystem;
 

@@ -1,7 +1,9 @@
 ﻿using IceCoffee.Common.Timers;
 using IceCoffee.Common.Xml;
+using LSTY.Sdtd.PatronsMod.LiveData;
 using LSTY.Sdtd.PatronsMod.Primitives;
 using System;
+using System.Threading;
 using System.Xml;
 
 namespace LSTY.Sdtd.PatronsMod.Functions
@@ -35,8 +37,12 @@ namespace LSTY.Sdtd.PatronsMod.Functions
 
         private SubTimer _timer;
 
+        private readonly Action<ClientInfo, RespawnType, Vector3i> _action;
+
         public GameNotice()
         {
+            _action = new Action<ClientInfo, RespawnType, Vector3i>(PlayerSpawnedInWorld);
+
             _timer = new SubTimer(SendAlternateNotice, 300);
             GlobalTimer.RegisterSubTimer(_timer);
         }
@@ -49,16 +55,16 @@ namespace LSTY.Sdtd.PatronsMod.Functions
         protected override void DisableFunction()
         {
             _timer.IsEnabled = false;
-            ModEvents.PlayerSpawnedInWorld.UnregisterHandler(FunctionManager.GameNotice.PlayerSpawnedInWorld);
+            ModEvents.PlayerSpawnedInWorld.UnregisterHandler(_action);
         }
 
         protected override void EnableFunction()
         {
             _timer.IsEnabled = true;
-            ModEvents.PlayerSpawnedInWorld.RegisterHandler(FunctionManager.GameNotice.PlayerSpawnedInWorld);
+            ModEvents.PlayerSpawnedInWorld.RegisterHandler(_action);
         }
 
-        public void PlayerSpawnedInWorld(ClientInfo clientInfo, RespawnType respawnType, Vector3i position)
+        private void PlayerSpawnedInWorld(ClientInfo clientInfo, RespawnType respawnType, Vector3i position)
         {
             switch (respawnType)
             {
@@ -66,7 +72,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                 case RespawnType.EnterMultiplayer:
                 // Old player spawning
                 case RespawnType.JoinMultiplayer:
-                    ModHelper.SendMessage(clientInfo, null, WelcomeNotice);
+                    ModHelper.SendMessage(clientInfo, null, FormatCmd(LiveDataContainer.OnlinePlayers[clientInfo.playerId], WelcomeNotice));
                     break;
             }
         }

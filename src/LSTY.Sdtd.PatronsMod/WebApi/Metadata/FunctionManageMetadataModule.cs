@@ -1,4 +1,5 @@
 ﻿using LSTY.Sdtd.PatronsMod.WebApi.ViewModels;
+using Nancy;
 using Nancy.Metadata.Modules;
 using Nancy.Swagger;
 using Swagger.ObjectModel;
@@ -33,7 +34,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
                            .Description("")
                            .Parameter(new Parameter() { Name = "isBatch", In = ParameterIn.Query, Description = "Whether batch update, the default value is false", Required = false })
                            .BodyParameter(p => p.Description("A config object").Name(nameof(FunctionManageViewModel)).Schema<FunctionManageViewModel>())
-                           .Response(200, r => r.Description("Succeeded or failed"))));
+                           .Response((int)HttpStatusCode.OK, r => r.Description("Succeeded or failed"))));
         }
     }
 }

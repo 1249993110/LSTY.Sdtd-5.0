@@ -6,13 +6,15 @@ using LSTY.Sdtd.PatronsMod.LiveData;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace LSTY.Sdtd.PatronsMod.Primitives
 {
     abstract class FunctionBase : IFunction
     {
-        private string _functionTag;
+        private string _functionName;
 
         private bool _isEnabled;
 
@@ -28,13 +30,17 @@ namespace LSTY.Sdtd.PatronsMod.Primitives
             get => _isEnabled;
             set
             {
-                _isEnabled = value;
                 if (value)
                 {
-                    PrivateEnableFunction();
+                    if (LicenseManager.CheckPermission())
+                    {
+                        _isEnabled = true;
+                        PrivateEnableFunction();
+                    }
                 }
                 else
                 {
+                    _isEnabled = false;
                     PrivateDisableFunction();
                 }
             }
@@ -43,7 +49,7 @@ namespace LSTY.Sdtd.PatronsMod.Primitives
         /// <summary>
         /// Function tag.
         /// </summary>
-        public string FunctionName => _functionTag;
+        public string FunctionName => _functionName;
 
         private readonly ChatHook _onPlayerChatHooked;
 
@@ -55,12 +61,12 @@ namespace LSTY.Sdtd.PatronsMod.Primitives
             _chatLogRepository = IocContainer.Resolve<IChatLogRepository>();
 
             _chatHooks = new List<ChatHook>();
-            ModEvents.ChatMessage.RegisterHandler(ChatMessage);
+            ModEvents.ChatMessage.RegisterHandler((_1, _2, _3, _4, _5, _6, _7) => Task.Run(() => ChatMessage(_1, _2, _3, _4, _5, _6, _7)).Result);
         }
 
         public FunctionBase()
         {
-            _functionTag = this.GetType().Name;
+            _functionName = this.GetType().Name;
 
             _onPlayerChatHooked = new ChatHook(this.OnPlayerChatHooked);
 
@@ -86,7 +92,7 @@ namespace LSTY.Sdtd.PatronsMod.Primitives
         /// </summary>
         private void PrivateEnableFunction()
         {
-            // If the function is disabled
+            // If the function is not running
             if (_isRunning == false && _isEnabled && LiveDataContainer.OnlinePlayers.Count > 0)
             {
                 _isRunning = true;

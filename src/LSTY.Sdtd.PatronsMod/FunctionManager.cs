@@ -6,7 +6,7 @@ namespace LSTY.Sdtd.PatronsMod
 {
     static class FunctionManager
     {
-        public static List<IFunction> Functions;
+        public static IReadOnlyList<IFunction> Functions;
 
 #pragma warning disable 0649
 
@@ -15,12 +15,12 @@ namespace LSTY.Sdtd.PatronsMod
         public static Functions.AntiCheat AntiCheat;
         public static Functions.PointsSystem PointsSystem;
         public static Functions.TeleportCity TeleportCity;
-
+        public static Functions.TeleportHome TeleportHome;
 #pragma warning restore 0649
 
         public static void Init()
         {
-            Functions = new List<IFunction>();
+            var functions = new List<IFunction>();
 
             Type fieldType;
             IFunction function;
@@ -32,9 +32,11 @@ namespace LSTY.Sdtd.PatronsMod
                     function = Activator.CreateInstance(fieldType) as IFunction;
                     item.SetValue(null, function);
 
-                    Functions.Add(function);
+                    functions.Add(function);
                 }
             }
+
+            Functions = functions;
         }
     }
 }

@@ -6,27 +6,38 @@ using System.Threading.Tasks;
 
 namespace LSTY.Sdtd.PatronsMod.WebApi.ViewModels
 {
-    public class TeleportCityConfigViewModel : FunctionManageViewModel
+    public class TeleportHomeConfigViewModel : FunctionManageViewModel
     {
         public string QueryListCmd { get; set; }
         public int TeleInterval { get; set; }
-        public string QueryListTips { get; set; }
-        public string TeleSucceedTips { get; set; }
-        public string PointsNotEnoughTips { get; set; }
+        public string SetHomeCmdPrefix { get; set; }
+        public int MaxCanSetCount { get; set; }
+        public int PointsRequiredForSet { get; set; }
+        public string DeleteHomeCmdPrefix { get; set; }
+        public string TeleHomeCmdPrefix { get; set; }
+        public int PointsRequiredForTele { get; set; }
+        public string NoneHaveHomeTips { get; set; }
+        public string OwnedHomeTips { get; set; } 
+        public string HomePositionTips { get; set; } 
+        public string OverLimitTips { get; set; } 
+        public string SetPointsNotEnoughTips { get; set; }
+        public string SetSucceedTips { get; set; } 
+        public string OverwriteOldSucceedTips { get; set; } 
+        public string DeleteSucceedTips { get; set; } 
+        public string HomeNotFoundTips { get; set; } 
         public string CoolingTips { get; set; }
-        public string NoneCityTips { get; set; }
-        public string AvailableCityTips { get; set; }
+        public string TelePointsNotEnoughTips { get; set; } 
+        public string TeleSucceedTips { get; set; } 
     }
 
-    public class CityPositionViewModelBase
+    public class HomePositionViewModelBase
     {
-        public string CityName { get; set; }
-        public string Command { get; set; }
-        public int PointsRequired { get; set; }
+        public string HomeName { get; set; }
+        public string SteamId { get; set; }
         public string Position { get; set; }
     }
 
-    public class CityPositionViewModel : CityPositionViewModelBase
+    public class HomePositionViewModel : HomePositionViewModelBase
     {
         public string Id { get; set; }
     }

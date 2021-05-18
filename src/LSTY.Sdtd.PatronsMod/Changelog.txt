@@ -1,4 +1,25 @@
-5.0.0-alpha.3 (2021-03-25)
+5.0.0-alpha.7 (2021-05-17)
+1. Add authenticate api
+
+5.0.0-alpha.6 (2021-05-16)
+Features:
+1. Add itemicons api
+2. Add teleport home
+Breaking Changes:
+1. You need delete dir: 7 Days to Die Dedicated Server\LSTY
+2. You need delete dir: {save}\LSTY
+3. You need delete dir: 7 Days to Die Dedicated Server\Mods\LSTY.Sdtd.PatronsMod
+
+5.0.0-alpha.5 (2021-05-14)
+Features:
+1. Optimize system structure
+2. Fix cors
+Breaking Changes:
+1. You need delete dir: 7 Days to Die Dedicated Server\LSTY
+2. You need delete dir: {save}\LSTY
+3. You need delete dir: 7 Days to Die Dedicated Server\Mods\LSTY.Sdtd.PatronsMod
+
+5.0.0-alpha.4 (2021-05-09)
 Features:
 1. Fix mod loading error
 2. Add server manage api
@@ -7,7 +28,7 @@ Breaking Changes:
 2. You need delete dir: {save}\LSTY
 3. You need delete dir: 7 Days to Die Dedicated Server\Mods\LSTY.Sdtd.PatronsMod
 
-5.0.0-alpha.3 (2021-03-25)
+5.0.0-alpha.3 (2021-05-7)
 Features:
 1. Add api about teleport city
 Breaking Changes:

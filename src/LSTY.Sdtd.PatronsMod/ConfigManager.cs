@@ -82,7 +82,7 @@ namespace LSTY.Sdtd.PatronsMod
         [CatchException("Failed to load configuration")]
         public static void LoadAll()
         {
-            if (System.IO.File.Exists(_functionConfigPath) == false)
+            if (File.Exists(_functionConfigPath) == false)
             {
                 SaveAll();
                 return;
@@ -172,7 +172,6 @@ namespace LSTY.Sdtd.PatronsMod
             {
                 _fileWatcher.EnableRaisingEvents = false;
 
-                CustomLogger.Info("SaveAll");
                 var functions = FunctionManager.Functions;
 
                 XmlDocument doc = GetDocument();
@@ -200,6 +199,8 @@ namespace LSTY.Sdtd.PatronsMod
                 }
 
                 doc.Save(_functionConfigPath);
+
+                CustomLogger.Info("SaveAll");
             }
             catch (Exception ex)
             {

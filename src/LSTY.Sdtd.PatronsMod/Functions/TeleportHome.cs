@@ -10,6 +10,7 @@ using System.Xml;
 using LSTY.Sdtd.PatronsMod.Data.IRepositories;
 using LSTY.Sdtd.PatronsMod.LiveData;
 using LSTY.Sdtd.PatronsMod.Data.Entities;
+using IceCoffee.Common.Extensions;
 
 namespace LSTY.Sdtd.PatronsMod.Functions
 {
@@ -34,6 +35,9 @@ namespace LSTY.Sdtd.PatronsMod.Functions
         public int PointsRequiredForSet { get; set; } = 2;
 
         [ConfigNode(XmlNodeType.Attribute)]
+        public string DeleteHomeCmdPrefix { get; set; } = "delHome";
+
+        [ConfigNode(XmlNodeType.Attribute)]
         public string TeleHomeCmdPrefix { get; set; } = "goHome";
 
         [ConfigNode(XmlNodeType.Attribute)]
@@ -46,31 +50,34 @@ namespace LSTY.Sdtd.PatronsMod.Functions
         public string OwnedHomeTips { get; set; } = "[00FF00]You currently have the following home:";
 
         [ConfigNode(XmlNodeType.Attribute)]
-        public string HomePositionTips { get; set; } = "[00FF00][00FF00]<[FF0000]{homeName}[00FF00]> teleCmd：[FF0000]/goHome {homeName}, points required：{pointsRequiredForSet}, position：{position}";
+        public string HomePositionTips { get; set; } = "[00FF00][00FF00]<[FF0000]{homeName}[00FF00]> teleCmd: [FF0000]/goHome {homeName}, points required: 2, position: {position}";
 
         [ConfigNode(XmlNodeType.Attribute)]
         public string OverLimitTips { get; set; } = "[00FF00]Exceeds the maximum number of settings";
 
         [ConfigNode(XmlNodeType.Attribute)]
-        public string SetPointsNotEnoughTips { get; set; } = "[00FF00]Not enough points! Points required: {pointsRequiredForSet}";
-
-        [ConfigNode(XmlNodeType.Attribute)]
-        public string OverwriteOldSucceedTips { get; set; } = "[00FF00]The old home have been successfully overwritten";
+        public string SetPointsNotEnoughTips { get; set; } = "[00FF00]Not enough points! Points required: 2";
 
         [ConfigNode(XmlNodeType.Attribute)]
         public string SetSucceedTips { get; set; } = "[00FF00]Set successfully";
 
         [ConfigNode(XmlNodeType.Attribute)]
-        public string TelePointsNotEnoughTips { get; set; } = "[00FF00]Not enough points! Points required: 2";
+        public string OverwriteOldSucceedTips { get; set; } = "[00FF00]The old home have been successfully overwritten";
 
         [ConfigNode(XmlNodeType.Attribute)]
-        public string HomeNotExistTips { get; set; } = "[00FF00]Home not exist";
+        public string DeleteSucceedTips { get; set; } = "[00FF00]Delete home successfully";
+
+        [ConfigNode(XmlNodeType.Attribute)]
+        public string HomeNotFoundTips { get; set; } = "[00FF00]Home not found";
 
         [ConfigNode(XmlNodeType.Attribute)]
         public string CoolingTips { get; set; } = "[00FF00]Teleported cooling... Remaining: {coolingTime} seconds ";
 
         [ConfigNode(XmlNodeType.Attribute)]
-        public string TeleSucceedTips { get; set; } = "[00FF00]Player: {playerName}, teleported to own home: {homeName}";
+        public string TelePointsNotEnoughTips { get; set; } = "[00FF00]Not enough points! Points required: 2";
+
+        [ConfigNode(XmlNodeType.Attribute)]
+        public string TeleSucceedTips { get; set; } = "[00FF00]Player: {playerName}, teleported to home: {homeName}";
 
         private static readonly IHomePositionRepository _homePositionRepository;
         private static readonly IPointsRepository _pointsRepository;
@@ -88,13 +95,12 @@ namespace LSTY.Sdtd.PatronsMod.Functions
             availableVariables.AddRange(new string[]
             {
                 "{homeName}",
-                "{pointsRequiredForSet}",
                 "{position}",
                 "{coolingTime}"
             });
         }
 
-        private string FormatCmd(OnlinePlayer player, string message, T_CityPosition cityPosition, int? coolingTime = null)
+        private string FormatCmd(OnlinePlayer player, string message, T_HomePosition position, int? coolingTime = null)
         {
             StringBuilder builder = new StringBuilder(base.FormatCmd(player, message));
 
@@ -104,83 +110,190 @@ namespace LSTY.Sdtd.PatronsMod.Functions
             }
 
             return builder
-                .Replace("{cityName}", cityPosition.CityName)
-                .Replace("{teleCmd}", cityPosition.Command)
-                .Replace("{pointsRequiredForSet}", cityPosition.PointsRequired.ToString())
-                .Replace("{position}", cityPosition.Position).ToString();
+                .Replace("{homeName}", position.HomeName)
+                .Replace("{position}", position.Position).ToString();
         }
 
         protected override bool OnPlayerChatHooked(OnlinePlayer player, string message)
         {
             string steamId = player.SteamId;
-            if (message == QueryListCmd)
+            if (string.Equals(message, QueryListCmd, StringComparison.OrdinalIgnoreCase))
             {
-                var cityPositions = _cityPositionRepository.QueryAll("CityName ASC");
+                var positions = _homePositionRepository.Query("SteamId=@SteamId", "HomeName", new { steamId });
 
-                if (cityPositions.Count() == 0)
+                if (positions.Any() == false)
                 {
-                    ModHelper.SendMessageToPlayer(steamId, NoneCityTips);
+                    ModHelper.SendMessageToPlayer(steamId, NoneHaveHomeTips);
                 }
                 else
                 {
-                    ModHelper.SendMessageToPlayer(steamId, AvailableCityTips);
+                    ModHelper.SendMessageToPlayer(steamId, OwnedHomeTips);
 
                     int index = 0;
-                    foreach (var item in cityPositions)
+                    foreach (var item in positions)
                     {
                         ++index;
-                        ModHelper.SendMessageToPlayer(steamId, 
-                            string.Format("[00FF00]{0}. {1}", index, FormatCmd(player, QueryListTips, item)));
+                        ModHelper.SendMessageToPlayer(steamId,
+                            string.Format("[00FF00]{0}. {1}", index, FormatCmd(player, HomePositionTips, item)));
+                    }
+                }
+            }
+            else if (message.StartsWith(SetHomeCmdPrefix + " ", StringComparison.OrdinalIgnoreCase))
+            {
+                //string[] args = message.Split(' ');
+
+                //if(args.Length != 2)
+                //{
+                //    ModHelper.SendMessageToPlayer(steamId, "Wrong number of arguments, expected 2, found " + args.Length);
+                //    return false;
+                //}
+
+                string homeName = message.Substring(SetHomeCmdPrefix.Length + 1);
+
+                if (string.IsNullOrEmpty(homeName))
+                {
+                    ModHelper.SendMessageToPlayer(steamId, HomeNotFoundTips);
+                }
+                else
+                {
+                    long positionCount = _homePositionRepository.QueryRecordCount();
+
+                    if (positionCount >= MaxCanSetCount)
+                    {
+                        ModHelper.SendMessageToPlayer(steamId, FormatCmd(player, OverLimitTips));
+                    }
+                    else
+                    {
+                        int playerScore = _pointsRepository.QueryPointsCountBySteamId(steamId);
+                        if (playerScore < PointsRequiredForSet)
+                        {
+                            ModHelper.SendMessageToPlayer(steamId, FormatCmd(player, SetPointsNotEnoughTips));
+                        }
+                        else
+                        {
+                            var entity = _homePositionRepository.Query("SteamId=@SteamId AND HomeName=@HomeName", null, 
+                                new { SteamId = steamId, HomeName = homeName }).FirstOrDefault();
+
+                            string pos = player.LastPosition.ToString();
+
+                            _pointsRepository.DeductPlayerPoints(steamId, PointsRequiredForSet);
+
+                            if (entity == null)
+                            {
+                                entity = new T_HomePosition()
+                                {
+                                    Id = Guid.NewGuid().ToString(),
+                                    HomeName = homeName,
+                                    SteamId = steamId,
+                                    Position = pos
+                                };
+
+                                _homePositionRepository.Insert(entity);
+
+                                ModHelper.SendMessageToPlayer(steamId, FormatCmd(player, SetSucceedTips, entity));
+                            }
+                            else
+                            {
+                                entity.HomeName = homeName;
+                                entity.SteamId = steamId;
+                                entity.Position = pos;
+                                _homePositionRepository.Update(entity);
+
+                                ModHelper.SendMessageToPlayer(steamId, FormatCmd(player, OverwriteOldSucceedTips, entity));
+                            }
+
+                            CustomLogger.Info(string.Format("Player: {0}, steamID: {1}, set home: {2}, position: {3}", player.Name, steamId, homeName, pos));
+                        }
+                    }
+                }
+            }
+            else if (message.StartsWith(DeleteHomeCmdPrefix + " ", StringComparison.OrdinalIgnoreCase))
+            {
+                string homeName = message.Substring(DeleteHomeCmdPrefix.Length + 1);
+
+                if (string.IsNullOrEmpty(homeName))
+                {
+                    ModHelper.SendMessageToPlayer(steamId, HomeNotFoundTips);
+                }
+                else
+                {
+                    int count = _homePositionRepository.Delete("SteamId=@SteamId AND HomeName=@HomeName", new { SteamId = steamId, HomeName = homeName });
+                    if (count == 0)
+                    {
+                        ModHelper.SendMessageToPlayer(steamId, HomeNotFoundTips);
+                    }
+                    else if (count == 1)
+                    {
+                        ModHelper.SendMessageToPlayer(steamId, DeleteSucceedTips);
+                    }
+                    else
+                    {
+                        CustomLogger.Warn(string.Format("Player: {0}, steamId: {1}, delete home: {2} failed!", player.Name, steamId, homeName));
+                    }
+                }
+            }
+            else if (message.StartsWith(TeleHomeCmdPrefix + " ", StringComparison.OrdinalIgnoreCase))
+            {
+                string homeName = message.Substring(TeleHomeCmdPrefix.Length + 1);
+                if (string.IsNullOrEmpty(homeName))
+                {
+                    ModHelper.SendMessageToPlayer(steamId, HomeNotFoundTips);
+                }
+                else
+                {
+
+                    var entity = _homePositionRepository.Query("SteamId=@SteamId AND HomeName=@HomeName", null,
+                                    new { SteamId = steamId, HomeName = homeName }).FirstOrDefault();
+
+                    if (entity == null)
+                    {
+                        ModHelper.SendMessageToPlayer(steamId, HomeNotFoundTips);
+                    }
+                    else
+                    {
+                        var teleRecord = _teleRecordRepository.QueryNewest(steamId, true);
+                        CustomLogger.Warn(teleRecord.ToJson());
+                        if (teleRecord != null)
+                        {
+                            int timeSpan = (int)(DateTime.Now - teleRecord.CreatedDate).TotalSeconds;
+                            if (timeSpan < TeleInterval)// Cooling
+                            {
+                                ModHelper.SendMessageToPlayer(steamId, FormatCmd(player, CoolingTips, entity, TeleInterval - timeSpan));
+
+                                return true;
+                            }
+                        }
+
+                        int pointsCount = _pointsRepository.QueryPointsCountBySteamId(steamId);
+                        if (pointsCount < PointsRequiredForTele)// Points not enough
+                        {
+                            ModHelper.SendMessageToPlayer(steamId, FormatCmd(player, TelePointsNotEnoughTips, entity));
+                        }
+                        else
+                        {
+                            _pointsRepository.DeductPlayerPoints(steamId, PointsRequiredForTele);
+
+                            ModHelper.TelePlayer(player.EntityId, entity.Position);
+
+                            ModHelper.SendGlobalMessage(FormatCmd(player, TeleSucceedTips, entity));
+
+                            // Record delivery date
+                            _teleRecordRepository.Insert(new T_TeleRecord()
+                            {
+                                SteamId = steamId,
+                                DestinationName = entity.HomeName,
+                                IsHome = true,
+                                Position = entity.Position
+                            });
+
+                            CustomLogger.Info(string.Format("Player: {0}, steamID: {1}, teleported to: {2}", player.Name, steamId, entity.HomeName));
+                        }
                     }
                 }
             }
             else
             {
-                var cityPosition = _cityPositionRepository.QueryById("Command", message).FirstOrDefault();
-                if (cityPosition == null)
-                {
-                    return false;
-                }
-                else
-                {
-                    var teleRecord = _teleRecordRepository.QueryNewest(steamId, false);
-
-                    if (teleRecord != null)
-                    {
-                        int timeSpan = (int)(DateTime.Now - teleRecord.CreatedDate).TotalSeconds;
-                        if (timeSpan < TeleInterval)// Cooling
-                        {
-                            ModHelper.SendMessageToPlayer(steamId, FormatCmd(player, TeleFailTips2, cityPosition, TeleInterval - timeSpan));
-
-                            return true;
-                        }
-                    }
-
-                    int pointsCount = _pointsRepository.QueryPointsCountBySteamId(steamId);
-                    if (pointsCount < cityPosition.PointsRequired)// Points not enough
-                    {
-                        ModHelper.SendMessageToPlayer(steamId, FormatCmd(player, TeleFailTips1, cityPosition));
-                    }
-                    else
-                    {
-                        _pointsRepository.DeductPlayerPoints(steamId, cityPosition.PointsRequired);
-
-                        ModHelper.TelePlayer(player.EntityId, cityPosition.Position);
-
-                        ModHelper.SendGlobalMessage(FormatCmd(player, TeleSucceedTips, cityPosition));
-
-                        // Record delivery date
-                        _teleRecordRepository.Insert(new T_TeleRecord() 
-                        { 
-                            SteamId = steamId,
-                            DestinationName = cityPosition.CityName,
-                            IsHome = false,
-                            Position = cityPosition.Position
-                        });
-
-                        CustomLogger.Info(string.Format("Player: {0}, steamID: {1}, teleported to: {2}", player.Name, steamId, cityPosition.CityName));
-                    }
-                }
+                return false;
             }
 
             return true;

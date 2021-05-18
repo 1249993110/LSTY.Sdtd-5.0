@@ -11,6 +11,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Response = Nancy.Response;
 
 namespace LSTY.Sdtd.PatronsMod.WebApi
@@ -54,12 +55,28 @@ namespace LSTY.Sdtd.PatronsMod.WebApi
 
         private Response OnBeforeRequest(NancyContext context)
         {
-            CustomLogger.Info("Web request from: " + context.Request.UserHostAddress + " path: " + context.Request.Path);
+            Request request = context.Request;
 
-            string path = context.Request.Path;
-            if (path.StartsWith("/api/"))
+            Task.Run(() =>
             {
-                var header = context.Request.Headers[WebConfig.AuthHeader];
+                CustomLogger.Info("Web request from: " + request.UserHostAddress + " path: " + request.Path);
+            });
+
+            string path = request.Path;
+            if (path.StartsWith("/api/", StringComparison.OrdinalIgnoreCase))
+            {
+                if(request.Method == "OPTIONS")
+                {
+                    var response = new Response()
+                    {
+                        StatusCode = HttpStatusCode.OK
+                    };
+
+                    response.Headers.Add("allow", "GET,POST,OPTIONS");
+                    return response;
+                }
+
+                var header = request.Headers[WebConfig.AuthHeader];
 
                 if (header.Any() == false
                     || header.First() != FunctionManager.CommonConfig.WebConfig.AccessToken)
@@ -98,8 +115,8 @@ namespace LSTY.Sdtd.PatronsMod.WebApi
         {
             base.ConfigureConventions(nancyConventions);
 
-            nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("/itemicons",
-               FunctionManager.CommonConfig.WebConfig.ItemIconsPath));
+            //nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("/itemicons",
+            //   FunctionManager.CommonConfig.WebConfig.ItemIconsPath));
 
             nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("/", 
                 Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\wwwroot"));
@@ -121,7 +138,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi
                 var headers = _context.Response.Headers;
                 headers.Add("Access-Control-Allow-Origin", "*");
                 headers.Add("Access-Control-Allow-Headers", "*");
-                headers.Add("Access-Control-Allow-Methods", "*");
+                headers.Add("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
             });
         }
     }

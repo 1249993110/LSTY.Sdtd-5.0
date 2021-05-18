@@ -6,6 +6,8 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace LSTY.Sdtd.PatronsMod.LiveData
 {
@@ -38,7 +40,7 @@ namespace LSTY.Sdtd.PatronsMod.LiveData
 
             ModEvents.PlayerLogin.RegisterHandler(PlayerLogin);
             ModEvents.PlayerDisconnected.RegisterHandler(PlayerDisconnected);
-            ModEvents.SavePlayerData.RegisterHandler(SavePlayerData);
+            ModEvents.SavePlayerData.RegisterHandler((_1, _2) => Task.Run(() => SavePlayerData(_1, _2)));
             ModEvents.PlayerSpawning.RegisterHandler(PlayerSpawning);
         }
 

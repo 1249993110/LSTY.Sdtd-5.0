@@ -19,9 +19,6 @@ namespace LSTY.Sdtd.PatronsMod.WebApi
         public bool OpenInDefaultBrowser { get; set; } = true;
 
         [ConfigNode(XmlNodeType.Attribute)]
-        public string ItemIconsPath { get; set; } = "Data/ItemIcons";
-
-        [ConfigNode(XmlNodeType.Attribute)]
         public bool EnableGzip { get; set; } = true;
     }
 }

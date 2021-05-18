@@ -77,7 +77,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
             });
         }
 
-        private string FormatCmd(OnlinePlayer player, string message, T_CityPosition cityPosition, int? coolingTime = null)
+        private string FormatCmd(OnlinePlayer player, string message, T_CityPosition position, int? coolingTime = null)
         {
             StringBuilder builder = new StringBuilder(base.FormatCmd(player, message));
 
@@ -87,16 +87,16 @@ namespace LSTY.Sdtd.PatronsMod.Functions
             }
 
             return builder
-                .Replace("{cityName}", cityPosition.CityName)
-                .Replace("{teleCmd}", cityPosition.Command)
-                .Replace("{pointsRequired}", cityPosition.PointsRequired.ToString())
-                .Replace("{position}", cityPosition.Position).ToString();
+                .Replace("{cityName}", position.CityName)
+                .Replace("{teleCmd}", position.Command)
+                .Replace("{pointsRequired}", position.PointsRequired.ToString())
+                .Replace("{position}", position.Position).ToString();
         }
 
         protected override bool OnPlayerChatHooked(OnlinePlayer player, string message)
         {
             string steamId = player.SteamId;
-            if (message == QueryListCmd)
+            if (string.Equals(message, QueryListCmd, StringComparison.OrdinalIgnoreCase))
             {
                 var cityPositions = _cityPositionRepository.QueryAll("CityName ASC");
 
@@ -119,7 +119,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
             }
             else
             {
-                var cityPosition = _cityPositionRepository.QueryById("Command", message).FirstOrDefault();
+                var cityPosition = _cityPositionRepository.Query("Command=@Command COLLATE NOCASE", "CityName", new { Command = message }).FirstOrDefault();
                 if (cityPosition == null)
                 {
                     return false;

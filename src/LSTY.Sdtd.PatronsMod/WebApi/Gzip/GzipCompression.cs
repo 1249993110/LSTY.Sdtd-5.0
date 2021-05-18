@@ -82,7 +82,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Gzip
 
         private static bool ResponseIsCompatibleMimeType(Response response)
         {
-            return _settings.MimeTypes.Any(x => x == response.ContentType || response.ContentType.StartsWith($"{x};"));
+            return _settings.MimeTypes.Any(x => x == response.ContentType || response.ContentType.StartsWith(x + ";"));
         }
 
         private static bool RequestIsGzipCompatible(Request request)

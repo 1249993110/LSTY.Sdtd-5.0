@@ -1,4 +1,5 @@
-﻿using Nancy.Metadata.Modules;
+﻿using Nancy;
+using Nancy.Metadata.Modules;
 using Nancy.Swagger;
 using Swagger.ObjectModel;
 using System.Collections.Generic;

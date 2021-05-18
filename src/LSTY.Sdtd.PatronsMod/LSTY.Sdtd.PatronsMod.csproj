@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net452</TargetFramework>
-    <Version>5.0.0.4</Version>
+    <Version>5.0.0.7</Version>
   </PropertyGroup>
-
+  
   <ItemGroup>
     <None Include="LSTY.Sdtd.PatronsMod.crproj" />
   </ItemGroup>
@@ -15,6 +15,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <!--<PackageReference Include="Magick.NET-Q8-x64" Version="7.24.0" />-->
     <PackageReference Include="Nancy" Version="2.0.0" />
     <PackageReference Include="Nancy.Hosting.Self" Version="2.0.0" />
     <PackageReference Include="Nancy.Swagger" Version="2.2.59-alpha" />
@@ -82,8 +83,19 @@
     <Reference Include="System.Runtime.Serialization">
       <HintPath>..\7dtd-binaries\System.Runtime.Serialization.dll</HintPath>
     </Reference>
+    <Reference Include="Magick.NET.Core">
+      <HintPath>..\7dtd-binaries\Magick.NET.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Magick.NET-Q8-x64">
+      <HintPath>..\7dtd-binaries\Magick.NET-Q8-x64.dll</HintPath>
+    </Reference>
   </ItemGroup>
-
+  
+  <!-- Copy files manually -->
+  <Target Name="Copy" BeforeTargets="CoreCompile">
+    <Copy SourceFiles="..\7dtd-binaries\x64\Magick.Native-Q8-x64.dll" DestinationFiles="$(OutDir)\x64\Magick.Native-Q8-x64.dll" SkipUnchangedFiles="True"></Copy>
+  </Target>
+  
   <ItemGroup>
     <ProjectReference Include="..\LSTY.Sdtd.PatronsMod.Data\LSTY.Sdtd.PatronsMod.Data.csproj" />
   </ItemGroup>
@@ -104,6 +116,7 @@
     <None Update="wwwroot\swagger-ui\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+   
   </ItemGroup>
   
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
@@ -115,6 +128,14 @@
     <ConfuserIntermediateOutputPath>$(IntermediateOutputPath)bin\confused\</ConfuserIntermediateOutputPath>
     <!--<ConfuserOutDir>$(OutDir)confused\</ConfuserOutDir>-->
     <ConfuserSymbolFileName>symbols.map</ConfuserSymbolFileName>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    
   </PropertyGroup>
 
 </Project>

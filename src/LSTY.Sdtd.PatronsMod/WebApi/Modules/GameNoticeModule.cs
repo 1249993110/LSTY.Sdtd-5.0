@@ -41,6 +41,11 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
 
                 return SucceededResult();
             });
+
+            HttpGet("/RetrieveAvailableVariables_GameNotice", "RetrieveAvailableVariables_GameNotice", _ =>
+            {
+                return SucceededResult(FunctionManager.GameNotice.AvailableVariables);
+            });
         }
     }
 }
