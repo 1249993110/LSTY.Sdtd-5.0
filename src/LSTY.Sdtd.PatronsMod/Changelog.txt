@@ -1,5 +1,10 @@
+5.0.0-alpha.8 (2021-05-18)
+1. Fix web api unsupportedMediaType error
+2. Fix api RetrieveKnownPlayer about player name is "0"
+
 5.0.0-alpha.7 (2021-05-17)
 1. Add authenticate api
+2. Fix api authentication
 
 5.0.0-alpha.6 (2021-05-16)
 Features:

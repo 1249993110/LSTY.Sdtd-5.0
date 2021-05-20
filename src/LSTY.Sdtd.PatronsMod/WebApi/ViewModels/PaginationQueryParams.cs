@@ -21,6 +21,6 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.ViewModels
         /// <summary>
         /// Order
         /// </summary>
-        public string Order { get; set; }
+        //public string Order { get; set; }
     }
 }

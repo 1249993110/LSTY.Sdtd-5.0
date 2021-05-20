@@ -1,4 +1,5 @@
-﻿using LSTY.Sdtd.PatronsMod.Data.Entities;
+﻿using IceCoffee.Common.Extensions;
+using LSTY.Sdtd.PatronsMod.Data.Entities;
 using LSTY.Sdtd.PatronsMod.Data.IRepositories;
 using LSTY.Sdtd.PatronsMod.LiveData;
 using Nancy;
@@ -42,7 +43,6 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 if (string.IsNullOrEmpty(steamId) == false)
                 {
                     T_Player player = _playerRepository.QueryBySteamId(steamId);
-
                     if (player == null)
                     {
                         return FailedResult(message: "The specified steamId does not exist");

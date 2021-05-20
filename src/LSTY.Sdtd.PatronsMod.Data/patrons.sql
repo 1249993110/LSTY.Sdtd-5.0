@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS T_Player(
 	SteamId TEXT PRIMARY KEY,		--SteamId
 	CreatedDate TIMESTAMP DEFAULT (DATETIME(CURRENT_TIMESTAMP,'LOCALTIME')),
 	EntityId INTEGER,				--实体Id
-	Name INTEGER,					--玩家名称
+	Name TEXT,						--玩家名称
 	IP TEXT,						--IP地址
 	TotalPlayTime REAL,				--总游戏时长（单位：分钟）
 	LastOnline TIMESTAMP,			--上次在线

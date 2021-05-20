@@ -1,4 +1,5 @@
-﻿using LSTY.Sdtd.PatronsMod.WebApi.Gzip;
+﻿using IceCoffee.Common.Extensions;
+using LSTY.Sdtd.PatronsMod.WebApi.Gzip;
 using Nancy;
 using Nancy.Bootstrapper;
 using Nancy.Conventions;
@@ -76,10 +77,21 @@ namespace LSTY.Sdtd.PatronsMod.WebApi
                     return response;
                 }
 
-                var header = request.Headers[WebConfig.AuthHeader];
+                var headers = request.Headers;
+                
+                var contentType = headers["Content-Type"].FirstOrDefault();
 
-                if (header.Any() == false
-                    || header.First() != FunctionManager.CommonConfig.WebConfig.AccessToken)
+                if (contentType != null && string.Equals(contentType, "application/json", StringComparison.OrdinalIgnoreCase) == false)
+                {
+                    return new Response()
+                    {
+                        StatusCode = HttpStatusCode.UnsupportedMediaType
+                    };
+                }
+
+                var authHeader = headers[WebConfig.AuthHeader].FirstOrDefault();
+                
+                if (authHeader == null && authHeader != FunctionManager.CommonConfig.WebConfig.AccessToken)
                 {
                     return new Response()
                     {
