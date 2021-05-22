@@ -1,4 +1,4 @@
-﻿using LSTY.Sdtd.PatronsMod.WebApi.ViewModels;
+﻿using LSTY.Sdtd.PatronsMod.WebApi.Models;
 using Nancy;
 using Nancy.Metadata.Modules;
 using Nancy.Swagger;
@@ -17,7 +17,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
             modelCatalog.AddModels(
                 typeof(ConsoleCommand), 
                 typeof(IEnumerable<ConsoleCommand>),
-                typeof(ViewModels.GameStats), 
+                typeof(Models.GameStats), 
                 typeof(Gametime));
 
             Describe["ExecuteConsoleCommand"] = description => description.AsSwagger(

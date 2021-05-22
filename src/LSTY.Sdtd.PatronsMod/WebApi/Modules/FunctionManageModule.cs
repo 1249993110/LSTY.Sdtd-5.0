@@ -1,5 +1,5 @@
 ﻿using LSTY.Sdtd.PatronsMod.Primitives;
-using LSTY.Sdtd.PatronsMod.WebApi.ViewModels;
+using LSTY.Sdtd.PatronsMod.WebApi.Models;
 using Nancy.ModelBinding;
 using System;
 using System.Collections.Generic;

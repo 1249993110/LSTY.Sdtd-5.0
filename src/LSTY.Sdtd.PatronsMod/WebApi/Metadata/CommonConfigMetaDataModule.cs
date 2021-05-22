@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LSTY.Sdtd.PatronsMod.Data.Entities;
-using LSTY.Sdtd.PatronsMod.WebApi.ViewModels;
+using LSTY.Sdtd.PatronsMod.WebApi.Models;
 using Nancy;
 using Nancy.Metadata.Modules;
 using Nancy.Swagger;

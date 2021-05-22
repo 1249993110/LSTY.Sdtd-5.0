@@ -2,7 +2,7 @@
 using LSTY.Sdtd.PatronsMod.Functions;
 using LSTY.Sdtd.PatronsMod.LiveData;
 using LSTY.Sdtd.PatronsMod.Primitives;
-using LSTY.Sdtd.PatronsMod.WebApi.ViewModels;
+using LSTY.Sdtd.PatronsMod.WebApi.Models;
 using Nancy;
 using Nancy.Metadata.Modules;
 using Nancy.Swagger;
@@ -18,6 +18,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
             modelCatalog.AddModel<TeleportHomeConfigViewModel>();
             modelCatalog.AddModel<HomePositionViewModelBase>();
             modelCatalog.AddModel<HomePositionViewModel>();
+            modelCatalog.AddModel<DeleteQueryParamOfString>();
 
             Describe["RetrieveTeleportHomeConfig"] = description => description.AsSwagger(
                 with => with.Operation(
@@ -75,6 +76,16 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
                             .Summary("更新私人回家点")
                             .Description("")
                             .BodyParameter(p => p.Description("A object").Name(nameof(HomePositionViewModel)).Schema<HomePositionViewModel>())
+                            .Response((int)HttpStatusCode.OK, r => r.Description("Succeeded or failed"))));
+
+            Describe["DeleteHomePosition"] = description => description.AsSwagger(
+                with => with.Operation(
+                    op => op.SecurityRequirement(SecuritySchemes.ApiKey)
+                            .OperationId("DeleteHomePosition")
+                            .Tag("TeleportHome")
+                            .Summary("删除私人回家点")
+                            .BodyParameter(p => p.Description("A array").Name(nameof(DeleteQueryParamOfString)).Schema<DeleteQueryParamOfString>())
+                            .Description("Delete home position by ids")
                             .Response((int)HttpStatusCode.OK, r => r.Description("Succeeded or failed"))));
         }
     }

@@ -1,5 +1,13 @@
-5.0.0-alpha.8 (2021-05-18)
-1. Fix web api unsupportedMediaType error
+5.0.0-alpha.10 (2021-05-21)
+1. Add api DeleteCityPosition
+2. Add api HomeCityPosition
+3. Add playerName in api chatLog
+
+5.0.0-alpha.9 (2021-05-21)
+1. Fix charset=utf-8 415 bug
+
+5.0.0-alpha.8 (2021-05-20)
+1. Fix web api unsupported mediaType error
 2. Fix api RetrieveKnownPlayer about player name is "0"
 
 5.0.0-alpha.7 (2021-05-17)

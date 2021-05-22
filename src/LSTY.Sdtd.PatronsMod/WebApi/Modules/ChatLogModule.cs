@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 using IceCoffee.Common.Extensions;
 using LSTY.Sdtd.PatronsMod.Data.Entities;
 using LSTY.Sdtd.PatronsMod.Data.IRepositories;
-using LSTY.Sdtd.PatronsMod.WebApi.ViewModels;
+using LSTY.Sdtd.PatronsMod.WebApi.Models;
 using Nancy.ModelBinding;
 
 namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
 {
     public class ChatLogModule : ApiModuleBase
     {
-        private static readonly IChatLogRepository _chatLogRepository = IocContainer.Resolve<IChatLogRepository>();
+        private static readonly IVChatLogRepository _vChatLogRepository = IocContainer.Resolve<IVChatLogRepository>();
 
         public ChatLogModule()
         {
@@ -25,7 +25,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                     return FailedResult(message: "The specified steamId does not exist");
                 }
 
-                var data = _chatLogRepository.QueryBySteamId(steamId);
+                var data = _vChatLogRepository.QueryBySteamId(steamId);
 
                 return SucceededResult(data);
             });
@@ -38,7 +38,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                     return FailedResult(message: "The specified entityId does not exist");
                 }
 
-                var data = _chatLogRepository.QueryByEntityId(entityId);
+                var data = _vChatLogRepository.QueryByEntityId(entityId);
 
                 return SucceededResult(data);
             });
@@ -54,14 +54,14 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                     return FailedResult(message: "The specified query parameters does not exist");
                 }
 
-                var data = _chatLogRepository.QueryByDateTime(Convert.ToDateTime(startDateTimeStr), Convert.ToDateTime(endDateTimeStr), "CreatedDate DESC");
+                var data = _vChatLogRepository.QueryByDateTime(Convert.ToDateTime(startDateTimeStr), Convert.ToDateTime(endDateTimeStr), "CreatedDate DESC");
 
                 return SucceededResult(data);
             });
 
             HttpPost("/RetrieveChatLogPaged", "RetrieveChatLogPaged", _ =>
             {
-                var queryParams = this.Bind<ChatLogQueryParams>();
+                var queryParams = this.Bind<ChatLogQueryParam>();
 
                 bool steamIdExist = string.IsNullOrEmpty(queryParams.SteamId);
 
@@ -69,7 +69,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
               
                 object param = steamIdExist ? null : new { SteamId = queryParams.SteamId };
 
-                var data = _chatLogRepository.QueryPaged(
+                var data = _vChatLogRepository.QueryPaged(
                     queryParams.PageIndex,
                     queryParams.PageSize,
                     whereBy,

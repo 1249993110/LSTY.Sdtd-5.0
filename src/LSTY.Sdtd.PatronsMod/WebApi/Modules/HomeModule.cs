@@ -1,4 +1,5 @@
-﻿using Nancy;
+﻿using IceCoffee.Common.Extensions;
+using Nancy;
 using System.IO;
 using System.Reflection;
 

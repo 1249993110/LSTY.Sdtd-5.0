@@ -2,7 +2,7 @@
 using LSTY.Sdtd.PatronsMod.Functions;
 using LSTY.Sdtd.PatronsMod.LiveData;
 using LSTY.Sdtd.PatronsMod.Primitives;
-using LSTY.Sdtd.PatronsMod.WebApi.ViewModels;
+using LSTY.Sdtd.PatronsMod.WebApi.Models;
 using Nancy;
 using Nancy.Metadata.Modules;
 using Nancy.Swagger;
@@ -18,6 +18,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
             modelCatalog.AddModel<TeleportCityConfigViewModel>();
             modelCatalog.AddModel<CityPositionViewModelBase>();
             modelCatalog.AddModel<CityPositionViewModel>();
+            modelCatalog.AddModel<DeleteQueryParamOfString>();
 
             Describe["RetrieveTeleportCityConfig"] = description => description.AsSwagger(
                 with => with.Operation(
@@ -76,6 +77,17 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
                             .Description("")
                             .BodyParameter(p => p.Description("A object").Name(nameof(CityPositionViewModel)).Schema<CityPositionViewModel>())
                             .Response((int)HttpStatusCode.OK, r => r.Description("Succeeded or failed"))));
+
+            Describe["DeleteCityPosition"] = description => description.AsSwagger(
+                with => with.Operation(
+                    op => op.SecurityRequirement(SecuritySchemes.ApiKey)
+                            .OperationId("DeleteCityPosition")
+                            .Tag("TeleportCity")
+                            .Summary("删除公共回城点")
+                            .BodyParameter(p => p.Description("A array").Name(nameof(DeleteQueryParamOfString)).Schema<DeleteQueryParamOfString>())
+                            .Description("Delete city position by ids")
+                            .Response((int)HttpStatusCode.OK, r => r.Description("Succeeded or failed"))));
+
         }
     }
 }

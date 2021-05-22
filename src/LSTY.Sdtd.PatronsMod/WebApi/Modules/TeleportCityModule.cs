@@ -1,7 +1,7 @@
 ﻿using IceCoffee.Common.Extensions;
 using LSTY.Sdtd.PatronsMod.Data.Entities;
 using LSTY.Sdtd.PatronsMod.Data.IRepositories;
-using LSTY.Sdtd.PatronsMod.WebApi.ViewModels;
+using LSTY.Sdtd.PatronsMod.WebApi.Models;
 using Nancy.ModelBinding;
 using System;
 using System.Collections.Generic;
@@ -119,6 +119,25 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 if (count != 1)
                 {
                     return FailedResult(message: "The specified cityPositionId does not exist");
+                }
+
+                return SucceededResult();
+            });
+
+            HttpPost("/DeleteCityPosition", "DeleteCityPosition", _ =>
+            {
+                var data = this.Bind<DeleteQueryParamOfString>();
+
+                if (data == null || data.Ids == null || data.Ids.Any() == false)
+                {
+                    return FailedResult(message: "The specified cityPositionIds is null");
+                }
+
+                int count = _cityPositionRepository.DeleteBatchByIds(nameof(T_CityPosition.Id), data.Ids);
+
+                if (count != data.Ids.Length)
+                {
+                    return FailedResult(message: "Deleted count: " + count);
                 }
 
                 return SucceededResult();

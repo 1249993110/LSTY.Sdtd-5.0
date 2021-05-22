@@ -1,4 +1,4 @@
-﻿using LSTY.Sdtd.PatronsMod.WebApi.ViewModels;
+﻿using LSTY.Sdtd.PatronsMod.WebApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

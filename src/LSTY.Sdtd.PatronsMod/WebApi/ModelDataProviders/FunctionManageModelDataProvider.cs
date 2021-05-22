@@ -1,5 +1,5 @@
 ﻿using LSTY.Sdtd.PatronsMod.WebApi.Modules;
-using LSTY.Sdtd.PatronsMod.WebApi.ViewModels;
+using LSTY.Sdtd.PatronsMod.WebApi.Models;
 using Nancy.Swagger;
 using Nancy.Swagger.Services;
 using System;

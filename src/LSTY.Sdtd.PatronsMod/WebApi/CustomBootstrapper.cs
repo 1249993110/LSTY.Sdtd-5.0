@@ -56,48 +56,59 @@ namespace LSTY.Sdtd.PatronsMod.WebApi
 
         private Response OnBeforeRequest(NancyContext context)
         {
-            Request request = context.Request;
-
-            Task.Run(() =>
+            try
             {
-                CustomLogger.Info("Web request from: " + request.UserHostAddress + " path: " + request.Path);
-            });
+                Request request = context.Request;
 
-            string path = request.Path;
-            if (path.StartsWith("/api/", StringComparison.OrdinalIgnoreCase))
+                Task.Run(() =>
+                {
+                    CustomLogger.Info("Web request from: " + request.UserHostAddress + " path: " + request.Path);
+                });
+
+                string path = request.Path;
+                if (path.StartsWith("/api/", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (request.Method == "OPTIONS")
+                    {
+                        var response = new Response()
+                        {
+                            StatusCode = HttpStatusCode.OK
+                        };
+
+                        response.Headers.Add("allow", "GET,POST,OPTIONS");
+                        return response;
+                    }
+
+                    var headers = request.Headers;
+
+                    var contentType = headers["Content-Type"].FirstOrDefault();
+
+                    if (contentType != null && contentType.IndexOf("application/json", StringComparison.OrdinalIgnoreCase) == -1)
+                    {
+                        return new Response()
+                        {
+                            StatusCode = HttpStatusCode.UnsupportedMediaType
+                        };
+                    }
+
+                    var authHeader = headers[WebConfig.AuthHeader].FirstOrDefault();
+
+                    if (authHeader == null && authHeader != FunctionManager.CommonConfig.WebConfig.AccessToken)
+                    {
+                        return new Response()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized
+                        };
+                    }
+                }
+            }
+            catch (Exception ex)
             {
-                if(request.Method == "OPTIONS")
+                CustomLogger.Error(ex, "Application Error in OnBeforeRequest");
+                return new Response()
                 {
-                    var response = new Response()
-                    {
-                        StatusCode = HttpStatusCode.OK
-                    };
-
-                    response.Headers.Add("allow", "GET,POST,OPTIONS");
-                    return response;
-                }
-
-                var headers = request.Headers;
-                
-                var contentType = headers["Content-Type"].FirstOrDefault();
-
-                if (contentType != null && string.Equals(contentType, "application/json", StringComparison.OrdinalIgnoreCase) == false)
-                {
-                    return new Response()
-                    {
-                        StatusCode = HttpStatusCode.UnsupportedMediaType
-                    };
-                }
-
-                var authHeader = headers[WebConfig.AuthHeader].FirstOrDefault();
-                
-                if (authHeader == null && authHeader != FunctionManager.CommonConfig.WebConfig.AccessToken)
-                {
-                    return new Response()
-                    {
-                        StatusCode = HttpStatusCode.Unauthorized
-                    };
-                }
+                    StatusCode = HttpStatusCode.InternalServerError
+                };
             }
 
             return null;

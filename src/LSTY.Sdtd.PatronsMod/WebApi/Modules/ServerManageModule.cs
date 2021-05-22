@@ -1,5 +1,5 @@
 ﻿using LSTY.Sdtd.PatronsMod.Primitives;
-using LSTY.Sdtd.PatronsMod.WebApi.ViewModels;
+using LSTY.Sdtd.PatronsMod.WebApi.Models;
 using Nancy.ModelBinding;
 using Newtonsoft.Json.Linq;
 using System;
@@ -100,7 +100,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
 
                 var entityList = GameManager.Instance.World.Entities.list;
 
-                var gameStats = new ViewModels.GameStats()
+                var gameStats = new Models.GameStats()
                 {
                     Gametime = new Gametime()
                     {

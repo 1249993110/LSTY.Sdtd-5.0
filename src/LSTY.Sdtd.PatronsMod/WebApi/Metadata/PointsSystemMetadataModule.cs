@@ -2,7 +2,7 @@
 using LSTY.Sdtd.PatronsMod.Functions;
 using LSTY.Sdtd.PatronsMod.LiveData;
 using LSTY.Sdtd.PatronsMod.Primitives;
-using LSTY.Sdtd.PatronsMod.WebApi.ViewModels;
+using LSTY.Sdtd.PatronsMod.WebApi.Models;
 using Nancy;
 using Nancy.Metadata.Modules;
 using Nancy.Swagger;

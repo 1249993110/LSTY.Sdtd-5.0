@@ -114,17 +114,23 @@ CREATE TABLE IF NOT EXISTS T_ChatLog(
 	CreatedDate TIMESTAMP DEFAULT (DATETIME(CURRENT_TIMESTAMP,'LOCALTIME')),
 	SteamId TEXT,
 	EntityId INTEGER,
-	ChatType TEXT,
+	ChatType INTEGER,
 	Message TEXT
 );
 --创建索引
 CREATE INDEX IF NOT EXISTS Index_ChatLog ON T_ChatLog(SteamId);
 CREATE INDEX IF NOT EXISTS Index_ChatLog1 ON T_ChatLog(EntityId);
 
+CREATE VIEW IF NOT EXISTS V_ChatLog AS
+SELECT _log.Id,_log.CreatedDate,_log.SteamId,_log.EntityId,_log.ChatType,_log.Message,player.Name as PlayerName FROM T_ChatLog AS _log LEFT JOIN T_Player AS player ON _log.SteamId = player.SteamId;
+
 --反作弊日志
 CREATE TABLE IF NOT EXISTS T_AntiCheatLog(
-	Id INTEGER PRIMARY KEY AUTOINCREMENT,
-	SteamId TEXT,
+	Id INTEGER PRIMARY KEY AUTOINCREMENT,	
 	CreatedDate TIMESTAMP DEFAULT (DATETIME(CURRENT_TIMESTAMP,'LOCALTIME')),
+	SteamId TEXT,
 	Message TEXT
 );
+
+CREATE VIEW IF NOT EXISTS V_AntiCheatLog AS
+SELECT _log.Id,_log.CreatedDate,_log.SteamId,_log.Message,player.Name as PlayerName FROM T_AntiCheatLog AS _log LEFT JOIN T_Player AS player ON _log.SteamId = player.SteamId;

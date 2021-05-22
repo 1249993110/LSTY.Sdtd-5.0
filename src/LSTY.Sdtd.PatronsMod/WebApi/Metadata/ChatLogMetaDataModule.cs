@@ -1,5 +1,5 @@
 ﻿using LSTY.Sdtd.PatronsMod.Data.Entities;
-using LSTY.Sdtd.PatronsMod.WebApi.ViewModels;
+using LSTY.Sdtd.PatronsMod.WebApi.Models;
 using Nancy.Metadata.Modules;
 using Nancy.Swagger;
 using Swagger.ObjectModel;
@@ -10,7 +10,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
     {
         public ChatLogMetaDataModule(ISwaggerModelCatalog modelCatalog)
         {
-            modelCatalog.AddModel<ChatLogQueryParams>();
+            modelCatalog.AddModel<ChatLogQueryParam>();
             modelCatalog.AddModel<T_ChatLog>();
 
             Describe["RetrieveChatLogBySteamId"] = description => description.AsSwagger(
@@ -50,7 +50,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
                             .OperationId("RetrieveChatLogPaged")
                             .Tag("ChatLog")
                             .Summary("通过分页参数获取聊天记录")
-                            .BodyParameter(p => p.Description("Query params").Name(nameof(ChatLogQueryParams)).Schema<ChatLogQueryParams>())
+                            .BodyParameter(p => p.Description("Query params").Name(nameof(ChatLogQueryParam)).Schema<ChatLogQueryParam>())
                             .Description("If the parameter steamId is optional")
                             .Response(r => r.Schema<T_ChatLog>().Description("Chat logs"))));
 

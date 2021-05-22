@@ -1,7 +1,7 @@
 ﻿using IceCoffee.Common.Extensions;
 using LSTY.Sdtd.PatronsMod.Data.Entities;
 using LSTY.Sdtd.PatronsMod.Data.IRepositories;
-using LSTY.Sdtd.PatronsMod.WebApi.ViewModels;
+using LSTY.Sdtd.PatronsMod.WebApi.Models;
 using Nancy.ModelBinding;
 using System;
 using System.Collections.Generic;

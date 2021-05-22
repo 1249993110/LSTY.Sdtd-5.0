@@ -25,16 +25,24 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
 
         protected TModel Bind<TModel>()
         {
-            string json = null;
-
-            using (var reader = new StreamReader(this.Request.Body, Encoding.UTF8))
+            try
             {
-                json = reader.ReadToEnd();
+                string json = null;
+
+                using (var reader = new StreamReader(this.Request.Body, Encoding.UTF8))
+                {
+                    json = reader.ReadToEnd();
+                }
+
+                TModel obj = JsonConvert.DeserializeObject<TModel>(json);
+
+                return obj;
             }
-
-            TModel obj = JsonConvert.DeserializeObject<TModel>(json);
-
-            return obj;
+            catch (Exception ex)
+            {
+                CustomLogger.Error(ex, "Body bind error");
+                return default(TModel);
+            }
         }
 
         #region SucceededResult
