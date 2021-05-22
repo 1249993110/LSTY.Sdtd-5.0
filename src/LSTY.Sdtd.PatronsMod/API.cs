@@ -3,12 +3,15 @@ using LSTY.Sdtd.PatronsMod.Data;
 using LSTY.Sdtd.PatronsMod.ExceptionCatch;
 using LSTY.Sdtd.PatronsMod.LiveData;
 using LSTY.Sdtd.PatronsMod.WebApi;
+using LSTY.Sdtd.PatronsMod.WebSocket;
 using Nancy.Hosting.Self;
 using System;
 using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using UnityEngine;
+using WebSocketSharp.Server;
 
 namespace LSTY.Sdtd.PatronsMod
 {
@@ -21,6 +24,7 @@ namespace LSTY.Sdtd.PatronsMod
         private const string _magickNativeTargetPath = "7DaysToDieServer_Data/Plugins/Magick.Native-Q8-x64.dll";
 
         private static NancyHost _nancyHost;
+        private static WebSocketServer _webSocketServer;
 
         /// <summary>
         /// Init mod
@@ -42,7 +46,7 @@ namespace LSTY.Sdtd.PatronsMod
             }
 
             #region Init directory. Try create directory and copy files
-            
+
             if (Directory.Exists("LSTY") == false)
             {
                 Directory.CreateDirectory("LSTY");
@@ -108,10 +112,12 @@ namespace LSTY.Sdtd.PatronsMod
             ConfigManager.LoadAll();
 
             var webConfig = FunctionManager.CommonConfig.WebConfig;
-            string uri = string.Format("http://localhost:{0}", webConfig.Port);
+            string uri = "http://localhost:" + webConfig.WebApiPort;
 
             _nancyHost = new NancyHost(new Uri(uri), new CustomBootstrapper());
             _nancyHost.Start();
+
+            InitWebSocket();
 
             if (webConfig.OpenInDefaultBrowser)
             {
@@ -133,8 +139,51 @@ namespace LSTY.Sdtd.PatronsMod
 
             _nancyHost.Stop();
 
+            Logger.Main.LogCallbacks -= LogCallback;
+            _webSocketServer.Stop();
+
             ConfigManager.DisableConfigFileWatcher();
             ConfigManager.SaveAll();
+        }
+
+        private static void InitWebSocket()
+        {
+            _webSocketServer = new WebSocketServer(System.Net.IPAddress.Any, FunctionManager.CommonConfig.WebConfig.WebSocketPort);
+            _webSocketServer.Log.Output = (logData, path) =>
+            {
+                string message = "Error in WebSocket" + logData.ToString();
+                switch (logData.Level)
+                {
+                    case WebSocketSharp.LogLevel.Warn:
+                        CustomLogger.Warn(message);
+                        break;
+                    case WebSocketSharp.LogLevel.Error:
+                    case WebSocketSharp.LogLevel.Fatal:
+                        CustomLogger.Error(message);
+                        break;
+                    default:
+                        CustomLogger.Info(message);
+                        break;
+                }
+            };
+            _webSocketServer.AddWebSocketService<WebSocketSession>("/");
+            _webSocketServer.Start();
+
+            Logger.Main.LogCallbacks += LogCallback;
+        }
+
+        private static void LogCallback(string message, string trace, LogType type)
+        {
+            try
+            {
+#pragma warning disable CS0618 // 类型或成员已过时
+                _webSocketServer.WebSocketServices.BroadcastAsync(message, null);
+#pragma warning restore CS0618 // 类型或成员已过时
+            }
+            catch (Exception ex)
+            {
+                CustomLogger.Error(ex, "Error in LogCallback");
+            }
         }
     }
 }

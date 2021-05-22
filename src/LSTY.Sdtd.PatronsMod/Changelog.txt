@@ -1,3 +1,8 @@
+5.0.0-alpha.11 (2021-05-22)
+1. Add api RetrieveLocalization
+2. Add api RetrieveKnownLanguages
+3. Add webSocket, ex: ws://localhost:8889?access-token={token}
+
 5.0.0-alpha.10 (2021-05-21)
 1. Add api DeleteCityPosition
 2. Add api HomeCityPosition

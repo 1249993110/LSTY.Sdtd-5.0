@@ -37,7 +37,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi
                 termsOfService: "https://lsty.top/termsOfService");
 
             var securitySchemeBuilder = new ApiKeySecuritySchemeBuilder()
-                .Name(WebConfig.AuthHeader)
+                .Name(WebConfig.AuthKeyName)
                 .IsInHeader()
                 .Description("Authentication with apikey");
             // The scheme name only can be 'ApiKey', because "security":[{"ApiKey":[]}]} in '/api-docs'
@@ -91,9 +91,9 @@ namespace LSTY.Sdtd.PatronsMod.WebApi
                         };
                     }
 
-                    var authHeader = headers[WebConfig.AuthHeader].FirstOrDefault();
+                    var accessToken = headers[WebConfig.AuthKeyName].FirstOrDefault();
 
-                    if (authHeader == null && authHeader != FunctionManager.CommonConfig.WebConfig.AccessToken)
+                    if (accessToken == null && accessToken != FunctionManager.CommonConfig.WebConfig.AccessToken)
                     {
                         return new Response()
                         {

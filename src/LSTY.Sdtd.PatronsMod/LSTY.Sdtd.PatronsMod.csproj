@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net452</TargetFramework>
-    <Version>5.0.0.10</Version>
+    <Version>5.0.0.11</Version>
   </PropertyGroup>
   
   <ItemGroup>
@@ -15,11 +15,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <!--<PackageReference Include="Magick.NET-Q8-x64" Version="7.24.0" />-->
     <PackageReference Include="Nancy" Version="2.0.0" />
     <PackageReference Include="Nancy.Hosting.Self" Version="2.0.0" />
     <PackageReference Include="Nancy.Swagger" Version="2.2.59-alpha" />
     <PackageReference Include="PostSharp" Version="6.9.4" />
+    <!--<PackageReference Include="Magick.NET-Q8-x64" Version="7.24.0" />-->
+    <!--<PackageReference Include="WebSocketSharp" Version="" />-->
   </ItemGroup>
 
   <ItemGroup>
@@ -88,6 +89,9 @@
     </Reference>
     <Reference Include="Magick.NET-Q8-x64">
       <HintPath>..\7dtd-binaries\Magick.NET-Q8-x64.dll</HintPath>
+    </Reference>
+    <Reference Include="websocket-sharp">
+      <HintPath>..\7dtd-binaries\websocket-sharp.dll</HintPath>
     </Reference>
   </ItemGroup>
   

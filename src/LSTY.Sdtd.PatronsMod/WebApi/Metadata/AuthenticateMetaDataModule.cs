@@ -18,8 +18,8 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
                     op => op.OperationId("Authenticate")
                             .Tag("Authenticate")
                             .Summary("认证")
-                            .Parameter(new Parameter() { Name = WebConfig.AuthHeader, In = ParameterIn.Header })
-                            .Description("Check " + WebConfig.AuthHeader)
+                            .Parameter(new Parameter() { Name = WebConfig.AuthKeyName, In = ParameterIn.Header })
+                            .Description("Check " + WebConfig.AuthKeyName)
                             .Response((int)HttpStatusCode.OK, r => r.Description("Succeeded"))
                             .Response((int)HttpStatusCode.Unauthorized, r => r.Description("Failed"))));
         }

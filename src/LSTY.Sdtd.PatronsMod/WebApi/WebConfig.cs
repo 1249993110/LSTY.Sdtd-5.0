@@ -7,13 +7,16 @@ namespace LSTY.Sdtd.PatronsMod.WebApi
 {
     public class WebConfig
     {
-        public const string AuthHeader = "access-token";
+        public const string AuthKeyName = "access-token";
 
         [ConfigNode(XmlNodeType.Attribute)]
         public string AccessToken { get; set; } = Guid.NewGuid().ToString().ToBase64();
 
         [ConfigNode(XmlNodeType.Attribute)]
-        public int Port { get; set; } = 8888;
+        public int WebApiPort { get; set; } = 8888;
+
+        [ConfigNode(XmlNodeType.Attribute)]
+        public int WebSocketPort { get; set; } = 8889;
 
         [ConfigNode(XmlNodeType.Attribute)]
         public bool OpenInDefaultBrowser { get; set; } = true;
