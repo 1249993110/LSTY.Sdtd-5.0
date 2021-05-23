@@ -66,6 +66,45 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
                             .BodyParameter(p => p.Description("A points information object").Name(nameof(PointsInfoViewModel)).Schema<PointsInfoViewModel>())
                             .Response((int)HttpStatusCode.OK, r => r.Description("Succeeded or failed"))));
 
+            Describe["IncreasePlayerPoints"] = description => description.AsSwagger(
+                with => with.Operation(
+                    op => op.SecurityRequirement(SecuritySchemes.ApiKey)
+                            .OperationId("IncreasePlayerPoints")
+                            .Tag("PointsSystem")
+                            .Summary("增加玩家积分")
+                            .Parameters(new Parameter[] 
+                            { 
+                                new Parameter() { Name = "steamId", In = ParameterIn.Query, Required = true } ,
+                                new Parameter() { Name = "count", In = ParameterIn.Query, Required = true }
+                            })
+                            .Description("")
+                            .Response((int)HttpStatusCode.OK, r => r.Description("Succeeded or failed"))));
+
+            Describe["DeductPlayerPoints"] = description => description.AsSwagger(
+                with => with.Operation(
+                    op => op.SecurityRequirement(SecuritySchemes.ApiKey)
+                            .OperationId("DeductPlayerPoints")
+                            .Tag("PointsSystem")
+                            .Summary("扣除玩家积分")
+                            .Parameters(new Parameter[]
+                            {
+                                new Parameter() { Name = "steamId", In = ParameterIn.Query, Required = true } ,
+                                new Parameter() { Name = "count", In = ParameterIn.Query, Required = true },
+                                new Parameter() { Name = "allowNegative", In = ParameterIn.Query, Default = false }
+                            })
+                            .Description("")
+                            .Response((int)HttpStatusCode.OK, r => r.Description("Succeeded or failed"))));
+
+            Describe["ResetLastSignDay"] = description => description.AsSwagger(
+               with => with.Operation(
+                   op => op.SecurityRequirement(SecuritySchemes.ApiKey)
+                           .OperationId("ResetLastSignDay")
+                           .Tag("PointsSystem")
+                           .Summary("重置上次签到天数")
+                           .Parameter(new Parameter() { Name = "steamId", In = ParameterIn.Query })
+                           .Description("If the steamId is null will reset all")
+                           .Response((int)HttpStatusCode.OK, r => r.Description("Succeeded or failed"))));
+
         }
     }
 }

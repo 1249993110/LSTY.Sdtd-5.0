@@ -151,7 +151,7 @@ namespace LSTY.Sdtd.PatronsMod
             _webSocketServer = new WebSocketServer(System.Net.IPAddress.Any, FunctionManager.CommonConfig.WebConfig.WebSocketPort);
             _webSocketServer.Log.Output = (logData, path) =>
             {
-                string message = "Error in WebSocket" + logData.ToString();
+                string message = "Error in WebSocket: " + logData.ToString();
                 switch (logData.Level)
                 {
                     case WebSocketSharp.LogLevel.Warn:

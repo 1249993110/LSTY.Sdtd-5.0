@@ -109,6 +109,78 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
 
                 return SucceededResult();
             });
+
+            HttpGet("/IncreasePlayerPoints", "IncreasePlayerPoints", _ =>
+            {
+                string steamId = Request.Query["steamId"];
+                if (string.IsNullOrEmpty(steamId))
+                {
+                    return FailedResult(message: "The specified steamId does not exist");
+                }
+
+                int count = Request.Query["count"];
+                if (count < 1)
+                {
+                    return FailedResult(message: "The count cannot be less than 1");
+                }
+
+                count = _pointsRepository.IncreasePlayerPoints(steamId, count);
+
+                if (count != 1)
+                {
+                    return FailedResult(message: "The specified steamId does not exist");
+                }
+
+                return SucceededResult();
+            });
+
+            HttpGet("/DeductPlayerPoints", "DeductPlayerPoints", _ =>
+            {
+                string steamId = Request.Query["steamId"];
+                if (string.IsNullOrEmpty(steamId))
+                {
+                    return FailedResult(message: "The specified steamId does not exist");
+                }
+
+                int count = Request.Query["count"];
+                if (count < 1)
+                {
+                    return FailedResult(message: "The count cannot be less than 1");
+                }
+
+                bool allowNegative = Request.Query["allowNegative"];
+                if (allowNegative == false)
+                {
+                    int ownCount = _pointsRepository.QueryPointsCountBySteamId(steamId);
+                    if (ownCount < count)
+                    {
+                        return FailedResult(message: "Not enough points");
+                    }
+                }
+
+                count = _pointsRepository.DeductPlayerPoints(steamId, count);
+
+                if (count != 1)
+                {
+                    return FailedResult(message: "The specified steamId does not exist");
+                }
+
+                return SucceededResult();
+            });
+
+            HttpGet("/ResetLastSignDay", "ResetLastSignDay", _ =>
+            {
+                string steamId = Request.Query["steamId"];
+
+                int count = _pointsRepository.ResetLastSignDay(steamId);
+
+                if (string.IsNullOrEmpty(steamId) == false && count != 1)
+                {
+                    return FailedResult(message: "The specified steamId does not exist");
+                }
+
+                return SucceededResult(message: "Successfully reset " + count);
+            });
         }
     }
 }

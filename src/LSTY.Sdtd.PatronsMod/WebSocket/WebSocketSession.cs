@@ -15,7 +15,7 @@ namespace LSTY.Sdtd.PatronsMod.WebSocket
         {
             if (e.IsText)
             {
-                List<string> executeResult = SdtdConsole.Instance.ExecuteSync(e.Data, null);
+                List<string> executeResult = SdtdConsole.Instance.ExecuteSync(e.Data, new ClientInfo() { playerId = "LSTY.WebSocket" });
                 Send(string.Join(Environment.NewLine, executeResult));
             }
             else

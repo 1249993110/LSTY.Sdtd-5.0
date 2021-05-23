@@ -22,7 +22,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                     return FailedResult("No command given");
                 }
 
-                List<string> executeResult = SdtdConsole.Instance.ExecuteSync(command, null);
+                List<string> executeResult = SdtdConsole.Instance.ExecuteSync(command, new ClientInfo() { playerId = "LSTY.WebApi" });
 
                 return SucceededResult(executeResult);
             });

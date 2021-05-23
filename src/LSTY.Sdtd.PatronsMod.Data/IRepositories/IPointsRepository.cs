@@ -10,10 +10,10 @@ namespace LSTY.Sdtd.PatronsMod.Data.IRepositories
 
         int QueryPointsCountBySteamId(string steamId);
 
-        void IncreasePlayerPoints(string steamId, int count);
+        int IncreasePlayerPoints(string steamId, int count);
 
-        void DeductPlayerPoints(string steamId, int count);
+        int DeductPlayerPoints(string steamId, int count);
 
-        void ResetLastSignDay(string steamId = null);
+        int ResetLastSignDay(string steamId = null);
     }
 }

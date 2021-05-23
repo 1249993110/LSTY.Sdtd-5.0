@@ -25,27 +25,27 @@ namespace LSTY.Sdtd.PatronsMod.Data.Repositories
         }
 
         [CatchException("Error in IncreasePlayerPoints")]
-        public void IncreasePlayerPoints(string steamId, int count)
+        public int IncreasePlayerPoints(string steamId, int count)
         {
-            base.Execute($"UPDATE {TableName} SET [Count]=[Count]+@Count WHERE SteamId=@SteamId", new { SteamId = steamId, Count = count });
+            return base.Execute($"UPDATE {TableName} SET [Count]=[Count]+@Count WHERE SteamId=@SteamId", new { SteamId = steamId, Count = count });
         }
 
         [CatchException("Error in DeductPlayerPoints")]
-        public void DeductPlayerPoints(string steamId, int count)
+        public int DeductPlayerPoints(string steamId, int count)
         {
-            base.Execute($"UPDATE {TableName} SET [Count]=[Count]-@Count WHERE SteamId=@SteamId", new { SteamId = steamId, Count = count });
+            return base.Execute($"UPDATE {TableName} SET [Count]=[Count]-@Count WHERE SteamId=@SteamId", new { SteamId = steamId, Count = count });
         }
 
         [CatchException("Error in ResetLastSignDay")]
-        public void ResetLastSignDay(string steamId = null)
+        public int ResetLastSignDay(string steamId = null)
         {
             if (steamId == null)
             {
-                base.Update("LastSignDate=0", null, null);
+                return base.Update("LastSignDay=0", null, null);
             }
             else
             {
-                base.Update("LastSignDate=0", "SteamId=@SteamId", new { SteamId = steamId });
+                return base.Update("LastSignDay=0", "SteamId=@SteamId", new { SteamId = steamId });
             }
         }
     }
