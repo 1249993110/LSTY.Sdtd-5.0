@@ -3,192 +3,131 @@ GO
 
 --用户表
 CREATE TABLE T_User(
-	Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),--GUID
-	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),	--创建日期
-	DisplayName NVARCHAR(24) NOT NULL,					--显示名称
-	LastLoginTime DATETIME,								--上次登录时间
-	LastLoginIpAddress VARCHAR(50),						--上次登录Ip
+	Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),	--GUID
+	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),			--创建日期
+	DisplayName NVARCHAR(32) NOT NULL,							--显示名称
+	LastLoginTime DATETIME,										--上次登录时间
+	LastLoginIpAddress VARCHAR(32),								--上次登录Ip
 );
---创建索引
-CREATE UNIQUE INDEX Index_User ON T_User(UserID);
 GO
 
 --标准账户表
 CREATE TABLE T_StandardAccount(
-	AccountName
-	GUID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),--GUID
-	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),	--创建日期
-	Fk_UserID INT FOREIGN KEY REFERENCES T_User(UserID)
-		ON DELETE CASCADE
-		ON UPDATE CASCADE,										--用户ID
-	PasswordHash VARCHAR(50) NOT NULL,							--密码哈希值
-	SecurityStamp VARCHAR(50) NOT NULL,							--安全戳
+	Fk_UserId UNIQUEIDENTIFIER PRIMARY KEY FOREIGN KEY REFERENCES T_User(Id),	--用户Id
+	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),			--创建日期
+	AccountName NVARCHAR(32) NOT NULL,							--账户名
+	PasswordHash VARCHAR(64) NOT NULL,							--密码哈希值
+	SecurityStamp VARCHAR(64) NOT NULL,							--安全戳
 );
 --创建索引
-CREATE UNIQUE INDEX Index_StandardAccount ON T_StandardAccount(Fk_UserID);
+CREATE UNIQUE INDEX Index_AccountName ON T_StandardAccount(AccountName);
 GO
 
 --Email账户表
 CREATE TABLE T_EmailAccount(
-	GUID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),	--GUID
-	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),	--创建日期
-	Fk_UserID INT FOREIGN KEY REFERENCES T_User(UserID)
-		ON DELETE CASCADE
-		ON UPDATE CASCADE,								--用户ID
-	Email VARCHAR(50) UNIQUE NOT NULL,					--Email用户身份的标识
+	Fk_UserId UNIQUEIDENTIFIER PRIMARY KEY FOREIGN KEY REFERENCES T_User(Id),	--用户Id
+	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),			--创建日期
+	Email VARCHAR(128) NOT NULL,								--Email用户身份的标识
 );
 --创建索引
-CREATE UNIQUE INDEX Index_EmailAccount ON T_EmailAccount(Fk_UserID);
-CREATE UNIQUE INDEX Index1_EmailAccount ON T_EmailAccount(Email);
+CREATE UNIQUE INDEX Index_Email ON T_EmailAccount(Email);
 GO
 
 --QQ账户表
 CREATE TABLE T_QQAccount(
-	GUID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),	--GUID
-	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),	--创建日期
-	Fk_UserID INT FOREIGN KEY REFERENCES T_User(UserID)
-		ON DELETE CASCADE
-		ON UPDATE CASCADE,								--用户ID
-	OpenID VARCHAR(50) UNIQUE NOT NULL,					--QQ用户身份的标识
+	Fk_UserId UNIQUEIDENTIFIER PRIMARY KEY FOREIGN KEY REFERENCES T_User(Id),	--用户Id
+	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),			--创建日期
+	OpenId VARCHAR(64) NOT NULL,								--QQ用户身份的标识
 );
 --创建索引
-CREATE UNIQUE INDEX Index_QQAccount ON T_QQAccount(Fk_UserID);
-CREATE UNIQUE INDEX Index1_QQAccount ON T_QQAccount(OpenID);
+CREATE UNIQUE INDEX Index_OpenId ON T_QQAccount(OpenId);
 GO
 
 --角色表
 CREATE TABLE T_Role(
-	GUID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),	--GUID
-	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),	--创建日期
-	RoleID INT DEFAULT(-1) UNIQUE NOT NULL,				--角色ID
-	RoleName NVARCHAR(8),								--角色名称
+	Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),	--角色Id
+	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),			--创建日期
+	Name NVARCHAR(32) NOT NULL,									--角色名称
+	Description NVARCHAR(512)
 );
 --创建索引
-CREATE UNIQUE INDEX Index_Role ON T_Role(RoleID);
+CREATE UNIQUE INDEX Index_Name ON T_Role(Name);
 GO
 
-INSERT INTO T_Role(RoleID,RoleName) VALUES(-1,'黑名单用户');
-INSERT INTO T_Role(RoleID,RoleName) VALUES(0,'超级管理员');
-INSERT INTO T_Role(RoleID,RoleName) VALUES(1,'管理员');
-INSERT INTO T_Role(RoleID,RoleName) VALUES(2,'优惠会员');
-INSERT INTO T_Role(RoleID,RoleName) VALUES(3,'普通会员');
-INSERT INTO T_Role(RoleID,RoleName) VALUES(4,'普通用户');
+INSERT INTO T_Role(Name,Description) VALUES('BlacklistUser','黑名单用户');
+INSERT INTO T_Role(Name,Description) VALUES('NormalUser','正常用户');
+INSERT INTO T_Role(Name,Description) VALUES('Administrator','管理员');
 GO
 
 --用户角色表
 CREATE TABLE T_UserRole(
-	GUID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),	--GUID
-	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),	--创建日期
-	Fk_UserID INT FOREIGN KEY REFERENCES T_User(UserID)
-		ON DELETE CASCADE
-		ON UPDATE CASCADE,								--用户ID
-	Fk_RoleID INT FOREIGN KEY REFERENCES T_Role(RoleID)
-		ON DELETE CASCADE
-		ON UPDATE CASCADE,								--用户角色ID
+	Fk_UserId UNIQUEIDENTIFIER FOREIGN KEY REFERENCES T_User(Id),	--用户Id
+	Fk_RoleId UNIQUEIDENTIFIER FOREIGN KEY REFERENCES T_Role(Id),	--角色Id
+	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),				--创建日期
+	PRIMARY KEY(Fk_UserId,Fk_RoleId)
 );
---创建索引
-CREATE UNIQUE INDEX Index_UserRole ON T_UserRole(Fk_UserID);
 GO
 
---工具使用期限表
-CREATE TABLE T_ST_Expiry(
-	GUID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),	--GUID
-	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),	--创建日期
-	Fk_UserID INT FOREIGN KEY REFERENCES T_User(UserID)
-		ON DELETE CASCADE
-		ON UPDATE CASCADE,								--用户ID
-	ExpiryTime DATETIME DEFAULT GETDATE(),				--使用期限
+--VIP用户表
+CREATE TABLE T_VipInfo(
+	Fk_UserId UNIQUEIDENTIFIER PRIMARY KEY FOREIGN KEY REFERENCES T_User(Id),	--用户Id
+	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),				--创建日期
+	ExpiryDate DATETIME NOT NULL DEFAULT GETDATE(),					--使用期限
+	MaxInstanceCount INT NOT NULL DEFAULT 0,						--最大实例个数
+	SecretId VARCHAR(64) NOT NULL,									--加密的强随机字符串
 );
 --创建索引
-CREATE UNIQUE INDEX Index_ST_Expiry ON T_ST_Expiry(Fk_UserID);
+CREATE UNIQUE INDEX Index_SecretId ON T_VipInfo(SecretId);
 GO
 
---在线用户表
-CREATE TABLE T_OnlineUser(
-	GUID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),	--GUID
-	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),	--创建日期
-	Fk_UserID INT FOREIGN KEY REFERENCES T_User(UserID)
-		ON UPDATE CASCADE,								--用户ID
-	DisplayName VARCHAR(24),							--显示名称
-	LoginTime DATETIME,									--登录时间
-	IpAddress VARCHAR(50),								--Ip地址
-	ExpiryTime DATETIME DEFAULT GETDATE(),				--使用期限
-	Fk_RoleID INT FOREIGN KEY REFERENCES T_Role(RoleID)
-		ON UPDATE CASCADE,								--用户角色ID
-	RoleName NVARCHAR(8),								--角色名称
-	Version VARCHAR(50),								--客户版本
+--活跃客户端表
+CREATE TABLE T_ActiveClient(
+	Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),		--GUID
+	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),				--创建日期
+	Fk_UserId UNIQUEIDENTIFIER FOREIGN KEY REFERENCES T_User(Id),	--用户Id
+	DeviceId VARCHAR(64) NOT NULL,									--客户设备Id，由mac地址和进程Id生成
+	IpAddress VARCHAR(32) NOT NULL,									--Ip地址
+	Version VARCHAR(64) NOT NULL,									--客户端版本
 );
 --创建索引
-CREATE INDEX Index_OnlineUser ON T_OnlineUser(Fk_UserID);
+CREATE UNIQUE INDEX Index_Fk_UserId ON T_ActiveClient(Fk_UserId);
+CREATE UNIQUE INDEX Index_DeviceId ON T_ActiveClient(DeviceId);
 GO
 
 --创建视图
 CREATE VIEW V_User AS
-SELECT u.UserID,u.DisplayName,u.LastLoginTime,u.LastLoginIpAddress,
-eA.Email,rol.RoleID,rol.RoleName,expiry.ExpiryTime FROM T_User AS u
-LEFT JOIN T_EmailAccount AS eA ON u.UserID=eA.Fk_UserID
-LEFT JOIN T_UserRole AS urole ON u.UserID=urole.Fk_UserID
-LEFT JOIN T_Role AS rol ON urole.Fk_RoleID=rol.RoleID
-LEFT JOIN T_ST_Expiry AS expiry ON u.UserID=expiry.Fk_UserID;
+SELECT u.Id AS UserId,u.DisplayName,u.LastLoginTime,u.LastLoginIpAddress,sa.AccountName,
+ea.Email,rol.Id AS RoleId,rol.[Name] AS RoleName,vip.ExpiryDate,vip.MaxInstanceCount,vip.SecretId FROM T_User AS u
+LEFT JOIN T_StandardAccount AS sa ON u.Id=sa.Fk_UserId
+LEFT JOIN T_EmailAccount AS ea ON u.Id=ea.Fk_UserId
+LEFT JOIN T_UserRole AS urole ON u.Id=urole.Fk_UserId
+LEFT JOIN T_Role AS rol ON urole.Fk_RoleId=rol.Id
+LEFT JOIN T_VipInfo AS vip ON u.Id=vip.Fk_UserId;
 GO
 
---存储过程，插入多条与邮箱账户相关的数据
-CREATE PROCEDURE SP_InsertEmailAccount
-	@Email VARCHAR(50),			--Email
-	@DisplayName VARCHAR(24),	--显示名称
-	@PasswordHash VARCHAR(50),	--密码哈希值
-	@SecurityStamp VARCHAR(50),	--安全戳
-	@LastLoginTime DATETIME,	--上次登录时间
-	@LastLoginIpAddress VARCHAR(50),--上次登录Ip
-	@RoleID INT,				--用户角色ID
-	@ExpiryTime DATETIME,		--使用期限
-	
-	@UserID INT OUT				--用户ID
-AS
-BEGIN
-	BEGIN TRY
-		BEGIN TRAN
-			SET NOCOUNT ON;
+--创建视图
+CREATE VIEW V_ActiveClient AS
+SELECT ac.Id,ac.CreatedDate,ac.Fk_UserId AS UserId,ac.DeviceId,ac.IpAddress,ac.[Version],
+u.DisplayName,sa.AccountName,
+ea.Email,vip.ExpiryDate,vip.MaxInstanceCount FROM T_ActiveClient AS ac
+LEFT JOIN T_User AS u ON u.Id=ac.Fk_UserId
+LEFT JOIN T_StandardAccount AS sa ON u.Id=sa.Fk_UserId
+LEFT JOIN T_EmailAccount AS ea ON u.Id=ea.Fk_UserId
+LEFT JOIN T_VipInfo AS vip ON u.Id=vip.Fk_UserId;
+GO
 
-			INSERT INTO T_User(DisplayName,LastLoginTime,LastLoginIpAddress)
-			VALUES(@DisplayName,@LastLoginTime,@LastLoginIpAddress)
-		
-			select @UserID = @@Identity
-			print(@UserID)
-
-			INSERT INTO T_EmailAccount(Fk_UserID,Email)
-			VALUES(@UserID,@Email)
-		
-			INSERT INTO T_StandardAccount(Fk_UserID,PasswordHash,SecurityStamp)
-			VALUES(@UserID,@PasswordHash,@SecurityStamp)
-		 
-			INSERT INTO T_UserRole(Fk_UserID,Fk_RoleID)
-			VALUES(@UserID,@RoleID)
-			
-			INSERT INTO T_ST_Expiry(Fk_UserID,ExpiryTime)
-			VALUES(@UserID,@ExpiryTime)
-			
-		COMMIT TRAN
-	End TRY
-	BEGIN CATCH
-		IF @@TRANCOUNT > 0			--判断有没有事务
-			BEGIN
-				ROLLBACK TRAN
-			END
-			
-			DECLARE @ErrorMessage NVARCHAR(4000);
-			DECLARE @ErrorSeverity INT;
-			DECLARE @ErrorState INT;
-
-			SELECT 
-				@ErrorMessage = ERROR_MESSAGE(),
-				@ErrorSeverity = ERROR_SEVERITY(),
-				@ErrorState = ERROR_STATE();
-			
-			RAISERROR (@ErrorMessage,  -- Message text.
-					   @ErrorSeverity, -- Severity.
-					   @ErrorState     -- State.
-					   );
-	END CATCH
-END;
+--Jwt RefreshToken表
+CREATE TABLE T_RefreshToken(
+	Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),		--GUID
+	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),				--创建日期
+	Fk_UserId UNIQUEIDENTIFIER FOREIGN KEY REFERENCES T_User(Id),	--用户Id
+	Token VARCHAR(MAX) NOT NULL,									--Refresh Token
+	JwtId VARCHAR(MAX) UNIQUE NOT NULL,								--使用 JwtId 映射到对应的 token
+	IsUsed BIT NOT NULL DEFAULT 0,									--如果已经使用过它，我们不想使用相同的 refresh token 生成新的 JWT token
+	IsRevorked BIT NOT NULL DEFAULT 0,								--是否出于安全原因已将其撤销
+	ExpiryDate DATETIME NOT NULL DEFAULT GETDATE(),					--Refresh Token 的生命周期很长，可以长达数月
+);
+--创建索引
+CREATE UNIQUE INDEX Index_Fk_UserId ON T_RefreshToken(Fk_UserId);
+CREATE UNIQUE INDEX Index_Token ON T_RefreshToken(Token);
 GO

@@ -8,7 +8,7 @@ namespace LSTY.Sdtd.PatronsMod.Data.Repositories
 {
     public class InventoryRepository : SQLiteRepository<T_Inventory>, IInventoryRepository
     {
-        public InventoryRepository() : base(DataManager.DefaultConnectionInfo)
+        public InventoryRepository() : base(ConnectionInfoManager.DefaultConnectionInfo)
         {
         }
 

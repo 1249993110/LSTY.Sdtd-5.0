@@ -8,7 +8,7 @@ namespace LSTY.Sdtd.PatronsMod.Data.Repositories
 {
     public class PointsRepository : SQLiteRepository<T_Points>, IPointsRepository
     {
-        public PointsRepository() : base(DataManager.DefaultConnectionInfo)
+        public PointsRepository() : base(ConnectionInfoManager.DefaultConnectionInfo)
         {
         }
 

@@ -3,8 +3,11 @@ using LSTY.Sdtd.PatronsMod.Data;
 using LSTY.Sdtd.PatronsMod.ExceptionCatch;
 using LSTY.Sdtd.PatronsMod.LiveData;
 using LSTY.Sdtd.PatronsMod.WebApi;
+using LSTY.Sdtd.PatronsMod.WebApi.MapRendering;
 using LSTY.Sdtd.PatronsMod.WebSocket;
 using Nancy.Hosting.Self;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.IO;
 using System.Reflection;
@@ -26,13 +29,32 @@ namespace LSTY.Sdtd.PatronsMod
         private static NancyHost _nancyHost;
         private static WebSocketServer _webSocketServer;
 
+        static API()
+        {
+            JsonConvert.DefaultSettings = new Func<JsonSerializerSettings>(() =>
+            {
+                JsonSerializerSettings setting = new JsonSerializerSettings() 
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                    DateFormatString = "yyyy-MM-dd HH:mm:ss.fff",
+                };
+
+                return setting;
+            });
+        }
+
         /// <summary>
         /// Init mod
         /// </summary>
         [CatchException("Initialize mod LSTY.Sdtd.PatronsMod error")]
         public void InitMod()
         {
+            ModHelper.MainThreadContext = SynchronizationContext.Current;
+
             Task.Run(InternalInit);
+
+            // Initialize in advance map rendering
+            MapRendering.Init();
         }
 
         [CatchException("LSTY.Sdtd.PatronsMod internal init error", true)]
@@ -83,7 +105,7 @@ namespace LSTY.Sdtd.PatronsMod
 
             CustomLogger.Info("Initializing database");
 
-            DataManager.InitializeDatabase(databasePath);
+            ConnectionInfoManager.InitializeDatabase(databasePath);
 
             #endregion
 
@@ -102,6 +124,7 @@ namespace LSTY.Sdtd.PatronsMod
             ModEvents.GameAwake.RegisterHandler(() => Task.Run(GameAwake));
             ModEvents.GameStartDone.RegisterHandler(() => Task.Run(GameStartDone));
             ModEvents.GameShutdown.RegisterHandler(GameShutdown);
+            ModEvents.CalcChunkColorsDone.RegisterHandler(CalcChunkColorsDone);
         }
 
         [CatchException("Error in GameAwake")]
@@ -144,6 +167,8 @@ namespace LSTY.Sdtd.PatronsMod
 
             ConfigManager.DisableConfigFileWatcher();
             ConfigManager.SaveAll();
+
+            MapRendering.Shutdown();
         }
 
         private static void InitWebSocket()
@@ -184,6 +209,11 @@ namespace LSTY.Sdtd.PatronsMod
             {
                 CustomLogger.Error(ex, "Error in LogCallback");
             }
+        }
+
+        private static void CalcChunkColorsDone(Chunk chunk)
+        {
+            MapRendering.RenderSingleChunk(chunk);
         }
     }
 }

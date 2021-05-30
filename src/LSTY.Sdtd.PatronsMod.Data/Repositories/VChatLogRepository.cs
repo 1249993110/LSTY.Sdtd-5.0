@@ -9,7 +9,7 @@ namespace LSTY.Sdtd.PatronsMod.Data.Repositories
 {
     public class VChatLogRepository : SQLiteRepository<V_ChatLog>, IVChatLogRepository
     {
-        public VChatLogRepository() : base(DataManager.DefaultConnectionInfo)
+        public VChatLogRepository() : base(ConnectionInfoManager.DefaultConnectionInfo)
         {
         }
 

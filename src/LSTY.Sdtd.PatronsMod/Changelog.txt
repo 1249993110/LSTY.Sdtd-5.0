@@ -1,3 +1,10 @@
+5.0.0-alpha.14 (2021-05-29)
+1. Add webApi command async execute
+2. Add webSocket command async execute, ex: 'lp -async'
+
+5.0.0-alpha.13 (2021-05-27)
+1. Add tile map (thanks for Christian 'Alloc' Illy - http://7dtd.illy.bz)
+
 5.0.0-alpha.12 (2021-05-23)
 1. Add webApi and webSocket command execute log
 2. Add api IncreasePlayerPoints

@@ -1,12 +1,13 @@
 ﻿using LSTY.Sdtd.PatronsMod.Primitives;
+using System.Threading;
 
 namespace LSTY.Sdtd.PatronsMod
 {
     static class ModHelper
     {
-        public static bool GameStartDone { get; set; }
+        public static bool GameStartDone;
 
-        private static string ServerName => FunctionManager.CommonConfig.ServerName;
+        public static SynchronizationContext MainThreadContext;
 
         #region ChatHelper
 
@@ -17,8 +18,9 @@ namespace LSTY.Sdtd.PatronsMod
 
             if (sender == null)
             {
-                senderId = ServerName;
-                senderName = ServerName;
+                string serverName = FunctionManager.CommonConfig.ServerName;
+                senderId = serverName;
+                senderName = serverName;
             }
             else
             {
@@ -37,7 +39,7 @@ namespace LSTY.Sdtd.PatronsMod
         /// <param name="message"></param>
         public static void SendGlobalMessage(string message)
         {
-            GameManager.Instance.ChatMessageServer(null, EChatType.Global, -1, message, ServerName, false, null);
+            GameManager.Instance.ChatMessageServer(null, EChatType.Global, -1, message, FunctionManager.CommonConfig.ServerName, false, null);
         }
 
         /// <summary>

@@ -8,7 +8,7 @@ namespace LSTY.Sdtd.PatronsMod.Data.Repositories
 {
     public class ContentTypesRepository : SQLiteRepository<T_ContentTypes>, IContentTypesRepository
     {
-        public ContentTypesRepository() : base(DataManager.DefaultConnectionInfo)
+        public ContentTypesRepository() : base(ConnectionInfoManager.DefaultConnectionInfo)
         {
         }
 

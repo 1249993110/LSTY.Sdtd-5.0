@@ -65,13 +65,6 @@ namespace LSTY.Sdtd.PatronsMod.WebApi
             Code = StatusCode.Failed;
         }
 
-        private static readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings()
-        {
-            ContractResolver = new CamelCasePropertyNamesContractResolver(),
-            DateFormatString = "yyyy-MM-dd HH:mm:ss.fff",
-            // NullValueHandling = NullValueHandling.Ignore
-        };
-
         public Response ToResponse(HttpStatusCode httpStatusCode)
         {
             return new Response()
@@ -80,7 +73,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi
                 ContentType = "application/json;charset=utf-8",
                 Contents = (stream) =>
                 {
-                    string json = JsonConvert.SerializeObject(this, _jsonSerializerSettings);
+                    string json = JsonConvert.SerializeObject(this);
 
                     byte[] data = Encoding.UTF8.GetBytes(json);
 

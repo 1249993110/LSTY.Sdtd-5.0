@@ -14,6 +14,8 @@ namespace LSTY.Sdtd.PatronsMod.Primitives
 {
     abstract class FunctionBase : IFunction
     {
+        public virtual bool IsVipFunction => false;
+
         private string _functionName;
 
         private bool _isEnabled;

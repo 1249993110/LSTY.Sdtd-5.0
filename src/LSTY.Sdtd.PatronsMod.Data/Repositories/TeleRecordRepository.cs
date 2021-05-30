@@ -9,7 +9,7 @@ namespace LSTY.Sdtd.PatronsMod.Data.Repositories
 {
     public class TeleRecordRepository : SQLiteRepository<T_TeleRecord>, ITeleRecordRepository
     {
-        public TeleRecordRepository() : base(DataManager.DefaultConnectionInfo)
+        public TeleRecordRepository() : base(ConnectionInfoManager.DefaultConnectionInfo)
         {
         }
 

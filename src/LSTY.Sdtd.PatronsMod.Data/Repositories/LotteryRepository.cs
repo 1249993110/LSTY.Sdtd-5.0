@@ -8,7 +8,7 @@ namespace LSTY.Sdtd.PatronsMod.Data.Repositories
 {
     public class LotteryRepository : SQLiteRepository<T_Lottery>, ILotteryRepository
     {
-        public LotteryRepository() : base(DataManager.DefaultConnectionInfo)
+        public LotteryRepository() : base(ConnectionInfoManager.DefaultConnectionInfo)
         {
         }
     }

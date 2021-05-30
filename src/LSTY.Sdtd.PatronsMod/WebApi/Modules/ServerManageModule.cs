@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
@@ -22,7 +23,20 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                     return FailedResult("No command given");
                 }
 
-                List<string> executeResult = SdtdConsole.Instance.ExecuteSync(command, new ClientInfo() { playerId = "LSTY.WebApi" });
+                string query = Request.Query["isAsync"];
+                bool isAsync = string.IsNullOrEmpty(query) ? false : Convert.ToBoolean(query);
+                List<string> executeResult = null;
+                if (isAsync)
+                {
+                    ModHelper.MainThreadContext.Send((obj) =>
+                    {
+                        executeResult = SdtdConsole.Instance.ExecuteSync(command, new ClientInfo() { playerId = "LSTY.WebApi" });
+                    }, null);
+                }
+                else
+                {
+                    executeResult = SdtdConsole.Instance.ExecuteSync(command, new ClientInfo() { playerId = "LSTY.WebApi" });
+                }
 
                 return SucceededResult(executeResult);
             });

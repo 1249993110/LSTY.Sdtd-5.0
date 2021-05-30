@@ -15,7 +15,22 @@ namespace LSTY.Sdtd.PatronsMod.WebSocket
         {
             if (e.IsText)
             {
-                List<string> executeResult = SdtdConsole.Instance.ExecuteSync(e.Data, new ClientInfo() { playerId = "LSTY.WebSocket" });
+                string command = e.Data;
+                List<string> executeResult = null;
+
+                if (command.LastIndexOf(" -async") != -1)
+                {
+                    command = command.Replace(" -async", string.Empty);
+                    ModHelper.MainThreadContext.Send((obj) =>
+                    {
+                        executeResult = SdtdConsole.Instance.ExecuteSync(command, new ClientInfo() { playerId = "LSTY.WebApi" });
+                    }, null);
+                }
+                else
+                {
+                    executeResult = SdtdConsole.Instance.ExecuteSync(e.Data, new ClientInfo() { playerId = "LSTY.WebSocket" });
+                }
+
                 Send(string.Join(Environment.NewLine, executeResult));
             }
             else

@@ -27,7 +27,11 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
                             .Tag("ServerManage")
                             .Summary("执行控制台命令")
                             .Description("")
-                            .Parameter(new Parameter() { Name = "command", In = ParameterIn.Query, Required = true })
+                            .Parameters(new Parameter[]
+                            {
+                                new Parameter() { Name = "command", In = ParameterIn.Query, Required = true },
+                                new Parameter() { Name = "isAsync", In = ParameterIn.Query, Description = "Whether async execute command", Required = false, Default = false }
+                            })
                             .Response(r => r.Schema<IEnumerable<string>>(modelCatalog).Description("The command executed result"))));
 
             Describe["RetrieveAllCommands"] = description => description.AsSwagger(

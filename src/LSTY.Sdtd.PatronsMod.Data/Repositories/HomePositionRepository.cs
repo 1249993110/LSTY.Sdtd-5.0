@@ -8,7 +8,7 @@ namespace LSTY.Sdtd.PatronsMod.Data.Repositories
 {
     public class HomePositionRepository : SQLiteRepository<T_HomePosition>, IHomePositionRepository
     {
-        public HomePositionRepository() : base(DataManager.DefaultConnectionInfo)
+        public HomePositionRepository() : base(ConnectionInfoManager.DefaultConnectionInfo)
         {
         }
 

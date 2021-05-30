@@ -92,10 +92,7 @@ namespace LSTY.Sdtd.PatronsMod.LiveData
             T_Inventory inventory = new T_Inventory()
             {
                 SteamId = steamId,
-                Content = JsonConvert.SerializeObject(onlinePlayer.GetInventory(), new JsonSerializerSettings()
-                {
-                    ContractResolver = new CamelCasePropertyNamesContractResolver()
-                })
+                Content = JsonConvert.SerializeObject(onlinePlayer.GetInventory())
             };
 
             _playerRepository.ReplaceInto(player);

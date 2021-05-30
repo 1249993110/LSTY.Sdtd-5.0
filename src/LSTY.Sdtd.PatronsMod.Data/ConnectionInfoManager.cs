@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace LSTY.Sdtd.PatronsMod.Data
 {
-    public static class DataManager
+    public static class ConnectionInfoManager
     {
         private static string _databasePath;
 

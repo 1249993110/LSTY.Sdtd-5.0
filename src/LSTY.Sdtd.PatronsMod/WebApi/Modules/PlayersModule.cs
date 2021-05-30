@@ -73,10 +73,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                     return FailedResult(message: "The specified steamId does not exist");
                 }
 
-                return SucceededResult(JsonConvert.DeserializeObject(inventory.Content, new JsonSerializerSettings()
-                {
-                    ContractResolver = new CamelCasePropertyNamesContractResolver()
-                }));
+                return SucceededResult(JsonConvert.DeserializeObject(inventory.Content));
             });
         }
     }

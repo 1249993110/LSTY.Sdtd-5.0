@@ -12,10 +12,8 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
 {
     public class ItemIconsMetaDataModule : MetadataModule<PathItem>
     {
-        public ItemIconsMetaDataModule(ISwaggerModelCatalog modelCatalog)
+        public ItemIconsMetaDataModule()
         {
-            modelCatalog.AddModel<GameNoticeConfigViewModel>();
-
             Describe["itemicons"] = description => description.AsSwagger(
                 with => with.Operation(
                     op => op.OperationId("itemicons")

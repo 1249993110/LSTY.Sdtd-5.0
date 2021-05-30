@@ -8,7 +8,7 @@ namespace LSTY.Sdtd.PatronsMod.Data.Repositories
 {
     public class PlayerRepository : SQLiteRepository<T_Player>, IPlayerRepository
     {
-        public PlayerRepository() : base(DataManager.DefaultConnectionInfo)
+        public PlayerRepository() : base(ConnectionInfoManager.DefaultConnectionInfo)
         {
         }
 

@@ -8,7 +8,7 @@ namespace LSTY.Sdtd.PatronsMod.Data.Repositories
 {
     public class AntiCheatLogRepository : SQLiteRepository<T_AntiCheatLog>, IAntiCheatLogRepository
     {
-        public AntiCheatLogRepository() : base(DataManager.DefaultConnectionInfo)
+        public AntiCheatLogRepository() : base(ConnectionInfoManager.DefaultConnectionInfo)
         {
         }
 

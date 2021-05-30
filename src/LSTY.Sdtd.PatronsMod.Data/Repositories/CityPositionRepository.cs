@@ -8,7 +8,7 @@ namespace LSTY.Sdtd.PatronsMod.Data.Repositories
 {
     public class CityPositionRepository : SQLiteRepository<T_CityPosition>, ICityPositionRepository
     {
-        public CityPositionRepository() : base(DataManager.DefaultConnectionInfo)
+        public CityPositionRepository() : base(ConnectionInfoManager.DefaultConnectionInfo)
         {
         }
 
