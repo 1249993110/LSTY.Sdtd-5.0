@@ -18,7 +18,13 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
                 typeof(ConsoleCommand), 
                 typeof(IEnumerable<ConsoleCommand>),
                 typeof(Models.GameStats), 
-                typeof(Gametime));
+                typeof(Gametime),
+                typeof(EntityLocation),
+                typeof(IEnumerable<EntityLocation>),
+                typeof(PlayersLocation),
+                typeof(IEnumerable<PlayersLocation>),
+                typeof(ClaimOwner),
+                typeof(LandClaims));
 
             Describe["ExecuteConsoleCommand"] = description => description.AsSwagger(
                 with => with.Operation(
@@ -60,6 +66,44 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
                           .Summary("获取服务器统计")
                           .Description("")
                           .Response((int)HttpStatusCode.OK, r => r.Schema<GameStats>().Description("The server' stats"))));
+
+            Describe["RetrieveAnimalsLocation"] = description => description.AsSwagger(
+              with => with.Operation(
+                  op => op.SecurityRequirement(SecuritySchemes.ApiKey)
+                          .OperationId("RetrieveAnimalsLocation")
+                          .Tag("ServerManage")
+                          .Summary("获取动物位置")
+                          .Description("")
+                          .Response((int)HttpStatusCode.OK, r => r.Schema<IEnumerable<EntityLocation>>(modelCatalog).Description("Animals location"))));
+
+            Describe["RetrieveHostileLocation"] = description => description.AsSwagger(
+              with => with.Operation(
+                  op => op.SecurityRequirement(SecuritySchemes.ApiKey)
+                          .OperationId("RetrieveHostileLocation")
+                          .Tag("ServerManage")
+                          .Summary("获取僵尸位置")
+                          .Description("")
+                          .Response((int)HttpStatusCode.OK, r => r.Schema<IEnumerable<EntityLocation>>(modelCatalog).Description("Hostile location"))));
+
+            Describe["RetrievePlayersLocation"] = description => description.AsSwagger(
+              with => with.Operation(
+                  op => op.SecurityRequirement(SecuritySchemes.ApiKey)
+                          .OperationId("RetrievePlayersLocation")
+                          .Tag("ServerManage")
+                          .Summary("获取玩家位置")
+                          .Parameter(new Parameter() { Name = "offline", In = ParameterIn.Query, Default = false })
+                          .Description("")
+                          .Response((int)HttpStatusCode.OK, r => r.Schema<IEnumerable<PlayersLocation>>(modelCatalog).Description("Players location"))));
+
+            Describe["RetrieveLandClaims"] = description => description.AsSwagger(
+              with => with.Operation(
+                  op => op.SecurityRequirement(SecuritySchemes.ApiKey)
+                          .OperationId("RetrieveLandClaims")
+                          .Tag("ServerManage")
+                          .Summary("获取领地石位置")
+                          .Parameter(new Parameter() { Name = "steamId", In = ParameterIn.Query, Default = string.Empty })
+                          .Description("")
+                          .Response((int)HttpStatusCode.OK, r => r.Schema<LandClaims>(modelCatalog).Description("Land claims location"))));
         }
     }
 }

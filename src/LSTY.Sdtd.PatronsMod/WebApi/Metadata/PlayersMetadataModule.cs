@@ -17,20 +17,20 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
             modelCatalog.AddModel<Position>();
             modelCatalog.AddModel<T_Player>();
 
-            Describe["RetrieveOnlinePlayer"] = description => description.AsSwagger(
+            Describe["RetrieveOnlinePlayers"] = description => description.AsSwagger(
                 with => with.Operation(
                     op => op.SecurityRequirement(SecuritySchemes.ApiKey)
-                            .OperationId("RetrieveOnlinePlayer")
+                            .OperationId("RetrieveOnlinePlayers")
                             .Tag("Players")
                             .Summary("获取在线玩家")
                             .Parameter(new Parameter() { Name = "steamId", In = ParameterIn.Query })
                             .Description("If the parameter steamId is not null then return a single player, otherwise returns a list of all online players")
                             .Response(r => r.Schema<OnlinePlayer>().Description("Online players"))));
 
-            Describe["RetrieveKnownPlayer"] = description => description.AsSwagger(
+            Describe["RetrieveKnownPlayers"] = description => description.AsSwagger(
                 with => with.Operation(
                     op => op.SecurityRequirement(SecuritySchemes.ApiKey)
-                            .OperationId("RetrieveKnownPlayer")
+                            .OperationId("RetrieveKnownPlayers")
                             .Tag("Players")
                             .Summary("获取历史玩家")
                             .Parameter(new Parameter() { Name = "steamId", In = ParameterIn.Query })

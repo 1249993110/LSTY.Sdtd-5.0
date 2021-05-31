@@ -1,4 +1,6 @@
-﻿using LSTY.Sdtd.PatronsMod.Primitives;
+﻿using LSTY.Sdtd.PatronsMod.Data.IRepositories;
+using LSTY.Sdtd.PatronsMod.LiveData;
+using LSTY.Sdtd.PatronsMod.Primitives;
 using LSTY.Sdtd.PatronsMod.WebApi.Models;
 using Nancy.ModelBinding;
 using Newtonsoft.Json.Linq;
@@ -13,6 +15,13 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
 {
     public class ServerManageModule : ApiModuleBase
     {
+        private static readonly IPlayerRepository _playerRepository;
+
+        static ServerManageModule()
+        {
+            _playerRepository = IocContainer.Resolve<IPlayerRepository>();
+        }
+
         public ServerManageModule()
         {
             HttpGet("/ExecuteConsoleCommand", "ExecuteConsoleCommand", _ =>
@@ -128,6 +137,154 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 };
 
                 return SucceededResult(gameStats);
+            });
+
+            HttpGet("/RetrieveAnimalsLocation", "RetrieveAnimalsLocation", _ =>
+            {
+                if (ModHelper.GameStartDone == false)
+                {
+                    return FailedResult("Server is starting, please wait");
+                }
+
+                var animals = GameManager.Instance.World.Entities.list.Where(p => p is EntityAnimal entity && entity != null && entity.IsAlive());
+
+                List<EntityLocation> entityLocations = new List<EntityLocation>();
+                foreach (EntityAlive entity in animals)
+                {
+                    entityLocations.Add(new EntityLocation() 
+                    {
+                        Id = entity.entityId,
+                        Name = entity.EntityName ?? ("animal class #" + entity.entityClass),
+                        Position = new Position(entity.GetPosition())
+                    });
+                }
+
+                return SucceededResult(entityLocations);
+            });
+
+            HttpGet("/RetrieveHostileLocation", "RetrieveHostileLocation", _ =>
+            {
+                if (ModHelper.GameStartDone == false)
+                {
+                    return FailedResult("Server is starting, please wait");
+                }
+
+                var enemies = GameManager.Instance.World.Entities.list.Where(p => p is EntityEnemy entity && entity != null && entity.IsAlive());
+
+                List<EntityLocation> entityLocations = new List<EntityLocation>();
+                foreach (EntityAlive entity in enemies)
+                {
+                    entityLocations.Add(new EntityLocation()
+                    {
+                        Id = entity.entityId,
+                        Name = entity.EntityName ?? ("enemy class #" + entity.entityClass),
+                        Position = new Position(entity.GetPosition())
+                    });
+                }
+
+                return SucceededResult(entityLocations);
+            });
+
+            HttpGet("/RetrievePlayersLocation", "RetrievePlayersLocation", _ =>
+            {
+                if (ModHelper.GameStartDone == false)
+                {
+                    return FailedResult("Server is starting, please wait");
+                }
+
+                string query = Request.Query["offline"];
+                bool offline = string.IsNullOrEmpty(query) ? false : Convert.ToBoolean(query);
+
+                List<PlayersLocation> playersLocations = new List<PlayersLocation>();
+
+                if (offline)
+                {
+                    var players = _playerRepository.QueryAll();
+                    foreach (var player in players)
+                    {
+                        playersLocations.Add(new PlayersLocation()
+                        {
+                            SteamId = player.SteamId,
+                            EntityId = player.EntityId,
+                            Name = player.Name,
+                            Online = LiveDataContainer.OnlinePlayers.ContainsKey(player.SteamId),
+                            Position = new Position(player.LastPositionX, player.LastPositionY, player.LastPositionZ)
+                        });
+                    }
+                }
+                else
+                {
+                    foreach (var player in LiveDataContainer.OnlinePlayers.Values)
+                    {
+                        playersLocations.Add(new PlayersLocation() 
+                        {
+                            SteamId = player.SteamId,
+                            EntityId = player.EntityId,
+                            Name = player.Name,
+                            Online = true,
+                            Position = player.LastPosition
+                        });
+                    }
+                }
+
+                return SucceededResult(playersLocations);
+            });
+
+            HttpGet("/RetrieveLandClaims", "RetrieveLandClaims", _ =>
+            {
+                if (ModHelper.GameStartDone == false)
+                {
+                    return FailedResult("Server is starting, please wait");
+                }
+
+                string steamIdFilter = Request.Query["steamId"];
+                bool filter = string.IsNullOrEmpty(steamIdFilter) == false;
+
+                var persistentPlayerList = GameManager.Instance.GetPersistentPlayerList();
+                var pBlockMap = persistentPlayerList.m_lpBlockMap;
+
+                Dictionary<string, ClaimOwner> claimOwners = new Dictionary<string, ClaimOwner>();
+
+                var playerNameDict = _playerRepository.QueryNameDict();
+
+                string steamId = null;
+                string playerName = null;
+                foreach (var item in pBlockMap)
+                {
+                    steamId = item.Value.PlayerId;
+
+                    if(filter && steamId != steamIdFilter)
+                    {
+                        continue;
+                    }
+
+                    if(playerNameDict.TryGetValue(steamId, out playerName) == false)
+                    {
+                        if(LiveDataContainer.OnlinePlayers.TryGetValue(steamId, out var onlinePlayer))
+                        {
+                            playerName = onlinePlayer.Name;
+                        }
+                    }
+
+                    claimOwners.TryAdd(steamId, new ClaimOwner() 
+                    {
+                        Claimactive = GameManager.Instance.World.IsLandProtectionValidForPlayer(persistentPlayerList.GetPlayerData(steamId)),
+                        SteamId = steamId,
+                        EntityId = item.Value.EntityId,
+                        PlayerName = playerName,
+                        Claims = new List<Position>()
+                    });
+
+                    claimOwners[steamId].Claims.Add(new Position(item.Key));
+                }
+
+                LandClaims landClaims = new LandClaims() 
+                {
+                    ClaimOwners = claimOwners.Values.ToList(),
+                    Claimsize = GamePrefs.GetInt(EnumUtils.Parse<EnumGamePrefs>("LandClaimSize"))
+                };
+
+                return SucceededResult(landClaims);
             });
         }
     }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LSTY.Sdtd.WebApi.Controllers
 {
-    [Route("[controller]/[action]")]
+    [Route("[controller]")]
     public class AccountController : ControllerBase
     {
         private readonly ILogger<AccountController> _logger;
@@ -18,8 +18,9 @@ namespace LSTY.Sdtd.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<WeatherForecast>> Get()
+        public object Get()
         {
+            return new { Name = "ZhangSan", Age = 18 };
         }
 
     }

@@ -21,7 +21,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
 
         public PlayersModule()
         {
-            HttpGet("/RetrieveOnlinePlayer", "RetrieveOnlinePlayer", _ =>
+            HttpGet("/RetrieveOnlinePlayers", "RetrieveOnlinePlayers", _ =>
             {
                 string steamId = Request.Query["steamId"];
                 if (string.IsNullOrEmpty(steamId) == false)
@@ -37,7 +37,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 return SucceededResult(LiveDataContainer.OnlinePlayers);
             });
 
-            HttpGet("/RetrieveKnownPlayer", "RetrieveKnownPlayer", _ =>
+            HttpGet("/RetrieveKnownPlayers", "RetrieveKnownPlayers", _ =>
             {
                 string steamId = Request.Query["steamId"];
                 if (string.IsNullOrEmpty(steamId) == false)

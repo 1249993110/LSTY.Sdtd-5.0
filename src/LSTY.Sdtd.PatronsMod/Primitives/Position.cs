@@ -2,7 +2,7 @@
 
 namespace LSTY.Sdtd.PatronsMod.Primitives
 {
-    class Position
+    public class Position
     {
         private readonly int _x;
         private readonly int _y;
@@ -31,6 +31,13 @@ namespace LSTY.Sdtd.PatronsMod.Primitives
             _x = (int)v.x;
             _y = (int)v.y;
             _z = (int)v.z;
+        }
+
+        public Position(Vector3i v)
+        {
+            _x = v.x;
+            _y = v.y;
+            _z = v.z;
         }
 
         public override string ToString()

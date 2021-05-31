@@ -1,3 +1,12 @@
+5.0.0-alpha.15 (2021-05-31)
+1. Fix bug: points system redundant prompt
+2. Change api RetrieveOnlinePlayer to RetrieveOnlinePlayers
+3. Change api RetrieveKnownPlayer to RetrieveKnownPlayers
+4. Add api RetrieveAnimalsLocation
+5. Add api RetrieveHostileLocation
+6. Add api RetrievePlayersLocation
+7. Add api RetrieveLandClaims
+
 5.0.0-alpha.14 (2021-05-29)
 1. Add webApi command async execute
 2. Add webSocket command async execute, ex: 'lp -async'
