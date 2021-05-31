@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 
-namespace LSTY.Sdtd.Data
+namespace LSTY.Sdtd.WebApi.Data
 {
     /// <summary>
     /// 数据库连接信息管理器

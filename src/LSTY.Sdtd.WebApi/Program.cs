@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LSTY.Sdtd.Web
+namespace LSTY.Sdtd.WebApi
 {
     public class Program
     {

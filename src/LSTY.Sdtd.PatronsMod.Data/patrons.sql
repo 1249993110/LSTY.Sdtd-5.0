@@ -129,8 +129,9 @@ CREATE TABLE IF NOT EXISTS T_AntiCheatLog(
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,	
 	CreatedDate TIMESTAMP DEFAULT (DATETIME(CURRENT_TIMESTAMP,'LOCALTIME')),
 	SteamId TEXT,
-	Message TEXT
+	MessageEn TEXT,
+	MessageZh TEXT
 );
 
 CREATE VIEW IF NOT EXISTS V_AntiCheatLog AS
-SELECT _log.Id,_log.CreatedDate,_log.SteamId,_log.Message,player.Name as PlayerName FROM T_AntiCheatLog AS _log LEFT JOIN T_Player AS player ON _log.SteamId = player.SteamId;
+SELECT _log.Id,_log.CreatedDate,_log.SteamId,_log.MessageEn,_log.MessageZh,player.Name as PlayerName FROM T_AntiCheatLog AS _log LEFT JOIN T_Player AS player ON _log.SteamId = player.SteamId;

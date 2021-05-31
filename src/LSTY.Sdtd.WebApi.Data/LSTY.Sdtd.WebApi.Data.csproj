@@ -14,5 +14,5 @@
     <PackageReference Include="IceCoffee.DbCore" Version="1.0.0.28" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0" />
   </ItemGroup>
-
+  
 </Project>

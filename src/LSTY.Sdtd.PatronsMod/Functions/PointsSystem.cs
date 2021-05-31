@@ -155,6 +155,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                     if (points.LastSignDay != 0 && currentDay - points.LastSignDay < SignInterval)// If player have signed
                     {
                         ModHelper.SendMessageToPlayer(steamId, this.FormatCmd(player, SignFailTips, points.Count));
+                        return true;
                     }
                     else//  If player have not signed in today 
                     {
