@@ -17,7 +17,7 @@ CREATE TABLE T_StandardAccount(
 	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),			--创建日期
 	AccountName NVARCHAR(32) NOT NULL,							--账户名
 	PasswordHash VARCHAR(64) NOT NULL,							--密码哈希值
-	SecurityStamp VARCHAR(64) NOT NULL,							--安全戳
+	PasswordSalt VARCHAR(64) NOT NULL,							--密码盐值
 );
 --创建索引
 CREATE UNIQUE INDEX Index_AccountName ON T_StandardAccount(AccountName);

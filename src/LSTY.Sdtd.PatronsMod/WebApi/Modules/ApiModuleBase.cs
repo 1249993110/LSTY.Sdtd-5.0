@@ -76,7 +76,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
         #endregion
 
         #region RefreshResult
-        protected virtual Response RefreshResult(string message = null, string title = "Error")
+        protected virtual Response RefreshResult(string message = null, string title = "")
         {
             ResponseResult responseResult = new ResponseResult()
             {

@@ -16,7 +16,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi
         Succeeded = 200,
 
         /// <summary>
-        /// 重定向
+        /// Redirect
         /// </summary>
         Redirect = 302,
 

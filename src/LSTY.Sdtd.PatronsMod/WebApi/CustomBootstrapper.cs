@@ -32,9 +32,9 @@ namespace LSTY.Sdtd.PatronsMod.WebApi
                 {
                     EmailAddress = "1249993110@qq.com",
                     Name = "IceCoffee",
-                    Url = "https://lsty.top"
-                },
-                termsOfService: "https://lsty.top/termsOfService");
+                    Url = "https://github.com/1249993110"
+                }/**,
+                termsOfService: "https://7daystodie.top/termsOfService"**/);
 
             var securitySchemeBuilder = new ApiKeySecuritySchemeBuilder()
                 .Name(WebConfig.AuthKeyName)
