@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LSTY.Sdtd.PatronsMod.WebApi.Models
 {
-    public class ChatLogQueryParam : PaginationQueryParam
+    public class ChatLogQueryParams : PaginationQueryParams
     {
         public string SteamId { get; set; }
 

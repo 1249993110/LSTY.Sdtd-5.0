@@ -61,7 +61,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
 
             HttpPost("/RetrieveChatLogPaged", "RetrieveChatLogPaged", _ =>
             {
-                var queryParams = this.Bind<ChatLogQueryParam>();
+                var queryParams = this.Bind<ChatLogQueryParams>();
 
                 bool steamIdExist = string.IsNullOrEmpty(queryParams.SteamId);
 

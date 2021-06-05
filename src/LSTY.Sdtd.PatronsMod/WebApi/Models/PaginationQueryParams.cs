@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LSTY.Sdtd.PatronsMod.WebApi.Models
 {
-    public class PaginationQueryParam
+    public class PaginationQueryParams
     {
         /// <summary>
         /// Page index

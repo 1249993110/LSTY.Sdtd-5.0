@@ -2,28 +2,20 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using NSwag;
 using Serilog;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Microsoft.Extensions.Localization;
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
-using LSTY.Sdtd.WebApi.Resources;
-using System.Reflection;
-using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
-using System.Resources;
-using System.ComponentModel.DataAnnotations;
 using IceCoffee.AspNetCore.Resources;
-using System.Text.Json.Serialization;
+using IceCoffee.AspNetCore.Models;
+using IceCoffee.AspNetCore.Middlewares;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using System.Diagnostics;
 
 [assembly: ApiController]
 namespace LSTY.Sdtd.WebApi
@@ -46,6 +38,22 @@ namespace LSTY.Sdtd.WebApi
             services.AddControllers()
                 .ConfigureApiBehaviorOptions(options =>
                 {
+                    options.InvalidModelStateResponseFactory = context =>
+                    {
+                        string requestId = Activity.Current?.Id ?? context.HttpContext.TraceIdentifier;
+                        string messages = string.Join(Environment.NewLine, 
+                            context.ModelState.Values.SelectMany(s => s.Errors).Select(s => s.ErrorMessage));
+
+                        var result = new FailedResult(requestId)
+                        {
+                            Title = "One or more model validation errors occurred",
+                            Message = messages
+                        };
+
+                        Log.Warning($"Invalid model state, RequestId: {requestId} ErrorMessage: {messages}");
+
+                        return (result as IConvertToActionResult).Convert();
+                    };
                     // 不需要的理应不要
                     options.SuppressConsumesConstraintForFormFileParameters = true;
                     // options.SuppressInferBindingSourcesForParameters = true;
@@ -128,14 +136,14 @@ namespace LSTY.Sdtd.WebApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
+            // Write streamlined request completion events, instead of the more verbose ones from the framework.
+            // To use the default framework request logging instead, remove this line and set the "Microsoft"
+            // level in appsettings.json to "Information".
+            app.UseSerilogRequestLogging();
+
             if (WebHostEnvironment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-
-                // Write streamlined request completion events, instead of the more verbose ones from the framework.
-                // To use the default framework request logging instead, remove this line and set the "Microsoft"
-                // level in appsettings.json to "Information".
-                app.UseSerilogRequestLogging();
 
                 // Register the Swagger generator and the Swagger UI middlewares
                 app.UseOpenApi();
@@ -143,7 +151,7 @@ namespace LSTY.Sdtd.WebApi
             }
             else
             {
-                app.UseSerilogRequestLogging();
+                app.UseMiddleware<GlobalExceptionHandleMiddleware>();
 
                 app.UseForwardedHeaders();
             }

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -35,39 +36,26 @@ namespace LSTY.Sdtd.WebApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(typeof(IceCoffee.AspNetCore.Models.ResponseResult<Model>), StatusCodes.Status200OK)]
-        public IceCoffee.AspNetCore.Models.ResponseResult<Model> Get([FromQuery]Model model)
+        public JsonResult<ResponseModel<int>> Get(int i)
         {
-            return new IceCoffee.AspNetCore.Models.ResponseResult<Model>() { Data = model };
-        }
+            throw new Exception("Test");
+            return new SucceededNullResult();
 
-        ///// <summary>
-        ///// GetModel
-        ///// </summary>
-        ///// <returns></returns>
-        //[HttpGet]
-        //[Route("[action]")]
-        //public Model Get1()
-        //{
-        //    return new Model();
-        //}
+            return new ResponseModel<int>();
 
-        /// <summary>
-        /// Model
-        /// </summary>
-        public class Model
-        {
-            /// <summary>
-            /// Name
-            /// </summary>
-            [MaxLength(1, ErrorMessage = DataAnnotationsResource.MaxLengthAttribute_ValidationError)]
-            [Required(ErrorMessage = DataAnnotationsResource.RequiredAttribute_ValidationError)]
-            //[EmailAddress]
-            public string Name { get; set; }// = "ZhangSan";
-            /// <summary>
-            /// Age
-            /// </summary>
-            public int Age { get; set; } = 18;
+            //return await Task.Run(()=> 
+            //{ 
+            //    return new ResponseResult<object>(null); 
+            //});
+
+            //if (true)
+            //{
+            //    return new FailedResult(Activity.Current?.Id ?? HttpContext.TraceIdentifier);
+            //}
+            //else
+            //{
+            //    return new SucceededNullResult();
+            //}
         }
     }
 }

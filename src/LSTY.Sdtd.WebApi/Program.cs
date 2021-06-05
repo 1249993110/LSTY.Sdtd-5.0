@@ -21,7 +21,7 @@ namespace LSTY.Sdtd.WebApi
             // logger configured in `UseSerilog()` below, once configuration and dependency-injection have both been
             // set up successfully.
             Log.Logger = new LoggerConfiguration()
-                 .WriteTo.Console()
+                 .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss.fff} {Level:u3}] {Message:lj}{NewLine}{Exception}")
                  .CreateBootstrapLogger();
 
             Log.Information("Starting up!");
