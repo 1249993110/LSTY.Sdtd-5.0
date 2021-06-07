@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Platform>x64</Platform>
     <TargetFramework>net452</TargetFramework>
-    <Version>5.0.0.16</Version>
+    <Version>5.0.0.18</Version>
   </PropertyGroup>
   
   <ItemGroup>
@@ -136,7 +136,8 @@
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    
+    <OutputPath>H:\steam\steamapps\common\7 Days to Die Dedicated Server\Mods\LSTY.Sdtd.PatronsMod</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

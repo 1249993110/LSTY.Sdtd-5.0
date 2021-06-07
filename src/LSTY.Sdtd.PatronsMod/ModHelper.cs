@@ -114,5 +114,10 @@ namespace LSTY.Sdtd.PatronsMod
             SdtdConsole.Instance.ExecuteSync(string.Format("ty-gi {0} {1} {2} {3} {4}", entityId, itemName, count, quality, durability), null);
         }
         #endregion
+
+        public static void SpawnEntity(int playerEntityId, string spawnEntity)
+        {
+            SdtdConsole.Instance.ExecuteSync(string.Format("se {0} {1}", playerEntityId, spawnEntity), null);
+        }
     }
 }

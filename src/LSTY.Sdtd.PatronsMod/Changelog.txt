@@ -1,3 +1,13 @@
+5.0.0-alpha.18 (2021-06-07)
+1. Change TeleportCity: AvailableCityTips to QueryListPreTips
+2. Change TeleportHome: OwnedHomeTips to QueryListPreTips
+3. Change TeleportHome: HomePositionTips to QueryListTips
+4. Add GameStore
+
+5.0.0-alpha.17 (2021-06-07)
+1. Change TeleportHome support empty home name
+2. Fix bug: TeleportHome MaxCanSetCount no connection specific player
+
 5.0.0-alpha.16 (2021-06-07)
 1. Add linux support
 

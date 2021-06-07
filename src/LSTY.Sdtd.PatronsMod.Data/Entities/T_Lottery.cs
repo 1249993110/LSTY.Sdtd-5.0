@@ -12,11 +12,11 @@ namespace LSTY.Sdtd.PatronsMod.Data.Entities
         [IgnoreUpdate, IgnoreInsert]
         public DateTime CreatedDate { get; set; }
 
-        public string LotteryName { get; set; }
+        public string Name { get; set; }
 
         public string Content { get; set; }
 
-        public int Amount { get; set; }
+        public int Count { get; set; }
 
         public int Quality { get; set; }
 

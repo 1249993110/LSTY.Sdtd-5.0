@@ -17,5 +17,11 @@ namespace LSTY.Sdtd.PatronsMod.Data.Repositories
         {
             return base.QueryById(nameof(T_HomePosition.SteamId), steamId);
         }
+
+        [CatchException("Error in QueryRecordCountBySteamId")]
+        public long QueryRecordCountBySteamId(string steamId)
+        {
+            return base.QueryRecordCount("SteamId=@SteamId", new { SteamId = steamId });
+        }
     }
 }

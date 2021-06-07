@@ -8,6 +8,7 @@ namespace LSTY.Sdtd.PatronsMod.Primitives
 {
     static class ChatCommandCache
     {
+        private const int _maxCacheLength = 10;
         class CacheItem
         {
             public DateTime ReadTime;
@@ -24,7 +25,7 @@ namespace LSTY.Sdtd.PatronsMod.Primitives
 
         public static void Set(string key, ChatHook chatHook)
         {
-            if(key.Length > 10)
+            if(key.Length > _maxCacheLength)
             {
                 return;
             }
@@ -50,7 +51,7 @@ namespace LSTY.Sdtd.PatronsMod.Primitives
 
         public static ChatHook Get(string key)
         {
-            if (key.Length > 10 || _cache.ContainsKey(key) == false)
+            if (key.Length > _maxCacheLength || _cache.ContainsKey(key) == false)
             {
                 return null;
             }

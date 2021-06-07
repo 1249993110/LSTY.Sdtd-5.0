@@ -25,6 +25,9 @@ namespace LSTY.Sdtd.PatronsMod.Functions
         public int TeleInterval { get; set; } = 20;
 
         [ConfigNode(XmlNodeType.Attribute)]
+        public string QueryListPreTips { get; set; } = "[00FF00]Available public cities:";
+
+        [ConfigNode(XmlNodeType.Attribute)]
         public string QueryListTips { get; set; } = "[00FF00]<[FF0000]{cityName}[00FF00]> teleCmd: [FF0000]{teleCmd}, pointsRequired: {pointsRequired}, position: {position}";
 
         [ConfigNode(XmlNodeType.Attribute)]
@@ -47,12 +50,6 @@ namespace LSTY.Sdtd.PatronsMod.Functions
         /// </summary>
         [ConfigNode(XmlNodeType.Attribute)]
         public string NoneCityTips { get; set; } = "[00FF00]No public city information";
-
-        /// <summary>
-        /// Available public city reminder
-        /// </summary>
-        [ConfigNode(XmlNodeType.Attribute)]
-        public string AvailableCityTips { get; set; } = "[00FF00]Available public cities:";
 
         private static readonly ICityPositionRepository _cityPositionRepository;
         private static readonly IPointsRepository _pointsRepository;
@@ -106,7 +103,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                 }
                 else
                 {
-                    ModHelper.SendMessageToPlayer(steamId, AvailableCityTips);
+                    ModHelper.SendMessageToPlayer(steamId, QueryListPreTips);
 
                     int index = 0;
                     foreach (var item in cityPositions)

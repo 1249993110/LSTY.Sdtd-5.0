@@ -27,7 +27,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 var function = FunctionManager.TeleportCity;
                 var data = new TeleportCityConfigViewModel()
                 {
-                    AvailableCityTips = function.AvailableCityTips,
+                    QueryListPreTips = function.QueryListPreTips,
                     FunctionName = function.FunctionName,
                     IsEnabled = function.IsEnabled,
                     NoneCityTips = function.NoneCityTips,
@@ -47,7 +47,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 var data = this.Bind<TeleportCityConfigViewModel>();
                 var function = FunctionManager.TeleportCity;
 
-                function.AvailableCityTips = data.AvailableCityTips;
+                function.QueryListPreTips = data.QueryListPreTips;
                 function.IsEnabled = data.IsEnabled;
                 function.NoneCityTips = data.NoneCityTips;
                 function.QueryListCmd = data.QueryListCmd;

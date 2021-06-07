@@ -37,11 +37,11 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                     CoolingTips = function.CoolingTips,
                     TeleInterval = function.TeleInterval,
                     TeleSucceedTips = function.TeleSucceedTips,
-                    HomePositionTips = function.HomePositionTips,
+                    QueryListTips = function.QueryListTips,
                     NoneHaveHomeTips = function.NoneHaveHomeTips,
                     OverLimitTips = function.OverLimitTips,
                     OverwriteOldSucceedTips = function.OverwriteOldSucceedTips,
-                    OwnedHomeTips = function.OwnedHomeTips,
+                    QueryListPreTips = function.QueryListPreTips,
                     PointsRequiredForSet = function.PointsRequiredForSet,
                     PointsRequiredForTele = function.PointsRequiredForTele,
                     SetHomeCmdPrefix = function.SetHomeCmdPrefix,
@@ -68,11 +68,11 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 function.CoolingTips = data.CoolingTips;
                 function.TeleInterval = data.TeleInterval;
                 function.TeleSucceedTips = data.TeleSucceedTips;
-                function.HomePositionTips = data.HomePositionTips;
+                function.QueryListTips = data.QueryListTips;
                 function.NoneHaveHomeTips = data.NoneHaveHomeTips;
                 function.OverLimitTips = data.OverLimitTips;
                 function.OverwriteOldSucceedTips = data.OverwriteOldSucceedTips;
-                function.OwnedHomeTips = data.OwnedHomeTips;
+                function.QueryListPreTips = data.QueryListPreTips;
                 function.PointsRequiredForSet = data.PointsRequiredForSet;
                 function.PointsRequiredForTele = data.PointsRequiredForTele;
                 function.SetHomeCmdPrefix = data.SetHomeCmdPrefix;

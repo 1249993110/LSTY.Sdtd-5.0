@@ -84,10 +84,10 @@ INSERT INTO T_ContentTypes(Name,Description) SELECT 'Points','积分' WHERE NOT 
 CREATE TABLE IF NOT EXISTS T_Goods(
 	Id TEXT PRIMARY KEY,			--唯一ID	
 	CreatedDate TIMESTAMP DEFAULT (DATETIME(CURRENT_TIMESTAMP,'LOCALTIME')),
-	GoodsName TEXT NOT NULL,		--商品名称
+	Name TEXT NOT NULL,				--商品名称
 	BuyCmd TEXT NOT NULL,			--购买命令
 	Content TEXT NOT NULL,			--内容 物品/方块/实体/指令
-	Amount INTEGER,					--数量
+	[Count] INTEGER,				--数量
 	Quality INTEGER,				--品质
 	Price INTEGER,					--售价
 	ContentType TEXT NOT NULL,		--商品类型
@@ -100,9 +100,9 @@ CREATE UNIQUE INDEX IF NOT EXISTS Index_Goods ON T_Goods(BuyCmd);
 CREATE TABLE IF NOT EXISTS T_Lottery(
 	Id TEXT PRIMARY KEY,			--唯一ID	
 	CreatedDate TIMESTAMP DEFAULT (DATETIME(CURRENT_TIMESTAMP,'LOCALTIME')),
-	LotteryName TEXT NOT NULL,		--奖品名称
+	Name TEXT NOT NULL,				--奖品名称
 	Content TEXT NOT NULL,			--内容 物品/方块/实体/指令/积分
-	Amount INTEGER,					--数量
+	[Count] INTEGER,				--数量
 	Quality INTEGER,				--品质
 	ContentType TEXT NOT NULL,		--奖品类型
 	FOREIGN KEY(ContentType) REFERENCES T_ContentTypes(Name) ON DELETE CASCADE

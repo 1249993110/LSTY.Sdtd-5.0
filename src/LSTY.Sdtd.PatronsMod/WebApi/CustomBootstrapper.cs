@@ -141,9 +141,8 @@ namespace LSTY.Sdtd.PatronsMod.WebApi
             //nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("/itemicons",
             //   FunctionManager.CommonConfig.WebConfig.ItemIconsPath));
 
-            string modPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location).GetMidStr("/Mods/", "/wwwroot",
-                AppDomain.CurrentDomain.BaseDirectory.Length);
-
+            string modPath = ModManager.GetModForAssembly(Assembly.GetExecutingAssembly()).FolderName;
+  
             nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("/", "Mods/" + modPath + "/wwwroot"));
 
             // Root path should put last

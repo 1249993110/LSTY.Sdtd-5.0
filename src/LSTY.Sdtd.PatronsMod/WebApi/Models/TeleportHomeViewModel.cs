@@ -15,7 +15,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Models
         public string PointsNotEnoughTips { get; set; }
         public string CoolingTips { get; set; }
         public string NoneCityTips { get; set; }
-        public string AvailableCityTips { get; set; }
+        public string QueryListPreTips { get; set; }
     }
 
     public class CityPositionViewModelBase

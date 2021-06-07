@@ -17,8 +17,8 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Models
         public string TeleHomeCmdPrefix { get; set; }
         public int PointsRequiredForTele { get; set; }
         public string NoneHaveHomeTips { get; set; }
-        public string OwnedHomeTips { get; set; } 
-        public string HomePositionTips { get; set; } 
+        public string QueryListPreTips { get; set; } 
+        public string QueryListTips { get; set; } 
         public string OverLimitTips { get; set; } 
         public string SetPointsNotEnoughTips { get; set; }
         public string SetSucceedTips { get; set; } 
