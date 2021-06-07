@@ -11,6 +11,7 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -20,12 +21,6 @@ namespace LSTY.Sdtd.PatronsMod
 {
     public class API : IModApi
     {
-        private const string _sqliteInteropTargetPath = "7DaysToDieServer_Data/Plugins/SQLite.Interop.dll";
-
-        private const string _nancyTargetPath = "7DaysToDieServer_Data/Managed/Nancy.dll";
-
-        private const string _magickNativeTargetPath = "7DaysToDieServer_Data/Plugins/Magick.Native-Q8-x64.dll";
-
         private static NancyHost _nancyHost;
         private static WebSocketServer _webSocketServer;
 
@@ -76,21 +71,35 @@ namespace LSTY.Sdtd.PatronsMod
 
             string modPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-            if (File.Exists(_sqliteInteropTargetPath) == false)
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                File.Copy(modPath + "/x64/SQLite.Interop.dll", _sqliteInteropTargetPath);
+                if (File.Exists("7DaysToDieServer_Data/Plugins/SQLite.Interop.dll") == false)
+                {
+                    File.Copy(modPath + "/x64/SQLite.Interop.dll", "7DaysToDieServer_Data/Plugins/SQLite.Interop.dll");
+                }
+
+                if (File.Exists("7DaysToDieServer_Data/Plugins/libSkiaSharp.dll") == false)
+                {
+                    File.Copy(modPath + "/x64/libSkiaSharp.dll", "7DaysToDieServer_Data/Plugins/libSkiaSharp.dll");
+                }
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                if (File.Exists("7DaysToDieServer_Data/Plugins/libSQLite.Interop.so") == false)
+                {
+                    File.Copy(modPath + "/linux-x64/SQLite.Interop.so", "7DaysToDieServer_Data/Plugins/libSQLite.Interop.so");
+                }
+
+                if (File.Exists("7DaysToDieServer_Data/Plugins/libSkiaSharp.so") == false)
+                {
+                    File.Copy(modPath + "/linux-x64/libSkiaSharp.so", "7DaysToDieServer_Data/Plugins/libSkiaSharp.so");
+                }
             }
 
-            if (File.Exists(_nancyTargetPath) == false)
+            if (File.Exists("7DaysToDieServer_Data/Managed/Nancy.dll") == false)
             {
-                File.Copy(modPath + "/Nancy.dll", _nancyTargetPath);
+                File.Copy(modPath + "/Nancy.dll", "7DaysToDieServer_Data/Managed/Nancy.dll");
             }
-
-            if (File.Exists(_magickNativeTargetPath) == false)
-            {
-                File.Copy(modPath + "/x64/Magick.Native-Q8-x64.dll", _magickNativeTargetPath);
-            }
-
 
             string saveGameDir = GameUtils.GetSaveGameDir();
 

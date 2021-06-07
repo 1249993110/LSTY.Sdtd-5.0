@@ -1,4 +1,3 @@
-using ImageMagick;
 using UnityEngine;
 
 namespace LSTY.Sdtd.PatronsMod.WebApi.MapRendering

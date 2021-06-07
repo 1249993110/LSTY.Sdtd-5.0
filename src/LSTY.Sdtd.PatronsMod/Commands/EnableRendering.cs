@@ -16,7 +16,7 @@ namespace LSTY.Sdtd.PatronsMod.Commands
 
 		public override string[] GetCommands()
 		{
-			return new[] { "ty-enablerendering" };
+			return new[] { "ty-EnableRendering" };
 		}
 
 		public override void Execute(List<string> args, CommandSenderInfo senderInfo)

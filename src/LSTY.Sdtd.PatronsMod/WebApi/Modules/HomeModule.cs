@@ -7,7 +7,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
 {
     public class HomeModule : NancyModule
     {
-        private static readonly string _indexPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\wwwroot\\index.html";
+        private static readonly string _indexPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/wwwroot/index.html";
 
         public HomeModule()
         {

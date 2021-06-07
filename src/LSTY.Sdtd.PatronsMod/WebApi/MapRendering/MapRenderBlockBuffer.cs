@@ -1,4 +1,3 @@
-using ImageMagick;
 using System;
 using System.IO;
 using Unity.Collections;

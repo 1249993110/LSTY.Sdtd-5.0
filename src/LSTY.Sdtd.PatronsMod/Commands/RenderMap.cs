@@ -13,7 +13,7 @@ namespace LSTY.Sdtd.PatronsMod.Commands
 
         public override string[] GetCommands()
         {
-            return new[] { "ty-rendermap" };
+            return new[] { "ty-RenderMap" };
         }
 
         public override void Execute(List<string> _params, CommandSenderInfo _senderInfo)

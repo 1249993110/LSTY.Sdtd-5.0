@@ -38,7 +38,7 @@ namespace LSTY.Sdtd.PatronsMod.Commands
 
         public override string[] GetCommands()
         {
-            return new string[] { "ty-giveitem", "ty-gi" };
+            return new string[] { "ty-GiveItem", "ty-gi" };
         }
 
         public override void Execute(List<string> args, CommandSenderInfo senderInfo)

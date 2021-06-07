@@ -18,7 +18,7 @@ namespace LSTY.Sdtd.PatronsMod.Commands
 
         public override string[] GetCommands()
         {
-            return new[] { "ty-sayplayer", "ty-pm" };
+            return new[] { "ty-SayPlayer", "ty-pm" };
         }
 
         private void InternalExecute(ClientInfo sender, List<string> args)

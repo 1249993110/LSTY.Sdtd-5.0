@@ -1,5 +1,4 @@
-﻿using ImageMagick;
-using Nancy;
+﻿using Nancy;
 using System;
 using System.Collections.Concurrent;
 using System.Drawing;
@@ -9,8 +8,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using UnityEngine;
-using Color = System.Drawing.Color;
+using SkiaSharp;
 
 namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
 {
@@ -33,46 +31,56 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                     iconColor = iconName.Substring(index + 2, 6);
                     iconName = iconName.Remove(index) + ".png";
                 }
-                
+
                 string iconPath = FindIconPath(iconName);
                 if (iconPath == null)
                 {
                     return new Response() { StatusCode = HttpStatusCode.NotFound };
                 }
-                
+
+                Stream stream = File.OpenRead(iconPath);
+
                 if (iconColor == null)
                 {
-                    var stream = File.OpenRead(iconPath);
-
                     return Response.FromStream(stream, "image/png");
                 }
 
-                MemoryStream memoryStream = new MemoryStream();
-                using (var image = new MagickImage(iconPath, MagickFormat.Png))
+                int r = Convert.ToInt32(iconColor.Substring(0, 2), 16);
+                int g = Convert.ToInt32(iconColor.Substring(2, 2), 16);
+                int b = Convert.ToInt32(iconColor.Substring(4, 2), 16);
+
+                using (var image = SKBitmap.Decode(stream))
                 {
-                    using (var pc = image.GetPixels())
+                    int width = image.Width;
+                    int height = image.Height;
+
+                    for (int i = 0; i < width; ++i)
                     {
-                        int r = Convert.ToInt32(iconColor.Substring(0, 2), 16);
-                        int g = Convert.ToInt32(iconColor.Substring(2, 2), 16);
-                        int b = Convert.ToInt32(iconColor.Substring(4, 2), 16);
-
-                        foreach (Pixel p in pc)
+                        for (int j = 0; j < height; ++j)
                         {
-                            p.SetChannel(0, (byte)(p[0] * r / 255));
-                            p.SetChannel(1, (byte)(p[1] * g / 255));
-                            p.SetChannel(2, (byte)(p[2] * b / 255));
-                        }
+                            var color = image.GetPixel(i, j);
 
-                        image.Write(memoryStream, MagickFormat.Png);
+                            image.SetPixel(i, j, new SKColor(
+                                (byte)(color.Red * r / 255),
+                                (byte)(color.Green * g / 255),
+                                (byte)(color.Blue * b / 255),
+                                color.Alpha));
+                        }
+                    }
+
+                    stream = new MemoryStream();
+                    using (SKManagedWStream wstream = new SKManagedWStream(stream))
+                    {
+                        image.PeekPixels().Encode(wstream, SKEncodedImageFormat.Png, 100);
                     }
                 }
 
-                memoryStream.Seek(0, SeekOrigin.Begin);
-                return Response.FromStream(memoryStream, "image/png");
+                stream.Seek(0, SeekOrigin.Begin);
+
+                return Response.FromStream(stream, "image/png");
 
             }, null, "itemicons");
         }
-
 
         private static string FindIconPath(string iconName)
         {
