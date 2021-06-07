@@ -1,3 +1,6 @@
+5.0.0-alpha.16 (2021-06-07)
+1. Add linux support
+
 5.0.0-alpha.15 (2021-05-31)
 1. Fix bug: points system redundant prompt
 2. Change api RetrieveOnlinePlayer to RetrieveOnlinePlayers

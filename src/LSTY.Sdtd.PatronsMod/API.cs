@@ -87,7 +87,7 @@ namespace LSTY.Sdtd.PatronsMod
             {
                 if (File.Exists("7DaysToDieServer_Data/Plugins/libSQLite.Interop.so") == false)
                 {
-                    File.Copy(modPath + "/linux-x64/SQLite.Interop.so", "7DaysToDieServer_Data/Plugins/libSQLite.Interop.so");
+                    File.Copy(modPath + "/linux-x64/libSQLite.Interop.so", "7DaysToDieServer_Data/Plugins/libSQLite.Interop.so");
                 }
 
                 if (File.Exists("7DaysToDieServer_Data/Plugins/libSkiaSharp.so") == false)
