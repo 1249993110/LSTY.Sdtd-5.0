@@ -101,7 +101,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                 case RespawnType.EnterMultiplayer:
                 // Old player spawning
                 case RespawnType.JoinMultiplayer:
-                    ModHelper.SendMessage(clientInfo, null, FormatCmd(LiveDataContainer.OnlinePlayers[clientInfo.playerId], WelcomeNotice));
+                    ModHelper.SendMessage(clientInfo, null, FormatCmd(WelcomeNotice, LiveDataContainer.OnlinePlayers[clientInfo.playerId]));
                     break;
             }
         }

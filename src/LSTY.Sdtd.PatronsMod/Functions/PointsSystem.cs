@@ -118,9 +118,9 @@ namespace LSTY.Sdtd.PatronsMod.Functions
             base.EnableFunction();
         }
 
-        private string FormatCmd(OnlinePlayer player, string message, int ownPoints)
+        private string FormatCmd(string message, OnlinePlayer player, int ownPoints)
         {
-            StringBuilder builder = new StringBuilder(base.FormatCmd(player, message));
+            StringBuilder builder = new StringBuilder(base.FormatCmd(message, player));
 
             return builder
                 .Replace("{signCmd}", SignCmd)
@@ -154,7 +154,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                 {
                     if (points.LastSignDay != 0 && currentDay - points.LastSignDay < SignInterval)// If player have signed
                     {
-                        ModHelper.SendMessageToPlayer(steamId, this.FormatCmd(player, SignFailTips, points.Count));
+                        ModHelper.SendMessageToPlayer(steamId, this.FormatCmd(SignFailTips, player, points.Count));
                         return true;
                     }
                     else//  If player have not signed in today 
@@ -168,7 +168,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                     }
                 }
 
-                ModHelper.SendMessageToPlayer(steamId, this.FormatCmd(player, SignSucceedTips, points.Count));
+                ModHelper.SendMessageToPlayer(steamId, this.FormatCmd(SignSucceedTips, player, points.Count));
 
                 CustomLogger.Info(string.Format("Player sign in, steamId: {0}, current day: {1}, last sign in day: {2}", steamId, currentDay, lastSignDay));
             }
@@ -182,7 +182,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                 }
                 else
                 {
-                    ModHelper.SendMessageToPlayer(steamId, this.FormatCmd(player, QueryPointsTips, points.Count));
+                    ModHelper.SendMessageToPlayer(steamId, this.FormatCmd(QueryPointsTips, player, points.Count));
                 }
             }
             else

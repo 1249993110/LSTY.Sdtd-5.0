@@ -56,9 +56,9 @@ namespace LSTY.Sdtd.PatronsMod.Functions
             });
         }
 
-        private string FormatCmd(OnlinePlayer player, string message, T_Goods goods)
+        private string FormatCmd(string message, OnlinePlayer player, T_Goods goods)
         {
-            StringBuilder builder = new StringBuilder(base.FormatCmd(player, message));
+            StringBuilder builder = new StringBuilder(base.FormatCmd(message, player));
 
             return builder
                 .Replace("{goodsName}", goods.Name)
@@ -90,7 +90,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                     {
                         ++index;
                         ModHelper.SendMessageToPlayer(steamId,
-                            string.Format("[00FF00]{0}. {1}", index, FormatCmd(player, QueryListTips, item)));
+                            string.Format("[00FF00]{0}. {1}", index, FormatCmd(QueryListTips, player, item)));
                     }
                 }
 
@@ -108,7 +108,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                     int playerPoints = _pointsRepository.QueryPointsCountBySteamId(steamId);
                     if (playerPoints < goods.Price)
                     {
-                        ModHelper.SendMessageToPlayer(steamId, FormatCmd(player, PointsNotEnoughTips, goods));
+                        ModHelper.SendMessageToPlayer(steamId, FormatCmd(PointsNotEnoughTips, player, goods));
                     }
                     else
                     {
@@ -131,14 +131,14 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                             case ContentTypes.Command:
                                 for (int i = 0; i < goods.Count; ++i)
                                 {
-                                    SdtdConsole.Instance.ExecuteSync(FormatCmd(player, goods.Content, goods), null);
+                                    SdtdConsole.Instance.ExecuteSync(FormatCmd(goods.Content, player, goods), null);
                                 }
                                 break;
                             default:
                                 throw new Exception("Invalid goods type");
                         }
 
-                        ModHelper.SendMessageToPlayer(steamId, FormatCmd(player, BuySuccessfullyTips, goods));
+                        ModHelper.SendMessageToPlayer(steamId, FormatCmd(BuySuccessfullyTips, player, goods));
 
                         CustomLogger.Info("Player: {0} steamId: {1} bought: {2}", player.Name, player.SteamId, goods.Name);
                     }

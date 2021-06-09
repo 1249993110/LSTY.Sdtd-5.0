@@ -100,9 +100,9 @@ namespace LSTY.Sdtd.PatronsMod.Functions
             });
         }
 
-        private string FormatCmd(OnlinePlayer player, string message, T_HomePosition position, int? coolingTime = null)
+        private string FormatCmd(string message, OnlinePlayer player, T_HomePosition position, int? coolingTime = null)
         {
-            StringBuilder builder = new StringBuilder(base.FormatCmd(player, message));
+            StringBuilder builder = new StringBuilder(base.FormatCmd(message, player));
 
             if (coolingTime.HasValue)
             {
@@ -134,7 +134,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                     {
                         ++index;
                         ModHelper.SendMessageToPlayer(steamId,
-                            string.Format("[00FF00]{0}. {1}", index, FormatCmd(player, QueryListTips, item)));
+                            string.Format("[00FF00]{0}. {1}", index, FormatCmd(QueryListTips, player, item)));
                     }
                 }
             }
@@ -153,7 +153,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                 int playerPoints = _pointsRepository.QueryPointsCountBySteamId(steamId);
                 if (playerPoints < PointsRequiredForSet)
                 {
-                    ModHelper.SendMessageToPlayer(steamId, FormatCmd(player, SetPointsNotEnoughTips));
+                    ModHelper.SendMessageToPlayer(steamId, FormatCmd(SetPointsNotEnoughTips, player));
                 }
                 else
                 {
@@ -169,7 +169,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
 
                         if (positionCount >= MaxCanSetCount)
                         {
-                            ModHelper.SendMessageToPlayer(steamId, FormatCmd(player, OverLimitTips));
+                            ModHelper.SendMessageToPlayer(steamId, FormatCmd(OverLimitTips, player));
                             return true;
                         }
                         else
@@ -184,7 +184,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
 
                             _homePositionRepository.Insert(entity);
 
-                            ModHelper.SendMessageToPlayer(steamId, FormatCmd(player, SetSucceedTips, entity));
+                            ModHelper.SendMessageToPlayer(steamId, FormatCmd(SetSucceedTips, player, entity));
                         }
                     }
                     else
@@ -194,7 +194,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                         entity.Position = pos;
                         _homePositionRepository.Update(entity);
 
-                        ModHelper.SendMessageToPlayer(steamId, FormatCmd(player, OverwriteOldSucceedTips, entity));
+                        ModHelper.SendMessageToPlayer(steamId, FormatCmd(OverwriteOldSucceedTips, player, entity));
                     }
 
                     _pointsRepository.DeductPlayerPoints(steamId, PointsRequiredForSet);
@@ -241,7 +241,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                         int timeSpan = (int)(DateTime.Now - teleRecord.CreatedDate).TotalSeconds;
                         if (timeSpan < TeleInterval)// Cooling
                         {
-                            ModHelper.SendMessageToPlayer(steamId, FormatCmd(player, CoolingTips, entity, TeleInterval - timeSpan));
+                            ModHelper.SendMessageToPlayer(steamId, FormatCmd(CoolingTips, player, entity, TeleInterval - timeSpan));
 
                             return true;
                         }
@@ -250,7 +250,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                     int pointsCount = _pointsRepository.QueryPointsCountBySteamId(steamId);
                     if (pointsCount < PointsRequiredForTele)// Points not enough
                     {
-                        ModHelper.SendMessageToPlayer(steamId, FormatCmd(player, TelePointsNotEnoughTips, entity));
+                        ModHelper.SendMessageToPlayer(steamId, FormatCmd(TelePointsNotEnoughTips, player, entity));
                     }
                     else
                     {
@@ -258,7 +258,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
 
                         ModHelper.TelePlayer(player.EntityId, entity.Position);
 
-                        ModHelper.SendGlobalMessage(FormatCmd(player, TeleSucceedTips, entity));
+                        ModHelper.SendGlobalMessage(FormatCmd(TeleSucceedTips, player, entity));
 
                         // Record delivery date
                         _teleRecordRepository.Insert(new T_TeleRecord()

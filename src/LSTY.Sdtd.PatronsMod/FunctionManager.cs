@@ -16,7 +16,8 @@ namespace LSTY.Sdtd.PatronsMod
         public static Functions.PointsSystem PointsSystem;
         public static Functions.TeleportCity TeleportCity;
         public static Functions.TeleportHome TeleportHome;
-        public static Functions.GameStore GameStore; 
+        public static Functions.GameStore GameStore;
+        public static Functions.LotterySystem LotterySystem;
 #pragma warning restore 0649
 
         public static void Init()

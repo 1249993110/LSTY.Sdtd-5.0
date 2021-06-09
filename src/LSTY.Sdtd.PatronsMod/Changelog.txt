@@ -1,3 +1,6 @@
+5.0.0-alpha.22 (2021-06-09)
+1. Add LotterySystem
+
 5.0.0-alpha.21 (2021-06-08)
 1. Fix bug: access-token not effective
 2. Add GameNotice support 5 alternate notice

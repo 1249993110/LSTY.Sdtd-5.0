@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net452</TargetFramework>
-    <Version>5.0.0.21</Version>
+    <Version>5.0.0.22</Version>
   </PropertyGroup>
   
   <ItemGroup>
@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.60.6" />
-    <PackageReference Include="IceCoffee.Common" Version="1.0.0.24" />
+    <PackageReference Include="IceCoffee.Common" Version="1.0.0.28" />
     <PackageReference Include="IceCoffee.DbCore" Version="1.0.0.28" />
     <PackageReference Include="PostSharp" Version="6.9.4" />
   </ItemGroup>

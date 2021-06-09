@@ -237,7 +237,7 @@ namespace LSTY.Sdtd.PatronsMod.Primitives
             "{entityId}"
         };
 
-        protected virtual string FormatCmd(OnlinePlayer player, string message)
+        protected virtual string FormatCmd(string message, OnlinePlayer player)
         {
             if (string.IsNullOrEmpty(message))
             {
