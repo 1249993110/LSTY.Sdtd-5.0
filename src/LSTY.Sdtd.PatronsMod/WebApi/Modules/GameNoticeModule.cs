@@ -20,6 +20,10 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 {
                     AlternateInterval = gameNotice.AlternateInterval,
                     AlternateNotice = gameNotice.AlternateNotice,
+                    AlternateNotice1 = gameNotice.AlternateNotice1,
+                    AlternateNotice2 = gameNotice.AlternateNotice2,
+                    AlternateNotice3 = gameNotice.AlternateNotice3,
+                    AlternateNotice4 = gameNotice.AlternateNotice4,
                     FunctionName = gameNotice.FunctionName,
                     IsEnabled = gameNotice.IsEnabled,
                     WelcomeNotice = gameNotice.WelcomeNotice
@@ -35,6 +39,10 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 gameNotice.IsEnabled = data.IsEnabled;
                 gameNotice.AlternateInterval = data.AlternateInterval;
                 gameNotice.AlternateNotice = data.AlternateNotice;
+                gameNotice.AlternateNotice1 = data.AlternateNotice1;
+                gameNotice.AlternateNotice2 = data.AlternateNotice2;
+                gameNotice.AlternateNotice3 = data.AlternateNotice3;
+                gameNotice.AlternateNotice4 = data.AlternateNotice4;
                 gameNotice.WelcomeNotice = data.WelcomeNotice;
 
                 ConfigManager.Save(gameNotice);

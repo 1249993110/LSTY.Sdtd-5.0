@@ -3,9 +3,9 @@
   <PropertyGroup>
     <Platform>x64</Platform>
     <TargetFramework>net452</TargetFramework>
-    <Version>5.0.0.18</Version>
+    <Version>5.0.0.21</Version>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <None Include="LSTY.Sdtd.PatronsMod.crproj" />
   </ItemGroup>

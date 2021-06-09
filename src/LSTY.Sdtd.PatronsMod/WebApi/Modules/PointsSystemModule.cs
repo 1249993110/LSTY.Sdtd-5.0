@@ -181,6 +181,21 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
 
                 return SucceededResult(message: "Successfully reset " + count);
             });
+
+
+            HttpPost("/RetrievePlayerPointsPaged", "RetrievePlayerPointsPaged", _ =>
+            {
+                var queryParams = this.Bind<PaginationQueryParams>();
+
+                var data = _pointsRepository.QueryPaged(
+                    queryParams.PageIndex,
+                    queryParams.PageSize,
+                    null,
+                    "CreatedDate DESC",
+                    null);
+
+                return SucceededResult(data);
+            });
         }
     }
 }

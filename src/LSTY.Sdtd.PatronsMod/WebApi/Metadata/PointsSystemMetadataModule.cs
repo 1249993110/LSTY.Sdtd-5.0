@@ -7,6 +7,7 @@ using Nancy;
 using Nancy.Metadata.Modules;
 using Nancy.Swagger;
 using Swagger.ObjectModel;
+using System.Collections.Generic;
 
 namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
 {
@@ -15,9 +16,11 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
         public PointsSystemMetadataModule(ISwaggerModelCatalog modelCatalog)
         {
             modelCatalog.AddModel<T_Points>();
+            modelCatalog.AddModel<IEnumerable<T_Points>>();
             modelCatalog.AddModel<PointsSystemConfigViewModel>();
             modelCatalog.AddModel<PointsInfoViewModel>();
-
+            modelCatalog.AddModel<PaginationQueryParams>();
+            
             Describe["RetrievePointsSystemConfig"] = description => description.AsSwagger(
                 with => with.Operation(
                     op => op.SecurityRequirement(SecuritySchemes.ApiKey)
@@ -54,7 +57,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
                             .Summary("获取玩家积分信息")
                             .Parameter(new Parameter() { Name = "steamId", In = ParameterIn.Query, Required = true })
                             .Description("If the parameter steamId is null then return a failed result, otherwise returns player's points information")
-                            .Response(r => r.Schema<T_Points>().Description("The player's points information"))));
+                            .Response(r => r.Schema<IEnumerable<T_Points>>(modelCatalog).Description("The player's points information"))));
 
             Describe["UpdatePlayerPoints"] = description => description.AsSwagger(
                 with => with.Operation(
@@ -104,6 +107,16 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
                            .Parameter(new Parameter() { Name = "steamId", In = ParameterIn.Query })
                            .Description("If the steamId is null will reset all")
                            .Response((int)HttpStatusCode.OK, r => r.Description("Succeeded or failed"))));
+
+            Describe["RetrievePlayerPointsPaged"] = description => description.AsSwagger(
+                with => with.Operation(
+                    op => op.SecurityRequirement(SecuritySchemes.ApiKey)
+                            .OperationId("RetrievePlayerPointsPaged")
+                            .Tag("PointsSystem")
+                            .Summary("通过分页参数获取积分")
+                            .BodyParameter(p => p.Description("Query params").Name(nameof(PaginationQueryParams)).Schema<PaginationQueryParams>())
+                            .Description("Get all")
+                            .Response(r => r.Schema<IEnumerable<T_Points>>(modelCatalog).Description("Chat logs"))));
 
         }
     }

@@ -17,6 +17,8 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
         {
             modelCatalog.AddModel<T_Goods>();
             modelCatalog.AddModel<IEnumerable<T_Goods>>();
+            modelCatalog.AddModel<T_ContentTypes>();
+            modelCatalog.AddModel<IEnumerable<T_ContentTypes>>();
             modelCatalog.AddModel<GameStoreConfigViewModel>();
             modelCatalog.AddModel<GoodsViewModelBase>();
             modelCatalog.AddModel<GoodsViewModel>();
@@ -88,6 +90,15 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
                             .BodyParameter(p => p.Description("A array").Name(nameof(DeleteQueryParamOfString)).Schema<DeleteQueryParamOfString>())
                             .Description("Delete goods by ids")
                             .Response((int)HttpStatusCode.OK, r => r.Description("Succeeded or failed"))));
+
+            Describe["RetrieveContentTypes"] = description => description.AsSwagger(
+                with => with.Operation(
+                    op => op.SecurityRequirement(SecuritySchemes.ApiKey)
+                            .OperationId("RetrieveContentTypes")
+                            .Tag("GameStore")
+                            .Summary("获取商品奖品内容类型")
+                            .Description("returns all content types")
+                            .Response((int)HttpStatusCode.OK, r => r.Schema<IEnumerable<T_ContentTypes>>(modelCatalog).Description("Succeeded or failed"))));
         }
     }
 }

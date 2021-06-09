@@ -86,13 +86,13 @@ namespace LSTY.Sdtd.PatronsMod.LiveData
             int maxAllowed = itemClass.Stacknumber.Value;
             string name = itemClass.GetItemName();
 
-            string steamId = ConnectionManager.Instance.Clients.ForEntityId(entityId).playerId;
+            //string steamId = ConnectionManager.Instance.Clients.ForEntityId(entityId).playerId;
 
-            var inventoryCheck = FunctionManager.AntiCheat.InventoryCheck;
-            if (inventoryCheck.IsEnabled)
-            {
-                inventoryCheck.Execute(steamId, name, count, maxAllowed);
-            }
+            //var inventoryCheck = FunctionManager.AntiCheat.InventoryCheck;
+            //if (inventoryCheck.IsEnabled)
+            //{
+            //    inventoryCheck.Execute(steamId, name, count, maxAllowed);
+            //}
 
             int quality = itemValue.HasQuality ? itemValue.Quality : -1;
 

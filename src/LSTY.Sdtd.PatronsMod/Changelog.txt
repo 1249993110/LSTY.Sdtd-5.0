@@ -1,3 +1,15 @@
+5.0.0-alpha.21 (2021-06-08)
+1. Fix bug: access-token not effective
+2. Add GameNotice support 5 alternate notice
+
+5.0.0-alpha.20 (2021-06-08)
+1. Add api RetrievePlayerPointsPaged
+2. Fix bug: goods content type not effective
+
+5.0.0-alpha.19 (2021-06-08)
+1. Fix bug: goods repository query error
+2. Fix bug: save player data error on disconnecting
+
 5.0.0-alpha.18 (2021-06-07)
 1. Change TeleportCity: AvailableCityTips to QueryListPreTips
 2. Change TeleportHome: OwnedHomeTips to QueryListPreTips
@@ -6,7 +18,7 @@
 
 5.0.0-alpha.17 (2021-06-07)
 1. Change TeleportHome support empty home name
-2. Fix bug: TeleportHome MaxCanSetCount no connection specific player
+2. Fix bug: TeleportHome MaxCanSetCount no connect specific player
 
 5.0.0-alpha.16 (2021-06-07)
 1. Add linux support

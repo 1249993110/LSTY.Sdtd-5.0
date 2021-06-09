@@ -3,8 +3,10 @@ using IceCoffee.Common.Xml;
 using LSTY.Sdtd.PatronsMod.LiveData;
 using LSTY.Sdtd.PatronsMod.Primitives;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Xml;
+using System.Linq;
 
 namespace LSTY.Sdtd.PatronsMod.Functions
 {
@@ -16,11 +18,20 @@ namespace LSTY.Sdtd.PatronsMod.Functions
         [ConfigNode(XmlNodeType.Attribute)]
         public string WelcomeNotice { get; set; } = "Welcome to 7 Days to Die!";
 
-        /// <summary>
-        /// Alternate notice
-        /// </summary>
         [ConfigNode(XmlNodeType.Attribute)]
         public string AlternateNotice { get; set; } = "Hello";
+
+        [ConfigNode(XmlNodeType.Attribute)]
+        public string AlternateNotice1 { get; set; } = "Hello1";
+
+        [ConfigNode(XmlNodeType.Attribute)]
+        public string AlternateNotice2 { get; set; } = "Hello2";
+
+        [ConfigNode(XmlNodeType.Attribute)]
+        public string AlternateNotice3 { get; set; } = "Hello3";
+
+        [ConfigNode(XmlNodeType.Attribute)]
+        public string AlternateNotice4 { get; set; } = "Hello4";
 
         /// <summary>
         /// Alternate interval
@@ -49,7 +60,25 @@ namespace LSTY.Sdtd.PatronsMod.Functions
 
         private void SendAlternateNotice()
         {
-            ModHelper.SendGlobalMessage(AlternateNotice);
+            var notices = new string[]
+            {
+                AlternateNotice,
+                AlternateNotice1,
+                AlternateNotice2,
+                AlternateNotice3,
+                AlternateNotice4
+            }.Where(p => string.IsNullOrEmpty(p) == false).ToArray();
+
+            string message = string.Empty;
+            if (notices.Length != 0)
+            {
+                Random rd = new Random();
+                int index = rd.Next(notices.Length);
+
+                message = notices[index];
+            }
+
+            ModHelper.SendGlobalMessage(message);
         }
 
         protected override void DisableFunction()

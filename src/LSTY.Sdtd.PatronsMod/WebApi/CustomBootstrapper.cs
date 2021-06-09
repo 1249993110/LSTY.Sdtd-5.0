@@ -93,7 +93,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi
 
                     var accessToken = headers[WebConfig.AuthKeyName].FirstOrDefault();
 
-                    if (accessToken == null && accessToken != FunctionManager.CommonConfig.WebConfig.AccessToken)
+                    if (accessToken == null || accessToken != FunctionManager.CommonConfig.WebConfig.AccessToken)
                     {
                         return new Response()
                         {

@@ -26,7 +26,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
         public string QueryListPreTips { get; set; } = "[00FF00]Goods list:";
 
         [ConfigNode(XmlNodeType.Attribute)]
-        public string QueryListTips { get; set; } = "[00FF00]{goodsName} {buyCmd} {count} {quality} {price} {type}";
+        public string QueryListTips { get; set; } = "[00FF00]{goodsName} {buyCmd} {count} {quality} {price} {contentType}";
 
         [ConfigNode(XmlNodeType.Attribute)]
         public string BuySuccessfullyTips { get; set; } = "[00FF00]Buy successfully";
@@ -75,7 +75,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
             string steamId = player.SteamId;
             if (string.Equals(message, QueryListCmd, StringComparison.OrdinalIgnoreCase))
             {
-                var goodsList = _goodsRepository.Query(whereBy: "Price DASC");
+                var goodsList = _goodsRepository.Query(whereBy: "Price DESC");
 
                 if (goodsList.Any() == false)
                 {
@@ -114,7 +114,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                     {
                         _pointsRepository.DeductPlayerPoints(steamId, goods.Price);
 
-                        switch (goods.Name)
+                        switch (goods.ContentType)
                         {
                             case ContentTypes.Item:
                                 ModHelper.GiveItem(player.EntityId, goods.Content, goods.Count, goods.Quality);

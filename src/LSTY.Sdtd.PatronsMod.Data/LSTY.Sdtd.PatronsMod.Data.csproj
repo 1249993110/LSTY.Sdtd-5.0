@@ -2,15 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>net452</TargetFramework>
-    <Version>5.0.0.18</Version>
+    <Version>5.0.0.21</Version>
   </PropertyGroup>
   
   <ItemGroup>
     <EmbeddedResource Include="patrons.sql" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Aggregates\" />
   </ItemGroup>
 
   <ItemGroup>

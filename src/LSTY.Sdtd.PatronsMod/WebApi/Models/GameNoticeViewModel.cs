@@ -10,6 +10,10 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Models
     {
         public string WelcomeNotice { get; set; }
         public string AlternateNotice { get; set; }
+        public string AlternateNotice1 { get; set; }
+        public string AlternateNotice2 { get; set; }
+        public string AlternateNotice3 { get; set; }
+        public string AlternateNotice4 { get; set; }
         public int AlternateInterval { get; set; }
     }
 }
