@@ -6,6 +6,9 @@ mscorlib.dll
 System.dll
 System.Xml.dll
 UnityEngine.dll
+UnityEngine.CoreModule.dll
+UnityEngine.ImageConversionModule.dll
+UnityEngine.PhysicsModule.dll
 from your dedicated server in this folder.
 
 Put the

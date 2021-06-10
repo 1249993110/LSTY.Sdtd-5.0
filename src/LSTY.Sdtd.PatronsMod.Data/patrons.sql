@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS T_TeleRecord(
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,--唯一ID
 	SteamId TEXT,					--SteamId
 	CreatedDate TIMESTAMP DEFAULT (DATETIME(CURRENT_TIMESTAMP,'LOCALTIME')),--传送日期
-	IsHome INTEGER,					--是否是Home类型
+	TargetType TEXT,				--目标类型
 	DestinationName TEXT,			--目的地名称
 	Position TEXT					--三维坐标
 );

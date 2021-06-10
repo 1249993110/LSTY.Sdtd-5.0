@@ -85,19 +85,20 @@ namespace LSTY.Sdtd.PatronsMod.Functions
 
             return builder
                 .Replace("{cityName}", position.CityName)
-                .Replace("{teleCmd}", position.Command)
+                .Replace("{teleCmd}", FunctionManager.CommonConfig.ChatCommandPrefix + position.Command)
                 .Replace("{pointsRequired}", position.PointsRequired.ToString())
                 .Replace("{position}", position.Position).ToString();
         }
 
         protected override bool OnPlayerChatHooked(OnlinePlayer player, string message)
         {
-            string steamId = player.SteamId;
             if (string.Equals(message, QueryListCmd, StringComparison.OrdinalIgnoreCase))
             {
+                string steamId = player.SteamId;
+
                 var cityPositions = _cityPositionRepository.QueryAll("CityName ASC");
 
-                if (cityPositions.Count() == 0)
+                if (cityPositions.Any() == false)
                 {
                     ModHelper.SendMessageToPlayer(steamId, NoneCityTips);
                 }
@@ -116,6 +117,8 @@ namespace LSTY.Sdtd.PatronsMod.Functions
             }
             else
             {
+                string steamId = player.SteamId;
+
                 var cityPosition = _cityPositionRepository.Query("Command=@Command COLLATE NOCASE", "CityName", new { Command = message }).FirstOrDefault();
                 if (cityPosition == null)
                 {
@@ -123,8 +126,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                 }
                 else
                 {
-                    var teleRecord = _teleRecordRepository.QueryNewest(steamId, false);
-
+                    var teleRecord = _teleRecordRepository.QueryNewest(steamId, TeleTargetTypes.City);
                     if (teleRecord != null)
                     {
                         int timeSpan = (int)(DateTime.Now - teleRecord.CreatedDate).TotalSeconds;
@@ -145,7 +147,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                     {
                         _pointsRepository.DeductPlayerPoints(steamId, cityPosition.PointsRequired);
 
-                        ModHelper.TelePlayer(player.EntityId, cityPosition.Position);
+                        ModHelper.TelePlayer(player.SteamId, cityPosition.Position);
 
                         ModHelper.SendGlobalMessage(FormatCmd(TeleSucceedTips, player, cityPosition));
 
@@ -154,11 +156,11 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                         { 
                             SteamId = steamId,
                             DestinationName = cityPosition.CityName,
-                            IsHome = false,
+                            TargetType = TeleTargetTypes.City,
                             Position = cityPosition.Position
                         });
 
-                        CustomLogger.Info(string.Format("Player: {0}, steamID: {1}, teleported to: {2}", player.Name, steamId, cityPosition.CityName));
+                        CustomLogger.Info("Player: {0}, steamID: {1}, teleported to: {2}", player.Name, steamId, cityPosition.CityName);
                     }
                 }
             }

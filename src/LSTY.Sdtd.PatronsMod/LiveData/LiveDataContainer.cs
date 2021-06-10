@@ -38,26 +38,21 @@ namespace LSTY.Sdtd.PatronsMod.LiveData
             _inventoryRepository = IocContainer.Resolve<IInventoryRepository>();
             OnlinePlayers = new Dictionary<string, OnlinePlayer>();
 
-            ModEvents.PlayerLogin.RegisterHandler(PlayerLogin);
+            // ModEvents.PlayerLogin.RegisterHandler(PlayerLogin);
             ModEvents.PlayerDisconnected.RegisterHandler(PlayerDisconnected);
             ModEvents.SavePlayerData.RegisterHandler((_1, _2) => Task.Run(() => SavePlayerData(_1, _2)));
             ModEvents.PlayerSpawning.RegisterHandler(PlayerSpawning);
         }
 
-        [CatchException("Error in PlayerLogin")]
-        private static bool PlayerLogin(ClientInfo clientInfo, string message, StringBuilder stringBuilder)
-        {
-            return true;
-        }
 
         [CatchException("Error in PlayerDisconnected")]
         private static void PlayerDisconnected(ClientInfo clientInfo, bool shutdown)
         {
             OnlinePlayers.Remove(clientInfo.playerId);
 
-            if (OnlinePlayers.Count == 0)
+            if (OnlinePlayers.Count == 0 && ServerNonePlayer != null)
             {
-                ServerNonePlayer?.Invoke();
+                Task.Run(ServerNonePlayer.Invoke);
             }
         }
 

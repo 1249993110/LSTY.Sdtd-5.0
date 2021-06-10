@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Platform>x64</Platform>
     <TargetFramework>net452</TargetFramework>
-    <Version>5.0.0.22</Version>
+    <Version>5.0.0.25</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -64,6 +64,10 @@
     <Reference Include="UnityEngine.ImageConversionModule">
       <Private>false</Private>
       <HintPath>..\7dtd-binaries\UnityEngine.ImageConversionModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <Private>false</Private>
+      <HintPath>..\7dtd-binaries\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
   </ItemGroup>
 

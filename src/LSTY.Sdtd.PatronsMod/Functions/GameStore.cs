@@ -62,7 +62,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
 
             return builder
                 .Replace("{goodsName}", goods.Name)
-                .Replace("{buyCmd}", goods.BuyCmd)
+                .Replace("{buyCmd}", FunctionManager.CommonConfig.ChatCommandPrefix + goods.BuyCmd)
                 .Replace("{count}", goods.Count.ToString())
                 .Replace("{quality}", goods.Quality.ToString())
                 .Replace("{price}", goods.Price.ToString())
@@ -72,10 +72,11 @@ namespace LSTY.Sdtd.PatronsMod.Functions
 
         protected override bool OnPlayerChatHooked(OnlinePlayer player, string message)
         {
-            string steamId = player.SteamId;
             if (string.Equals(message, QueryListCmd, StringComparison.OrdinalIgnoreCase))
             {
-                var goodsList = _goodsRepository.Query(whereBy: "Price DESC");
+                string steamId = player.SteamId;
+
+                var goodsList = _goodsRepository.Query(orderBy: "Price DESC");
 
                 if (goodsList.Any() == false)
                 {
@@ -85,7 +86,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                 {
                     ModHelper.SendMessageToPlayer(steamId, QueryListPreTips);
 
-                    int index = 1;
+                    int index = 0;
                     foreach (var item in goodsList)
                     {
                         ++index;
@@ -105,6 +106,8 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                 }
                 else
                 {
+                    string steamId = player.SteamId;
+
                     int playerPoints = _pointsRepository.QueryPointsCountBySteamId(steamId);
                     if (playerPoints < goods.Price)
                     {

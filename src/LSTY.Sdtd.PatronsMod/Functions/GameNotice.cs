@@ -48,14 +48,13 @@ namespace LSTY.Sdtd.PatronsMod.Functions
 
         private SubTimer _timer;
 
-        private readonly Action<ClientInfo, RespawnType, Vector3i> _action;
+        private readonly Action<ClientInfo, RespawnType, Vector3i> _playerSpawnedInWorldHook;
 
         public GameNotice()
         {
-            _action = new Action<ClientInfo, RespawnType, Vector3i>(PlayerSpawnedInWorld);
+            _playerSpawnedInWorldHook = new Action<ClientInfo, RespawnType, Vector3i>(PlayerSpawnedInWorld);
 
             _timer = new SubTimer(SendAlternateNotice, 300);
-            GlobalTimer.RegisterSubTimer(_timer);
         }
 
         private void SendAlternateNotice()
@@ -84,13 +83,15 @@ namespace LSTY.Sdtd.PatronsMod.Functions
         protected override void DisableFunction()
         {
             _timer.IsEnabled = false;
-            ModEvents.PlayerSpawnedInWorld.UnregisterHandler(_action);
+            GlobalTimer.UnregisterSubTimer(_timer);
+            ModEvents.PlayerSpawnedInWorld.UnregisterHandler(_playerSpawnedInWorldHook);
         }
 
         protected override void EnableFunction()
         {
             _timer.IsEnabled = true;
-            ModEvents.PlayerSpawnedInWorld.RegisterHandler(_action);
+            GlobalTimer.RegisterSubTimer(_timer);
+            ModEvents.PlayerSpawnedInWorld.RegisterHandler(_playerSpawnedInWorldHook);
         }
 
         private void PlayerSpawnedInWorld(ClientInfo clientInfo, RespawnType respawnType, Vector3i position)

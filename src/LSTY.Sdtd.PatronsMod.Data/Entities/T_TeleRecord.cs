@@ -14,7 +14,7 @@ namespace LSTY.Sdtd.PatronsMod.Data.Entities
         [IgnoreUpdate, IgnoreInsert]
         public DateTime CreatedDate { get; set; }
 
-        public bool IsHome { get; set; }
+        public string TargetType { get; set; }
 
         public string DestinationName { get; set; }
 

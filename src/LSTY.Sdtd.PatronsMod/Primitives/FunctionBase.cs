@@ -144,7 +144,7 @@ namespace LSTY.Sdtd.PatronsMod.Primitives
                 if (chatHook != null)
                 {
                     // If function is enabled
-                    if ((chatHook.Target as IFunction).IsEnabled)
+                    if ((chatHook.Target as FunctionBase).IsEnabled)
                     {
                         bool isHandled = HandleChatMessage(chatHook, clientInfo, _message);
 

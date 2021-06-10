@@ -8,6 +8,6 @@ namespace LSTY.Sdtd.PatronsMod.Data.IRepositories
     {
         IEnumerable<T_TeleRecord> QueryBySteamId(string steamId);
 
-        T_TeleRecord QueryNewest(string steamId, bool isHome);
+        T_TeleRecord QueryNewest(string steamId, string teleTargetType);
     }
 }

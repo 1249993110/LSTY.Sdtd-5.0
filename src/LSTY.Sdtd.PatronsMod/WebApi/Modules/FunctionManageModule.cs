@@ -19,11 +19,14 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
 
                 foreach (var function in FunctionManager.Functions)
                 {
-                    data.Add(new FunctionManageViewModel()
+                    if(function is FunctionBase functionBase)
                     {
-                        FunctionName = function.FunctionName,
-                        IsEnabled = function.IsEnabled
-                    });
+                        data.Add(new FunctionManageViewModel()
+                        {
+                            FunctionName = functionBase.FunctionName,
+                            IsEnabled = functionBase.IsEnabled
+                        });
+                    }
                 }
 
                 return SucceededResult(data);
@@ -37,10 +40,10 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 if (isBatch)
                 {
                     var data = this.Bind<IEnumerable<FunctionManageViewModel>>();
-                    IFunction function;
+                    FunctionBase function;
                     foreach (var item in data)
                     {
-                        function = FunctionManager.Functions.FirstOrDefault(p => p.FunctionName == item.FunctionName);
+                        function = FunctionManager.Functions.FirstOrDefault(p => p is FunctionBase && p.FunctionName == item.FunctionName) as FunctionBase;
                         if (function == null)
                         {
                             return FailedResult(message: $"function: {function.FunctionName} not exist");
@@ -56,7 +59,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 else
                 {
                     var data = this.Bind<FunctionManageViewModel>();
-                    var function = FunctionManager.Functions.FirstOrDefault(p => p.FunctionName == data.FunctionName);
+                    var function = FunctionManager.Functions.FirstOrDefault(p => p is FunctionBase && p.FunctionName == data.FunctionName) as FunctionBase;
                     if (function == null)
                     {
                         return FailedResult(message: "function not exist");

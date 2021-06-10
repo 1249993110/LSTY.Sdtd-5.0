@@ -100,6 +100,11 @@ namespace LSTY.Sdtd.PatronsMod
 
             foreach (var function in functions)
             {
+                if(function is ISubFunction)
+                {
+                    continue;
+                }
+
                 functionName = function.FunctionName;
                 try
                 {
@@ -183,8 +188,12 @@ namespace LSTY.Sdtd.PatronsMod
 
                 foreach (var function in functions)
                 {
-                    functionName = function.FunctionName;
+                    if (function is ISubFunction)
+                    {
+                        continue;
+                    }
 
+                    functionName = function.FunctionName;
                     try
                     {
                         // Take the class name inherited from FunctionBase as the parent node.

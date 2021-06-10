@@ -116,9 +116,10 @@ namespace LSTY.Sdtd.PatronsMod.Functions
 
         protected override bool OnPlayerChatHooked(OnlinePlayer player, string message)
         {
-            string steamId = player.SteamId;
             if (string.Equals(message, QueryListCmd, StringComparison.OrdinalIgnoreCase))
             {
+                string steamId = player.SteamId;
+
                 var positions = _homePositionRepository.Query("SteamId=@SteamId", "HomeName", new { steamId });
 
                 if (positions.Any() == false)
@@ -147,6 +148,8 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                 //    ModHelper.SendMessageToPlayer(steamId, "Wrong number of arguments, expected 2, found " + args.Length);
                 //    return false;
                 //}
+                string steamId = player.SteamId;
+
                 int cmdLength = SetHomeCmdPrefix.Length + 1;
                 string homeName = message.Length <= cmdLength ? string.Empty : message.Substring(cmdLength);
 
@@ -203,6 +206,8 @@ namespace LSTY.Sdtd.PatronsMod.Functions
             }
             else if (message.StartsWith(DeleteHomeCmdPrefix, StringComparison.OrdinalIgnoreCase))
             {
+                string steamId = player.SteamId;
+
                 int cmdLength = DeleteHomeCmdPrefix.Length + 1;
                 string homeName = message.Length <= cmdLength ? string.Empty : message.Substring(cmdLength);
 
@@ -222,6 +227,8 @@ namespace LSTY.Sdtd.PatronsMod.Functions
             }
             else if (message.StartsWith(TeleHomeCmdPrefix, StringComparison.OrdinalIgnoreCase))
             {
+                string steamId = player.SteamId;
+
                 int cmdLength = TeleHomeCmdPrefix.Length + 1;
                 string homeName = message.Length <= cmdLength ? string.Empty : message.Substring(cmdLength);
 
@@ -234,7 +241,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                 }
                 else
                 {
-                    var teleRecord = _teleRecordRepository.QueryNewest(steamId, true);
+                    var teleRecord = _teleRecordRepository.QueryNewest(steamId, TeleTargetTypes.Home);
                     CustomLogger.Warn(teleRecord.ToJson());
                     if (teleRecord != null)
                     {
@@ -256,7 +263,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                     {
                         _pointsRepository.DeductPlayerPoints(steamId, PointsRequiredForTele);
 
-                        ModHelper.TelePlayer(player.EntityId, entity.Position);
+                        ModHelper.TelePlayer(player.SteamId, entity.Position);
 
                         ModHelper.SendGlobalMessage(FormatCmd(TeleSucceedTips, player, entity));
 
@@ -265,11 +272,11 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                         {
                             SteamId = steamId,
                             DestinationName = entity.HomeName,
-                            IsHome = true,
+                            TargetType = TeleTargetTypes.Home,
                             Position = entity.Position
                         });
 
-                        CustomLogger.Info(string.Format("Player: {0}, steamID: {1}, teleported to: {2}", player.Name, steamId, entity.HomeName));
+                        CustomLogger.Info("Player: {0}, steamID: {1}, teleported to: {2}", player.Name, steamId, entity.HomeName);
                     }
                 }
             }

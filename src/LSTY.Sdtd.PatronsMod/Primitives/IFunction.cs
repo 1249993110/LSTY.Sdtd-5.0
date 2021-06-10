@@ -3,11 +3,6 @@
     interface IFunction
     {
         /// <summary>
-        /// Function is or no enabled
-        /// </summary>
-        bool IsEnabled { get; set; }
-
-        /// <summary>
         /// Function name
         /// </summary>
         string FunctionName { get; }

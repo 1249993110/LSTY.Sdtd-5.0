@@ -98,7 +98,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
         {
             StringBuilder builder = new StringBuilder(base.FormatCmd(message, player));
 
-            builder.Replace("{lotteryCmd}", CurrentLotteryCmd)
+            builder.Replace("{lotteryCmd}", FunctionManager.CommonConfig.ChatCommandPrefix + CurrentLotteryCmd)
                 .Replace("{lotteryInterval}", LotteryInterval.ToString())
                 .Replace("{lotteryDuration}", LotteryDuration.ToString());
 
@@ -168,6 +168,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
         private void OnEndLottery()
         {
             _isLotterying = false;
+            _timer2.IsEnabled = false;
             base.DisableFunction();
 
             int maxWinnerCount = _currentParticipant.Count > MaxWinnerCount ? MaxWinnerCount : _currentParticipant.Count;

@@ -86,22 +86,13 @@ namespace LSTY.Sdtd.PatronsMod
         /// <summary>
         /// Teleport player
         /// </summary>
-        /// <param name="entityId"></param>
-        /// <param name="position"></param>
-        public static void TelePlayer(int entityId, string position)
+        /// <param name="player"></param>
+        /// <param name="target"></param>
+        public static void TelePlayer(object player, object target)
         {
-            SdtdConsole.Instance.ExecuteSync(string.Format("tele {0} {1}", entityId, position), null);
+            SdtdConsole.Instance.ExecuteSync(string.Format("tele {0} {1}", player, target), null);
         }
 
-        /// <summary>
-        /// Teleport player
-        /// </summary>
-        /// <param name="entityId"></param>
-        /// <param name="position"></param>
-        public static void TelePlayer(int entityId, Position position)
-        {
-            SdtdConsole.Instance.ExecuteSync(string.Format("tele {0} {1}", entityId, position), null);
-        }
         #endregion
 
         #region Give Item

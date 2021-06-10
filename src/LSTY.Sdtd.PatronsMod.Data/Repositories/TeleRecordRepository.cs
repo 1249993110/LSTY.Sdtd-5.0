@@ -20,10 +20,10 @@ namespace LSTY.Sdtd.PatronsMod.Data.Repositories
         }
 
         [CatchException("Error in QueryNewest")]
-        public T_TeleRecord QueryNewest(string steamId, bool isHome)
+        public T_TeleRecord QueryNewest(string steamId, string teleTargetType)
         {
-            return base.Query<T_TeleRecord>($"SELECT * FROM {TableName} WHERE SteamId=@SteamId AND IsHome=@IsHome ORDER BY CreatedDate DESC LIMIT 1", 
-                new { SteamId = steamId, IsHome = isHome }).FirstOrDefault();
+            return base.Query<T_TeleRecord>($"SELECT * FROM {TableName} WHERE SteamId=@SteamId AND TargetType=@TargetType ORDER BY CreatedDate DESC LIMIT 1", 
+                new { SteamId = steamId, TargetType = teleTargetType }).FirstOrDefault();
         }
     }
 }
