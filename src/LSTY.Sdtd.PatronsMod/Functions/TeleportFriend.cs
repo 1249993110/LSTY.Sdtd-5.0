@@ -104,15 +104,16 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                 }
 
                 var clientInfo = ConsoleHelper.ParseParamIdOrName(targetName);
+                EntityPlayer targetEntityPlayer = null;
 
-                if (clientInfo == null)
+                if (clientInfo == null
+                    || GameManager.Instance.World.Players.dict.TryGetValue(clientInfo.entityId, out targetEntityPlayer) == false)
                 {
                     ModHelper.SendMessageToPlayer(steamId, FormatCmd(TargetNotFoundTips, player, targetName));
                     return true;
                 }
 
-                EntityPlayer targetEntityPlayer;
-                if ( GameManager.Instance.World.Players.dict.TryGetValue(clientInfo.entityId, out targetEntityPlayer) == false)
+                if (targetEntityPlayer.IsFriendsWith(GameManager.Instance.World.Players.dict[player.EntityId]) == false)
                 {
                     ModHelper.SendMessageToPlayer(steamId, FormatCmd(TargetNotFriendTips, player, targetName));
                     return true;

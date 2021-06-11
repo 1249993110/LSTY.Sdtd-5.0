@@ -10,6 +10,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Models
     {
         public int DeductPoints { get; set; }
         public string DeductPointsTips { get; set; }
+        public bool AllowNegative { get; set; }
     }
 
     public class OnlineRewardConfigViewModel : FunctionManageViewModel

@@ -21,6 +21,9 @@ namespace LSTY.Sdtd.PatronsMod.Functions
         [ConfigNode(XmlNodeType.Attribute)]
         public string DeductPointsTips { get; set; } = "[00FF00]You deduct points {2} by death penalty";
 
+        [ConfigNode(XmlNodeType.Attribute)]
+        public bool AllowNegative { get; set; } = true;
+
         private readonly Action<ClientInfo, RespawnType, Vector3i> _playerSpawnedInWorldHook;
 
         public DeathPenalty()
@@ -50,8 +53,18 @@ namespace LSTY.Sdtd.PatronsMod.Functions
             {
                 case RespawnType.Died:
                     string steamId = clientInfo.playerId;
-                    IocContainer.Resolve<IPointsRepository>().DeductPlayerPoints(steamId, DeductPoints);
+                    var pointsRepository = IocContainer.Resolve<IPointsRepository>();
 
+                    if(AllowNegative == false)
+                    {
+                        int count = pointsRepository.QueryPointsCountBySteamId(steamId);
+                        if (count <= 0)
+                        {
+                            break;
+                        }
+                    }
+
+                    pointsRepository.DeductPlayerPoints(steamId, DeductPoints);
                     var player = LiveDataContainer.OnlinePlayers[steamId];
                     ModHelper.SendMessageToPlayer(steamId, FormatCmd(DeductPointsTips, player));
 

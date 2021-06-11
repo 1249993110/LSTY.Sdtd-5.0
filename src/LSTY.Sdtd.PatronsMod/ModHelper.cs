@@ -28,7 +28,7 @@ namespace LSTY.Sdtd.PatronsMod
                 senderName = sender.playerName;
             }
 
-            receiver.SendPackage(NetPackageManager.GetPackage<NetPackageChat>().Setup(EChatType.Whisper, -1, message, senderName + " (PM)", false, null));
+            receiver.SendPackage(NetPackageManager.GetPackage<NetPackageChat>().Setup(EChatType.Whisper, -1, message, senderName, false, null));
 
             CustomLogger.Info("Message to player {0} sent with sender {1}.", receiver.playerId, senderId);
         }

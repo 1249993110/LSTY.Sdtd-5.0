@@ -22,7 +22,8 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                     FunctionName = function.FunctionName,
                     IsEnabled = function.IsEnabled,
                     DeductPoints = function.DeductPoints,
-                    DeductPointsTips = function.DeductPointsTips
+                    DeductPointsTips = function.DeductPointsTips,
+                    AllowNegative = function.AllowNegative
                 };
 
                 return SucceededResult(data);
@@ -35,6 +36,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 function.IsEnabled = data.IsEnabled;
                 function.DeductPoints = data.DeductPoints;
                 function.DeductPointsTips = data.DeductPointsTips;
+                function.AllowNegative = data.AllowNegative;
 
                 ConfigManager.Save(function);
 
