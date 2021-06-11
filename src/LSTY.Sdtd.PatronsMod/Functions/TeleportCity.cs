@@ -10,10 +10,11 @@ using System.Xml;
 using LSTY.Sdtd.PatronsMod.Data.IRepositories;
 using LSTY.Sdtd.PatronsMod.LiveData;
 using LSTY.Sdtd.PatronsMod.Data.Entities;
+using LSTY.Sdtd.PatronsMod.Internal;
 
 namespace LSTY.Sdtd.PatronsMod.Functions
 {
-    class TeleportCity : FunctionBase
+    public class TeleportCity : FunctionBase
     {
         [ConfigNode(XmlNodeType.Attribute)]
         public string QueryListCmd { get; set; } = "hc";

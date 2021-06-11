@@ -5,7 +5,7 @@ using System.Xml;
 
 namespace LSTY.Sdtd.PatronsMod.Functions
 {
-    class CommonConfig : IFunction
+    public class CommonConfig : IFunction
     {
         public bool IsEnabled { get; set; } = true;
 

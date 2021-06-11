@@ -10,11 +10,11 @@ using UnityEngine;
 using UnityEngine.Profiling;
 using Object = UnityEngine.Object;
 
-namespace LSTY.Sdtd.PatronsMod.WebApi.MapRendering
+namespace LSTY.Sdtd.PatronsMod.MapRendering
 {
-    public class MapRendering
+    public class MapRender
     {
-        private static MapRendering _instance;
+        private static MapRender _instance;
 
         private static readonly object _lockObject = new object();
         public static bool RenderingEnabled = true;
@@ -29,7 +29,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.MapRendering
         private readonly List<Vector2i> _chunksToRender = new List<Vector2i>();
         private readonly List<Vector2i> _chunksRendered = new List<Vector2i>();
 
-        private MapRendering()
+        private MapRender()
         {
             Constants.MapDirectory = GameUtils.GetSaveGameDir() + "/LSTY/map";
 
@@ -56,11 +56,11 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.MapRendering
         {
             if (_instance == null)
             {
-                _instance = new MapRendering();
+                _instance = new MapRender();
             }
         }
 
-       public static MapRendering Instance
+       public static MapRender Instance
         {
             get
             {

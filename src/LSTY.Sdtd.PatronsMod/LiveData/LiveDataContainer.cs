@@ -1,6 +1,7 @@
 ﻿using LSTY.Sdtd.PatronsMod.Data.Entities;
 using LSTY.Sdtd.PatronsMod.Data.IRepositories;
 using LSTY.Sdtd.PatronsMod.ExceptionCatch;
+using LSTY.Sdtd.PatronsMod.Internal;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace LSTY.Sdtd.PatronsMod.LiveData
 {
-    static class LiveDataContainer
+    public static class LiveDataContainer
     {
         private static readonly IPlayerRepository _playerRepository;
         private static readonly IInventoryRepository _inventoryRepository;

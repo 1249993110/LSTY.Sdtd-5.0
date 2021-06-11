@@ -1,13 +1,67 @@
 ﻿using LSTY.Sdtd.PatronsMod.Primitives;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 
-namespace LSTY.Sdtd.PatronsMod
+namespace LSTY.Sdtd.PatronsMod.Internal
 {
     static class ModHelper
     {
-        public static bool GameStartDone;
+        private static bool _isRestarting;
 
+        public static bool GameStartDone;
+        public static readonly string ModPath;
         public static SynchronizationContext MainThreadContext;
+        
+        static ModHelper()
+        {
+            ModPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        }
+        public static void RestartServer(bool force = false)
+        {
+            _isRestarting = true;
+
+            if (force)
+            {
+                InternalRestartServer();
+            }
+            else
+            {
+                SdtdConsole.Instance.ExecuteSync("shutdown", null);
+            }
+        }
+
+        private static void InternalRestartServer()
+        {
+            string scriptPath = null;
+
+            string serverPath = null;
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                scriptPath = "/restart.bat";
+                serverPath = "/startdedicated.bat";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                scriptPath = "/restart.sh";
+                serverPath = "/startserver.sh -configfile=serverconfig.xml";
+            }
+
+            Process.Start(ModHelper.ModPath + scriptPath,
+                string.Format("{0} \"{1}\"", Process.GetCurrentProcess().Id, AppDomain.CurrentDomain.BaseDirectory + serverPath));
+        }
+
+        public static void OnGameShutdown()
+        {
+            if (_isRestarting)
+            {
+                InternalRestartServer();
+            }
+        }
 
         #region ChatHelper
 
@@ -110,5 +164,8 @@ namespace LSTY.Sdtd.PatronsMod
         {
             SdtdConsole.Instance.ExecuteSync(string.Format("se {0} {1}", playerEntityId, spawnEntity), null);
         }
+
+       
+
     }
 }

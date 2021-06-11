@@ -1,6 +1,6 @@
 ﻿namespace LSTY.Sdtd.PatronsMod.Primitives
 {
-    interface IFunction
+    public interface IFunction
     {
         /// <summary>
         /// Function name

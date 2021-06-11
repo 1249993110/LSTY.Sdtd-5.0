@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using LSTY.Sdtd.PatronsMod.WebApi.MapRendering;
+using LSTY.Sdtd.PatronsMod.MapRendering;
 using Nancy;
 
 namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
 {
     public class MapModule : NancyModule
     {
-        private static MapTileCache _mapTileCache = MapRendering.MapRendering.GetTileCache();
+        private static MapTileCache _mapTileCache = MapRendering.MapRender.GetTileCache();
 
         public MapModule()
         {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LSTY.Sdtd.PatronsMod.Internal;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LSTY.Sdtd.PatronsMod.Primitives
 {
-    static class ChatCommandCache
+    public static class ChatCommandCache
     {
         private const int _maxCacheLength = 10;
         class CacheItem

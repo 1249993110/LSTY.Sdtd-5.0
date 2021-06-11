@@ -1,6 +1,7 @@
 ﻿using IceCoffee.Common.Xml;
 using LSTY.Sdtd.PatronsMod.Data.IRepositories;
 using LSTY.Sdtd.PatronsMod.ExceptionCatch;
+using LSTY.Sdtd.PatronsMod.Internal;
 using LSTY.Sdtd.PatronsMod.LiveData;
 using LSTY.Sdtd.PatronsMod.Primitives;
 using System;
@@ -11,7 +12,7 @@ using System.Xml;
 
 namespace LSTY.Sdtd.PatronsMod.Functions
 {
-    class ZombieKillReward : FunctionBase, ISubFunction
+    public class ZombieKillReward : FunctionBase, ISubFunction
     {
         [ConfigNode(XmlNodeType.Attribute)]
         public int TriggerRequiredCount { get; set; } = 10;

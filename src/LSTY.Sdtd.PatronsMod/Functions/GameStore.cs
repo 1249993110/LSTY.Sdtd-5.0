@@ -11,10 +11,11 @@ using LSTY.Sdtd.PatronsMod.Data.IRepositories;
 using LSTY.Sdtd.PatronsMod.LiveData;
 using LSTY.Sdtd.PatronsMod.Data.Entities;
 using IceCoffee.Common.Extensions;
+using LSTY.Sdtd.PatronsMod.Internal;
 
 namespace LSTY.Sdtd.PatronsMod.Functions
 {
-    class GameStore : FunctionBase
+    public class GameStore : FunctionBase
     {
         private static readonly IPointsRepository _pointsRepository;
         private static readonly IGoodsRepository _goodsRepository;

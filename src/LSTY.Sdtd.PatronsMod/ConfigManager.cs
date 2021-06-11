@@ -1,5 +1,6 @@
 ﻿using IceCoffee.Common.Xml;
 using LSTY.Sdtd.PatronsMod.ExceptionCatch;
+using LSTY.Sdtd.PatronsMod.Internal;
 using LSTY.Sdtd.PatronsMod.Primitives;
 using System;
 using System.IO;
@@ -8,7 +9,7 @@ using System.Xml;
 
 namespace LSTY.Sdtd.PatronsMod
 {
-    static class ConfigManager
+    public static class ConfigManager
     {
         private const string _functionConfigPath = "LSTY/functionConfig.xml";
 

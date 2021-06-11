@@ -1,18 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project baseDir="" outputDir="" xmlns="http://confuser.codeplex.com">
   <rule pattern="true" preset="none" inherit="false">
-      <!--<protection id="anti debug" />-->
-      <!--<protection id="anti dump" />-->
-      <protection id="anti ildasm" />
-      <!--<protection id="anti tamper" />-->
-    
-      <protection id="constants" />
-      <protection id="ctrl flow" />
-    
-      <!--<protection id="invalid metadata" />-->
-      <protection id="ref proxy" />
-      <!--<protection id="rename" />-->
-      <!--<protection id="resources" />-->
+    <!--<protection id="anti debug" />-->
+    <!--<protection id="anti dump" />-->
+    <protection id="anti ildasm" />
+    <!--<protection id="anti tamper" />-->
+    <protection id="constants">
+      <argument name="decoderCount" value="10" />
+      <argument name="elements" value="SNI" />
+      <argument name="cfg" value="true" />
+    </protection>
+    <protection id="ctrl flow" />
+    <!--<protection id="invalid metadata" />-->
+    <protection id="rename">
+      <argument name="mode" value="reflection" />
+      <argument name="renameArgs" value="true" />
+      <argument name="renEnum" value="true" />
+      <argument name="flatten" value="true" />
+      <argument name="forceRen" value="false" />
+      <argument name="renPublic" value="false" />
+      <argument name="renPdb" value="true" />
+      <argument name="renXaml" value="false" />
+    </protection>
+    <protection id="harden" />
+    <protection id="ref proxy" />
+    <!--<protection id="resources" />-->
+    <protection id="typescramble" />
+    <protection id="watermark" action="remove" />
   </rule>
-	<module path="LSTY.Sdtd.PatronsMod.dll" />
+  <module path="LSTY.Sdtd.PatronsMod.dll" />
 </project>

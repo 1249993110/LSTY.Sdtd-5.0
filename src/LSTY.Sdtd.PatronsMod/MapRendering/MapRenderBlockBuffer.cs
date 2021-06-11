@@ -3,7 +3,7 @@ using System.IO;
 using Unity.Collections;
 using UnityEngine;
 
-namespace LSTY.Sdtd.PatronsMod.WebApi.MapRendering
+namespace LSTY.Sdtd.PatronsMod.MapRendering
 {
     public class MapRenderBlockBuffer
     {

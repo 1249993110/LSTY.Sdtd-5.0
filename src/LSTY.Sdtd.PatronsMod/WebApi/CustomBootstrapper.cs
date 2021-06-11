@@ -1,4 +1,5 @@
 ﻿using IceCoffee.Common.Extensions;
+using LSTY.Sdtd.PatronsMod.Internal;
 using LSTY.Sdtd.PatronsMod.WebApi.Gzip;
 using Nancy;
 using Nancy.Bootstrapper;
@@ -141,9 +142,9 @@ namespace LSTY.Sdtd.PatronsMod.WebApi
             //nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("/itemicons",
             //   FunctionManager.CommonConfig.WebConfig.ItemIconsPath));
 
-            string modPath = ModManager.GetModForAssembly(Assembly.GetExecutingAssembly()).FolderName;
+            string modFolderName = ModManager.GetModForAssembly(Assembly.GetExecutingAssembly()).FolderName;
   
-            nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("/", "Mods/" + modPath + "/wwwroot"));
+            nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("/", "Mods/" + modFolderName + "/wwwroot"));
 
             // Root path should put last
             //nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("/",

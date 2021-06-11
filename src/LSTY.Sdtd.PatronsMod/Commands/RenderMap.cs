@@ -1,4 +1,4 @@
-using LSTY.Sdtd.PatronsMod.WebApi.MapRendering;
+using LSTY.Sdtd.PatronsMod.MapRendering;
 using System;
 using System.Collections.Generic;
 
@@ -18,7 +18,7 @@ namespace LSTY.Sdtd.PatronsMod.Commands
 
         public override void Execute(List<string> _params, CommandSenderInfo _senderInfo)
         {
-            MapRendering.Instance.RenderFullMap();
+            MapRender.Instance.RenderFullMap();
 
             Log("Render map done");
         }

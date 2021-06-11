@@ -3,7 +3,7 @@ using LSTY.Sdtd.PatronsMod.Data;
 using LSTY.Sdtd.PatronsMod.ExceptionCatch;
 using LSTY.Sdtd.PatronsMod.LiveData;
 using LSTY.Sdtd.PatronsMod.WebApi;
-using LSTY.Sdtd.PatronsMod.WebApi.MapRendering;
+using LSTY.Sdtd.PatronsMod.MapRendering;
 using LSTY.Sdtd.PatronsMod.WebSocket;
 using Nancy.Hosting.Self;
 using Newtonsoft.Json;
@@ -16,6 +16,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using WebSocketSharp.Server;
+using LSTY.Sdtd.PatronsMod.Internal;
+using System.Diagnostics;
 
 namespace LSTY.Sdtd.PatronsMod
 {
@@ -49,7 +51,7 @@ namespace LSTY.Sdtd.PatronsMod
             Task.Run(InternalInit);
 
             // Initialize in advance map rendering
-            MapRendering.Init();
+            MapRender.Init();
         }
 
         [CatchException("LSTY.Sdtd.PatronsMod internal init error", true)]
@@ -69,7 +71,7 @@ namespace LSTY.Sdtd.PatronsMod
                 Directory.CreateDirectory("LSTY");
             }
 
-            string modPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string modPath = ModHelper.ModPath;
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -153,7 +155,7 @@ namespace LSTY.Sdtd.PatronsMod
 
             if (webConfig.OpenInDefaultBrowser)
             {
-                System.Diagnostics.Process.Start(uri);
+                Process.Start(uri);
             }
         }
 
@@ -177,7 +179,9 @@ namespace LSTY.Sdtd.PatronsMod
             ConfigManager.DisableConfigFileWatcher();
             ConfigManager.SaveAll();
 
-            MapRendering.Shutdown();
+            MapRender.Shutdown();
+
+            ModHelper.OnGameShutdown();
         }
 
         private static void InitWebSocket()
@@ -222,7 +226,7 @@ namespace LSTY.Sdtd.PatronsMod
 
         private static void CalcChunkColorsDone(Chunk chunk)
         {
-            MapRendering.RenderSingleChunk(chunk);
+            MapRender.RenderSingleChunk(chunk);
         }
     }
 }

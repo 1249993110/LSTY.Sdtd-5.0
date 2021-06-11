@@ -1,4 +1,4 @@
-﻿using LSTY.Sdtd.PatronsMod.WebApi.MapRendering;
+﻿using LSTY.Sdtd.PatronsMod.MapRendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,11 +23,11 @@ namespace LSTY.Sdtd.PatronsMod.Commands
 		{
 			if (args.Count != 1)
 			{
-				Log("Current state: " + MapRendering.RenderingEnabled);
+				Log("Current state: " + MapRender.RenderingEnabled);
 				return;
 			}
 
-			MapRendering.RenderingEnabled = args[0].Equals("1");
+			MapRender.RenderingEnabled = args[0].Equals("1");
 			Log("Set live map rendering to " + args[0].Equals("1"));
 		}
 	}

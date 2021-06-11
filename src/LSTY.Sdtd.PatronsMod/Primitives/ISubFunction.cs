@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LSTY.Sdtd.PatronsMod.Primitives
 {
-    interface ISubFunction
+    public interface ISubFunction
     {
     }
 }

@@ -10,10 +10,11 @@ using System.Xml;
 using LSTY.Sdtd.PatronsMod.Data.IRepositories;
 using LSTY.Sdtd.PatronsMod.LiveData;
 using LSTY.Sdtd.PatronsMod.Data.Entities;
+using LSTY.Sdtd.PatronsMod.Internal;
 
 namespace LSTY.Sdtd.PatronsMod.Functions
 {
-    class TeleportFriend : FunctionBase
+    public class TeleportFriend : FunctionBase
     {
         [ConfigNode(XmlNodeType.Attribute)]
         public string TeleCmd { get; set; } = "tele";

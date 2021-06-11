@@ -7,10 +7,11 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Xml;
 using System.Linq;
+using LSTY.Sdtd.PatronsMod.Internal;
 
 namespace LSTY.Sdtd.PatronsMod.Functions
 {
-    class GameNotice : FunctionBase
+    public class GameNotice : FunctionBase
     {
         /// <summary>
         /// Welcome notice

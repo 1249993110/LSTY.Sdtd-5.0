@@ -2,6 +2,7 @@
 using IceCoffee.Common.Xml;
 using LSTY.Sdtd.PatronsMod.Data.IRepositories;
 using LSTY.Sdtd.PatronsMod.ExceptionCatch;
+using LSTY.Sdtd.PatronsMod.Internal;
 using LSTY.Sdtd.PatronsMod.LiveData;
 using LSTY.Sdtd.PatronsMod.Primitives;
 using System;
@@ -13,7 +14,7 @@ using System.Xml;
 
 namespace LSTY.Sdtd.PatronsMod.Functions
 {
-    class DeathPenalty : FunctionBase, ISubFunction
+    public class DeathPenalty : FunctionBase, ISubFunction
     {
         [ConfigNode(XmlNodeType.Attribute)]
         public int DeductPoints { get; set; } = 1;

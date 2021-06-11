@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace LSTY.Sdtd.PatronsMod.LiveData
 {
-    class Inventory
+    public class Inventory
     {
         public List<InvItem> Bag { get => _bag; set => _bag = value; }
         public List<InvItem> Belt { get => _belt; set => _belt = value; }

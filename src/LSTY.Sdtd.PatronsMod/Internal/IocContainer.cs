@@ -3,7 +3,7 @@ using Autofac.Core;
 using System;
 using System.Linq;
 
-namespace LSTY.Sdtd.PatronsMod
+namespace LSTY.Sdtd.PatronsMod.Internal
 {
     /// <summary>
     /// Ioc container

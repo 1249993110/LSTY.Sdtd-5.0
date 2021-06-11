@@ -1,4 +1,5 @@
 ﻿using IceCoffee.Common.Xml;
+using LSTY.Sdtd.PatronsMod.Internal;
 using LSTY.Sdtd.PatronsMod.Primitives;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Xml;
 
 namespace LSTY.Sdtd.PatronsMod.Functions
 {
-    class ExtensionFunctions : IFunction
+    public class ExtensionFunctions : IFunction
     {
         [ConfigNode(XmlNodeType.Element)]
         public DeathPenalty DeathPenalty { get; set; }

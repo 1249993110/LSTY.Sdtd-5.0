@@ -1,6 +1,7 @@
 ﻿using IceCoffee.Common.Xml;
 using LSTY.Sdtd.PatronsMod.Data.Entities;
 using LSTY.Sdtd.PatronsMod.Data.IRepositories;
+using LSTY.Sdtd.PatronsMod.Internal;
 using LSTY.Sdtd.PatronsMod.LiveData;
 using LSTY.Sdtd.PatronsMod.Primitives;
 using System;
@@ -12,7 +13,7 @@ using System.Xml;
 
 namespace LSTY.Sdtd.PatronsMod.Functions
 {
-    class PointsSystem : FunctionBase
+    public class PointsSystem : FunctionBase
     {
         /// <summary>
         /// Sign command

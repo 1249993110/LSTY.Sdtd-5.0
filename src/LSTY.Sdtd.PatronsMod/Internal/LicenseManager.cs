@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LSTY.Sdtd.PatronsMod
+namespace LSTY.Sdtd.PatronsMod.Internal
 {
     static class LicenseManager
     {

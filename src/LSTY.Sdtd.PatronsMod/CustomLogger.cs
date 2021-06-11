@@ -2,7 +2,7 @@
 
 namespace LSTY.Sdtd.PatronsMod
 {
-    static class CustomLogger
+    public static class CustomLogger
     {
         public const string Prefix = "[LSTY] ";
 

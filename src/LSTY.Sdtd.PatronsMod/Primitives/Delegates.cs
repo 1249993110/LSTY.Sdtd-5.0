@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace LSTY.Sdtd.PatronsMod.Primitives
 {
-    internal delegate bool ChatHook(OnlinePlayer player, string message);
+    public delegate bool ChatHook(OnlinePlayer player, string message);
 }

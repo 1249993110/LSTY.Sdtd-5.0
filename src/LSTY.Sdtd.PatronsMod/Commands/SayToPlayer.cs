@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using LSTY.Sdtd.PatronsMod.Internal;
+using System.Collections.Generic;
 
 namespace LSTY.Sdtd.PatronsMod.Commands
 {

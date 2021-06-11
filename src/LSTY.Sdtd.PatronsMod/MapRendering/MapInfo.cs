@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LSTY.Sdtd.PatronsMod.WebApi.MapRendering
+namespace LSTY.Sdtd.PatronsMod.MapRendering
 {
     public class MapInfo
     {

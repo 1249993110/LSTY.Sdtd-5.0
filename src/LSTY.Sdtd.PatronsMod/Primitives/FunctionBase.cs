@@ -2,6 +2,7 @@
 using LSTY.Sdtd.PatronsMod.Data.Entities;
 using LSTY.Sdtd.PatronsMod.Data.IRepositories;
 using LSTY.Sdtd.PatronsMod.ExceptionCatch;
+using LSTY.Sdtd.PatronsMod.Internal;
 using LSTY.Sdtd.PatronsMod.LiveData;
 using System;
 using System.Collections.Generic;
@@ -12,10 +13,8 @@ using System.Xml;
 
 namespace LSTY.Sdtd.PatronsMod.Primitives
 {
-    abstract class FunctionBase : IFunction
+    public abstract class FunctionBase : IFunction
     {
-        public virtual bool IsVipFunction => false;
-
         private string _functionName;
 
         private bool _isEnabled;

@@ -1,6 +1,6 @@
 ﻿namespace LSTY.Sdtd.PatronsMod.LiveData
 {
-    class InvItem
+    public class InvItem
     {
         private string _itemName;
         private int _count;

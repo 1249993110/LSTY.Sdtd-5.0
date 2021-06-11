@@ -3,6 +3,7 @@ using IceCoffee.Common.Timers;
 using IceCoffee.Common.Xml;
 using LSTY.Sdtd.PatronsMod.Data.Entities;
 using LSTY.Sdtd.PatronsMod.Data.IRepositories;
+using LSTY.Sdtd.PatronsMod.Internal;
 using LSTY.Sdtd.PatronsMod.LiveData;
 using LSTY.Sdtd.PatronsMod.Primitives;
 using System;
@@ -14,7 +15,7 @@ using System.Xml;
 
 namespace LSTY.Sdtd.PatronsMod.Functions
 {
-    class LotterySystem : FunctionBase
+    public class LotterySystem : FunctionBase
     {
         private bool _isLotterying;
 

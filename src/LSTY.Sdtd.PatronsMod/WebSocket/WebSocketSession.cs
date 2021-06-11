@@ -1,4 +1,5 @@
-﻿using LSTY.Sdtd.PatronsMod.WebApi;
+﻿using LSTY.Sdtd.PatronsMod.Internal;
+using LSTY.Sdtd.PatronsMod.WebApi;
 using System;
 using System.Collections.Generic;
 using System.Linq;

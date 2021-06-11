@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace LSTY.Sdtd.PatronsMod
+namespace LSTY.Sdtd.PatronsMod.Internal
 {
     static class FunctionManager
     {

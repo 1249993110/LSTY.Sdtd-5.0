@@ -11,10 +11,11 @@ using LSTY.Sdtd.PatronsMod.Data.IRepositories;
 using LSTY.Sdtd.PatronsMod.LiveData;
 using LSTY.Sdtd.PatronsMod.Data.Entities;
 using IceCoffee.Common.Extensions;
+using LSTY.Sdtd.PatronsMod.Internal;
 
 namespace LSTY.Sdtd.PatronsMod.Functions
 {
-    class TeleportHome : FunctionBase
+    public class TeleportHome : FunctionBase
     {
         private static readonly IHomePositionRepository _homePositionRepository;
         private static readonly IPointsRepository _pointsRepository;

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace LSTY.Sdtd.PatronsMod.LiveData
 {
-    class OnlinePlayer
+    public class OnlinePlayer
     {
         private readonly ClientInfo _clientInfo;
         private readonly DateTime _loginTime;

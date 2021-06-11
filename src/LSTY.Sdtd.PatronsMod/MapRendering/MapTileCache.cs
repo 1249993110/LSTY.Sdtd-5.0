@@ -3,7 +3,7 @@ using System.IO;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace LSTY.Sdtd.PatronsMod.WebApi.MapRendering
+namespace LSTY.Sdtd.PatronsMod.MapRendering
 {
     /// <summary>
     /// Special "cache" for map tile folder as both map rendering and webserver access files in there.
