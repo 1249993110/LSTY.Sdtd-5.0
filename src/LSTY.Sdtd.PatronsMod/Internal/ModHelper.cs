@@ -43,16 +43,16 @@ namespace LSTY.Sdtd.PatronsMod.Internal
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 scriptPath = "/restart.bat";
-                serverPath = "/startdedicated.bat";
+                serverPath = AppDomain.CurrentDomain.BaseDirectory + "/startdedicated.bat";
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 scriptPath = "/restart.sh";
-                serverPath = "/startserver.sh -configfile=serverconfig.xml";
+                serverPath = AppDomain.CurrentDomain.BaseDirectory;
             }
 
             Process.Start(ModHelper.ModPath + scriptPath,
-                string.Format("{0} \"{1}\"", Process.GetCurrentProcess().Id, AppDomain.CurrentDomain.BaseDirectory + serverPath));
+                string.Format("{0} \"{1}\"", Process.GetCurrentProcess().Id, serverPath));
         }
 
         public static void OnGameShutdown()

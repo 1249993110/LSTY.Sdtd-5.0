@@ -33,9 +33,9 @@ namespace LSTY.Sdtd.PatronsMod.Functions
             availableVariables.Add("{deductPoints}");
         }
 
-        protected override string FormatCmd(string message, OnlinePlayer player)
+        private string FormatCmd(string message, OnlinePlayer player, int deductPoints)
         {
-            return base.FormatCmd(message, player).Replace("{deductPoints}", DeductPoints.ToString());
+            return base.FormatCmd(message, player).Replace("{deductPoints}", deductPoints.ToString());
         }
 
         protected override void DisableFunction()
@@ -56,21 +56,27 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                     string steamId = clientInfo.playerId;
                     var pointsRepository = IocContainer.Resolve<IPointsRepository>();
 
-                    if(AllowNegative == false)
+                    var deductPoints = DeductPoints;
+
+                    if (AllowNegative == false)
                     {
                         int count = pointsRepository.QueryPointsCountBySteamId(steamId);
                         if (count <= 0)
                         {
                             break;
                         }
+                        else if(count < DeductPoints) 
+                        {
+                            deductPoints = count;
+                        }
                     }
 
-                    pointsRepository.DeductPlayerPoints(steamId, DeductPoints);
+                    pointsRepository.DeductPlayerPoints(steamId, deductPoints);
                     var player = LiveDataContainer.OnlinePlayers[steamId];
-                    ModHelper.SendMessageToPlayer(steamId, FormatCmd(DeductPointsTips, player));
+                    ModHelper.SendMessageToPlayer(steamId, FormatCmd(DeductPointsTips, player, deductPoints));
 
                     CustomLogger.Info("Player: {0}, steamID: {1}, deduct points {2} by death penalty",
-                                    player.Name, steamId, DeductPoints);
+                                    player.Name, steamId, deductPoints);
                     break;
             }
         }

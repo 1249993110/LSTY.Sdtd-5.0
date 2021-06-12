@@ -287,6 +287,30 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
 
                 return SucceededResult(landClaims);
             });
+
+            HttpGet("/RestartServer", "RestartServer", _ =>
+            {
+                string query = Request.Query["force"];
+                bool force = string.IsNullOrEmpty(query) ? false : Convert.ToBoolean(query);
+
+                if (force)
+                {
+                    ModHelper.RestartServer(true);
+                }
+                else
+                {
+                    if (ModHelper.GameStartDone == false)
+                    {
+                        return FailedResult("Server is starting, please use force parameter");
+                    }
+                    else
+                    {
+                        ModHelper.RestartServer(false);
+                    }
+                }
+
+                return SucceededResult();
+            });
         }
     }
 }

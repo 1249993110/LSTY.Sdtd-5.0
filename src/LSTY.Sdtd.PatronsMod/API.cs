@@ -96,6 +96,8 @@ namespace LSTY.Sdtd.PatronsMod
                 {
                     File.Copy(modPath + "/linux-x64/libSkiaSharp.so", "7DaysToDieServer_Data/Plugins/libSkiaSharp.so");
                 }
+
+                Process.Start("chmod", " +x " + modPath + "/restart.sh");
             }
 
             if (File.Exists("7DaysToDieServer_Data/Managed/Nancy.dll") == false)

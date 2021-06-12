@@ -1,3 +1,6 @@
+5.0.0-alpha.27 (2021-06-12)
+1. Add one key restart
+
 5.0.0-alpha.26 (2021-06-11)
 1. Fix bug: TeleportFriend: target not friend forbid teleport
 2. Add DeathPenalty allow negative switch

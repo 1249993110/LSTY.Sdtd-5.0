@@ -104,6 +104,17 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
                           .Parameter(new Parameter() { Name = "steamId", In = ParameterIn.Query, Default = string.Empty })
                           .Description("")
                           .Response((int)HttpStatusCode.OK, r => r.Schema<LandClaims>(modelCatalog).Description("Land claims location"))));
+
+            Describe["RestartServer"] = description => description.AsSwagger(
+             with => with.Operation(
+                 op => op.SecurityRequirement(SecuritySchemes.ApiKey)
+                         .OperationId("RestartServer")
+                         .Tag("ServerManage")
+                         .Summary("重启服务器")
+                         .Parameter(new Parameter() { Name = "force", In = ParameterIn.Query, Default = false })
+                         .Description("")
+                         .Response((int)HttpStatusCode.OK, r => r.Description("result"))));
+
         }
     }
 }
