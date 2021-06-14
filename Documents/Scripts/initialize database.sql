@@ -15,7 +15,7 @@ GO
 CREATE TABLE T_StandardAccount(
 	Fk_UserId UNIQUEIDENTIFIER PRIMARY KEY FOREIGN KEY REFERENCES T_User(Id),	--用户Id
 	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),			--创建日期
-	AccountName NVARCHAR(32) NOT NULL,							--账户名
+	AccountName VARCHAR (32) NOT NULL,							--账户名
 	PasswordHash VARCHAR(64) NOT NULL,							--密码哈希值
 	PasswordSalt VARCHAR(64) NOT NULL,							--密码盐值
 );
@@ -48,7 +48,7 @@ CREATE TABLE T_Role(
 	Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),	--角色Id
 	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),			--创建日期
 	Name NVARCHAR(32) NOT NULL,									--角色名称
-	Description NVARCHAR(512)
+	Description NVARCHAR(512)									--说明
 );
 --创建索引
 CREATE UNIQUE INDEX Index_Name ON T_Role(Name);
@@ -74,10 +74,10 @@ CREATE TABLE T_VipInfo(
 	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),				--创建日期
 	ExpiryDate DATETIME NOT NULL DEFAULT GETDATE(),					--使用期限
 	MaxInstanceCount INT NOT NULL DEFAULT 0,						--最大实例个数
-	SecretId VARCHAR(64) NOT NULL,									--加密的强随机字符串
+	SecretKey VARCHAR(64) NOT NULL,									--加密的强随机字符串
 );
 --创建索引
-CREATE UNIQUE INDEX Index_SecretId ON T_VipInfo(SecretId);
+CREATE UNIQUE INDEX Index_SecretKey ON T_VipInfo(SecretKey);
 GO
 
 --活跃客户端表
@@ -121,8 +121,8 @@ CREATE TABLE T_RefreshToken(
 	Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),		--GUID
 	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),				--创建日期
 	Fk_UserId UNIQUEIDENTIFIER FOREIGN KEY REFERENCES T_User(Id),	--用户Id
-	Token VARCHAR(MAX) NOT NULL,									--Refresh Token
-	JwtId VARCHAR(MAX) UNIQUE NOT NULL,								--使用 JwtId 映射到对应的 token
+	Token VARCHAR(512) NOT NULL,									--Refresh Token
+	JwtId VARCHAR(512) UNIQUE NOT NULL,								--使用 JwtId 映射到对应的 token
 	IsUsed BIT NOT NULL DEFAULT 0,									--如果已经使用过它，我们不想使用相同的 refresh token 生成新的 JWT token
 	IsRevorked BIT NOT NULL DEFAULT 0,								--是否出于安全原因已将其撤销
 	ExpiryDate DATETIME NOT NULL DEFAULT GETDATE(),					--Refresh Token 的生命周期很长，可以长达数月
@@ -130,4 +130,48 @@ CREATE TABLE T_RefreshToken(
 --创建索引
 CREATE UNIQUE INDEX Index_Fk_UserId ON T_RefreshToken(Fk_UserId);
 CREATE UNIQUE INDEX Index_Token ON T_RefreshToken(Token);
+GO
+
+--菜单表
+CREATE TABLE T_Menu(
+	Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),		--GUID
+	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),				--创建日期
+	ParentId UNIQUEIDENTIFIER ,										--父菜单Id
+	Name NVARCHAR(512) NOT NULL,									--菜单名
+	Icon VARCHAR(512) NOT NULL,										--菜单图标
+	Url VARCHAR(512) NOT NULL,										--Url
+	Sort INT NOT NULL,												--排序
+	IsEnabled BIT NOT NULL,											--是否启用
+	Description NVARCHAR(512)										--说明
+);
+GO
+
+--角色菜单表
+CREATE TABLE T_RoleMenu(	
+	Fk_RoleId UNIQUEIDENTIFIER FOREIGN KEY REFERENCES T_Role(Id),	--角色Id
+	Fk_MenuId UNIQUEIDENTIFIER FOREIGN KEY REFERENCES T_Menu(Id),	--菜单Id
+	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),				--创建日期
+	PRIMARY KEY(Fk_RoleId,Fk_MenuId)
+);
+GO
+
+--许可表
+CREATE TABLE T_Permission(
+	Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),		--GUID
+	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),				--创建日期
+	PathStartsSegments VARCHAR(512) NOT NULL,						--路由开始部分
+	IsEnabled BIT NOT NULL,											--是否启用
+	Description NVARCHAR(512)										--说明
+);
+--创建索引
+CREATE UNIQUE INDEX Index_PathStartsSegments ON T_Permission(PathStartsSegments);
+GO
+
+--角色许可表
+CREATE TABLE T_RolePermission(	
+	Fk_RoleId UNIQUEIDENTIFIER FOREIGN KEY REFERENCES T_Role(Id),				--角色Id
+	Fk_PermissionId UNIQUEIDENTIFIER FOREIGN KEY REFERENCES T_Permission(Id),	--许可Id
+	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),							--创建日期
+	PRIMARY KEY(Fk_RoleId,Fk_PermissionId)
+);
 GO

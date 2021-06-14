@@ -16,6 +16,8 @@ using IceCoffee.AspNetCore.Models;
 using IceCoffee.AspNetCore.Middlewares;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using IceCoffee.AspNetCore.Extensions;
 
 [assembly: ApiController]
 namespace LSTY.Sdtd.WebApi
@@ -40,7 +42,7 @@ namespace LSTY.Sdtd.WebApi
                 {
                     options.InvalidModelStateResponseFactory = context =>
                     {
-                        string requestId = Activity.Current?.Id ?? context.HttpContext.TraceIdentifier;
+                        string requestId = context.HttpContext.GetRequestId();
                         string messages = string.Join(Environment.NewLine, 
                             context.ModelState.Values.SelectMany(s => s.Errors).Select(s => s.ErrorMessage));
 
@@ -59,13 +61,16 @@ namespace LSTY.Sdtd.WebApi
                     // options.SuppressInferBindingSourcesForParameters = true;
                     // options.SuppressModelStateInvalidFilter = true;
                     // options.SuppressMapClientErrors = true;
-                }).AddDataAnnotationsLocalization(options =>
+                })
+                .AddDataAnnotationsLocalization(options =>
                 {
                     options.DataAnnotationLocalizerProvider = (type, factory) =>
                     {
                         return factory.Create(typeof(DataAnnotationsResource));
                     };
                 });
+
+            services.AddJwtAuthentication(Configuration);
 
             if (WebHostEnvironment.IsDevelopment())
             {

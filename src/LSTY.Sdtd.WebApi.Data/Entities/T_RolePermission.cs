@@ -1,0 +1,28 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace LSTY.Sdtd.WebApi.Data.Entities
+{
+    /// <summary>
+    ///  T_RolePermission    
+    /// </summary>
+    public class T_RolePermission
+    {
+        /// <summary>
+        /// 角色Id
+        /// </summary>
+        public Guid Fk_RoleId { get; set; }
+
+        /// <summary>
+        /// 许可Id
+        /// </summary>
+        public Guid Fk_PermissionId { get; set; }
+
+        /// <summary>
+        /// 创建日期  
+        /// </summary>
+        public DateTime CreatedDate { get; set; }
+
+    }
+}
