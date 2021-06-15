@@ -1,4 +1,5 @@
 ﻿using IceCoffee.DbCore.OptionalAttributes;
+using IceCoffee.DbCore.Primitives.Entity;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,7 +10,7 @@ namespace LSTY.Sdtd.WebApi.Data.Entities
     /// <summary>
     ///  T_StandardAccount    
     /// </summary>
-    public class T_StandardAccount
+    public class T_StandardAccount : EntityBase
     {
         /// <summary>
         /// 用户Id   

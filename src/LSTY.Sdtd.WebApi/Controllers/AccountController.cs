@@ -35,7 +35,7 @@ namespace LSTY.Sdtd.WebApi.Controllers
 
         public AccountController(ILogger<AccountController> logger,
             IStringLocalizer<SharedResource> localizer,
-            IOptionsMonitor<JwtConfig> jwtConfigOptionsMonitor,
+            IOptionsMonitor<JwtSettings> jwtConfigOptionsMonitor,
             TokenValidationParameters tokenValidationParams) : base(jwtConfigOptionsMonitor, tokenValidationParams)
         {
             _logger = logger;

@@ -1,4 +1,5 @@
 ﻿using IceCoffee.DbCore.OptionalAttributes;
+using IceCoffee.DbCore.Primitives.Entity;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,7 +9,7 @@ namespace LSTY.Sdtd.WebApi.Data.Entities
     /// <summary>
     ///  T_User    
     /// </summary>
-    public class T_User
+    public class T_User : EntityBase
     {
         /// <summary>
         /// 主键   

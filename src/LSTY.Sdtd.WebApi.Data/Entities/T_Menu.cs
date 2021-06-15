@@ -1,23 +1,26 @@
-﻿using System;
+﻿using IceCoffee.DbCore.OptionalAttributes;
+using IceCoffee.DbCore.Primitives.Entity;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace LSTY.Sdtd.WebApi.Data.Entities
 {
-
     /// <summary>
     ///  T_Menu    
     /// </summary>
-    public class T_Menu
+    public class T_Menu : EntityBase
     {
         /// <summary>
-        /// 无    
+        /// Id    
         /// </summary>
+        [PrimaryKey]
         public Guid Id { get; set; }
 
         /// <summary>
         /// 创建日期 
         /// </summary>
+        [IgnoreUpdate, IgnoreInsert]
         public DateTime CreatedDate { get; set; }
 
         /// <summary>

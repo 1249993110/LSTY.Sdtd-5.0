@@ -97,7 +97,7 @@ GO
 --创建视图
 CREATE VIEW V_User AS
 SELECT u.Id AS UserId,u.DisplayName,u.LastLoginTime,u.LastLoginIpAddress,sa.AccountName,
-ea.Email,rol.Id AS RoleId,rol.[Name] AS RoleName,vip.ExpiryDate,vip.MaxInstanceCount,vip.SecretId FROM T_User AS u
+ea.Email,rol.Id AS RoleId,rol.Name AS RoleName,vip.ExpiryDate,vip.MaxInstanceCount,vip.SecretKey FROM T_User AS u
 LEFT JOIN T_StandardAccount AS sa ON u.Id=sa.Fk_UserId
 LEFT JOIN T_EmailAccount AS ea ON u.Id=ea.Fk_UserId
 LEFT JOIN T_UserRole AS urole ON u.Id=urole.Fk_UserId
@@ -107,7 +107,7 @@ GO
 
 --创建视图
 CREATE VIEW V_ActiveClient AS
-SELECT ac.Id,ac.CreatedDate,ac.Fk_UserId AS UserId,ac.DeviceId,ac.IpAddress,ac.[Version],
+SELECT ac.Id,ac.CreatedDate,ac.Fk_UserId AS UserId,ac.DeviceId,ac.IpAddress,ac.Version,
 u.DisplayName,sa.AccountName,
 ea.Email,vip.ExpiryDate,vip.MaxInstanceCount FROM T_ActiveClient AS ac
 LEFT JOIN T_User AS u ON u.Id=ac.Fk_UserId
@@ -121,7 +121,7 @@ CREATE TABLE T_RefreshToken(
 	Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),		--GUID
 	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),				--创建日期
 	Fk_UserId UNIQUEIDENTIFIER FOREIGN KEY REFERENCES T_User(Id),	--用户Id
-	Token VARCHAR(512) NOT NULL,									--Refresh Token
+	[Value] VARCHAR(512) NOT NULL,									--Refresh Token
 	JwtId VARCHAR(512) UNIQUE NOT NULL,								--使用 JwtId 映射到对应的 token
 	IsUsed BIT NOT NULL DEFAULT 0,									--如果已经使用过它，我们不想使用相同的 refresh token 生成新的 JWT token
 	IsRevorked BIT NOT NULL DEFAULT 0,								--是否出于安全原因已将其撤销
@@ -129,7 +129,7 @@ CREATE TABLE T_RefreshToken(
 );
 --创建索引
 CREATE UNIQUE INDEX Index_Fk_UserId ON T_RefreshToken(Fk_UserId);
-CREATE UNIQUE INDEX Index_Token ON T_RefreshToken(Token);
+CREATE UNIQUE INDEX Index_Token ON T_RefreshToken([Value]);
 GO
 
 --菜单表
@@ -138,8 +138,8 @@ CREATE TABLE T_Menu(
 	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),				--创建日期
 	ParentId UNIQUEIDENTIFIER ,										--父菜单Id
 	Name NVARCHAR(512) NOT NULL,									--菜单名
-	Icon VARCHAR(512) NOT NULL,										--菜单图标
-	Url VARCHAR(512) NOT NULL,										--Url
+	Icon VARCHAR(512),												--菜单图标
+	Url VARCHAR(512),												--Url
 	Sort INT NOT NULL,												--排序
 	IsEnabled BIT NOT NULL,											--是否启用
 	Description NVARCHAR(512)										--说明
@@ -159,12 +159,15 @@ GO
 CREATE TABLE T_Permission(
 	Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),		--GUID
 	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),				--创建日期
-	PathStartsSegments VARCHAR(512) NOT NULL,						--路由开始部分
+	[Path] VARCHAR(512) NOT NULL,									--路径
+	[Type] TINYINT NOT NULL,										--许可类型
 	IsEnabled BIT NOT NULL,											--是否启用
 	Description NVARCHAR(512)										--说明
 );
+--添加约束
+ALTER TABLE T_Permission ADD CONSTRAINT Constraint_1 UNIQUE ([Type],[Path]);
 --创建索引
-CREATE UNIQUE INDEX Index_PathStartsSegments ON T_Permission(PathStartsSegments);
+CREATE UNIQUE INDEX Index_1 ON T_Permission(IsEnabled,[Type],[Path]);  
 GO
 
 --角色许可表
