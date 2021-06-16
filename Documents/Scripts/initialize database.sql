@@ -119,7 +119,7 @@ GO
 --Jwt RefreshToken表
 CREATE TABLE T_RefreshToken(
 	Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),		--GUID
-	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),				--创建日期
+	CreatedUtcDate DATETIME NOT NULL,								--创建日期，Utc 时间
 	Fk_UserId UNIQUEIDENTIFIER FOREIGN KEY REFERENCES T_User(Id),	--用户Id
 	[Value] VARCHAR(512) NOT NULL,									--Refresh Token
 	JwtId VARCHAR(512) UNIQUE NOT NULL,								--使用 JwtId 映射到对应的 token
@@ -128,7 +128,7 @@ CREATE TABLE T_RefreshToken(
 	ExpiryDate DATETIME NOT NULL DEFAULT GETDATE(),					--Refresh Token 的生命周期很长，可以长达数月
 );
 --创建索引
-CREATE UNIQUE INDEX Index_Fk_UserId ON T_RefreshToken(Fk_UserId);
+CREATE INDEX Index_Fk_UserId ON T_RefreshToken(Fk_UserId);
 CREATE UNIQUE INDEX Index_Token ON T_RefreshToken([Value]);
 GO
 
@@ -159,15 +159,15 @@ GO
 CREATE TABLE T_Permission(
 	Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),		--GUID
 	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),				--创建日期
-	[Path] VARCHAR(512) NOT NULL,									--路径
+	RouteStarts VARCHAR(512) NOT NULL,								--路由开始部分
 	[Type] TINYINT NOT NULL,										--许可类型
 	IsEnabled BIT NOT NULL,											--是否启用
 	Description NVARCHAR(512)										--说明
 );
 --添加约束
-ALTER TABLE T_Permission ADD CONSTRAINT Constraint_1 UNIQUE ([Type],[Path]);
+ALTER TABLE T_Permission ADD CONSTRAINT Constraint_1 UNIQUE ([Type],RouteStarts);
 --创建索引
-CREATE UNIQUE INDEX Index_1 ON T_Permission(IsEnabled,[Type],[Path]);  
+CREATE UNIQUE INDEX Index_1 ON T_Permission(IsEnabled,[Type],RouteStarts);  
 GO
 
 --角色许可表

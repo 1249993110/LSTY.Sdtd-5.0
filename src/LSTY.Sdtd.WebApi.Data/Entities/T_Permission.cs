@@ -14,8 +14,8 @@ namespace LSTY.Sdtd.WebApi.Data.Entities
         /// <summary>
         /// Id    
         /// </summary>
-        [PrimaryKey]
-        public Guid Id { get; set; }
+        [PrimaryKey, IgnoreInsert]
+        public string Id { get; set; }
 
         /// <summary>
         /// 创建日期   
@@ -26,8 +26,7 @@ namespace LSTY.Sdtd.WebApi.Data.Entities
         /// <summary>
         /// 路由开始部分 
         /// </summary>
-        [Column("[Path]")]
-        public string Path { get; set; }
+        public string RouteStarts { get; set; }
 
         /// <summary>
         /// 许可类型

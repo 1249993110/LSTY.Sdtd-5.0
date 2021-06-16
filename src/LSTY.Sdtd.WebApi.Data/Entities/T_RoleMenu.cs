@@ -15,13 +15,13 @@ namespace LSTY.Sdtd.WebApi.Data.Entities
         /// 角色Id
         /// </summary>
         [PrimaryKey]
-        public Guid Fk_RoleId { get; set; }
+        public string Fk_RoleId { get; set; }
 
         /// <summary>
         /// 菜单Id
         /// </summary>
         [PrimaryKey]
-        public Guid Fk_MenuId { get; set; }
+        public string Fk_MenuId { get; set; }
 
         /// <summary>
         /// 创建日期

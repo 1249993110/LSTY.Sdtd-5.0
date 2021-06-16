@@ -28,7 +28,7 @@ namespace LSTY.Sdtd.WebApi.Data
         /// <param name="configuration"></param>
         /// <param name="databaseType"></param>
         /// <param name="connKeyNames"></param>
-        public static void AddDbConnectionInfoToCache(IConfiguration configuration, DatabaseType databaseType, IEnumerable<string> connKeyNames)
+        public static void AddDbConnectionInfoToCache(IConfiguration configuration, DatabaseType databaseType, params string[] connKeyNames)
         {
             try
             {

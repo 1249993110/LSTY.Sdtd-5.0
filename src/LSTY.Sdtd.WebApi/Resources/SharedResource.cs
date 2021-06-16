@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace LSTY.Sdtd.WebApi.Resources
 {
-    public class SharedResource
+    public struct SharedResource
     {
     }
 }

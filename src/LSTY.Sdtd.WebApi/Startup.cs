@@ -18,6 +18,12 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using IceCoffee.AspNetCore.Extensions;
+using LSTY.Sdtd.WebApi.Data;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using IceCoffee.DbCore;
+using IceCoffee.AspNetCore.Permission;
+using LSTY.Sdtd.WebApi.Permission;
+using IceCoffee.AspNetCore.Models.Results;
 
 [assembly: ApiController]
 namespace LSTY.Sdtd.WebApi
@@ -28,6 +34,9 @@ namespace LSTY.Sdtd.WebApi
         {
             Configuration = configuration;
             WebHostEnvironment = env;
+
+            // 将数据库连接信息添加到全局缓存池
+            ConnectionInfoManager.AddDbConnectionInfoToCache(configuration, DatabaseType.SQLServer, "DefaultConnection");
         }
 
         public IConfiguration Configuration { get; }
@@ -70,7 +79,8 @@ namespace LSTY.Sdtd.WebApi
                     };
                 });
 
-            services.AddJwtAuthentication(Configuration);
+            services.AddJwtAuthentication(Configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>());
+            services.AddJwtAuthorization();
 
             if (WebHostEnvironment.IsDevelopment())
             {
@@ -136,6 +146,17 @@ namespace LSTY.Sdtd.WebApi
                 // These are the cultures the app supports for UI strings, i.e. we have localized resources for.
                 options.SupportedUICultures = supportedCultures;
             });
+
+            foreach (var type in typeof(ConnectionInfoManager).Assembly.GetExportedTypes())
+            {
+                if (type.FullName.StartsWith("LSTY.Sdtd.WebApi.Data.Repositories"))
+                {
+                    var interfaceType = type.GetInterfaces().First(p => p.FullName.StartsWith("LSTY.Sdtd.WebApi.Data.IRepositories"));
+                    services.TryAddSingleton(interfaceType, type);
+                }
+            }
+
+            services.AddSingleton<IPermissionValidator, PermissionValidator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

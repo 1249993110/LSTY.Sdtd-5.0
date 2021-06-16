@@ -14,19 +14,18 @@ namespace LSTY.Sdtd.WebApi.Data.Entities
         /// <summary>
         /// Id    
         /// </summary>
-        [PrimaryKey]
-        public Guid Id { get; set; }
+        [PrimaryKey, IgnoreInsert]
+        public string Id { get; set; }
 
         /// <summary>
-        /// 创建日期  
+        /// 创建日期，Utc 时间
         /// </summary>
-        [IgnoreUpdate, IgnoreInsert]
-        public DateTime CreatedDate { get; set; }
+        public DateTime CreatedUtcDate { get; set; }
 
         /// <summary>
         /// 用户Id
         /// </summary>
-        public Guid Fk_UserId { get; set; }
+        public string Fk_UserId { get; set; }
 
         /// <summary>
         /// Refresh Token 
