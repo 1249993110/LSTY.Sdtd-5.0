@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace LSTY.Sdtd.WebApi.Data.IRepositories
 {
-    public interface IUserRepository : IRepository<T_User>
+    public interface IVLoginRepository : IRepository<V_Login>
     {
-        Task<int> UpdateLoginStateAsync(string userId, DateTime lastLoginTime, string lastLoginIpAddress);
+        Task<V_Login> QueryByLoginNameAsync(string loginName);
     }
 }

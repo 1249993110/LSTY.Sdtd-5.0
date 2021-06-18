@@ -14,7 +14,7 @@ namespace LSTY.Sdtd.WebApi.Data.Entities
         /// <summary>
         /// 主键   
         /// </summary>
-        [PrimaryKey, IgnoreInsert]
+        [PrimaryKey]
         public string Id { get; set; }
 
         /// <summary>

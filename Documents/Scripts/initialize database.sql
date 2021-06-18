@@ -3,7 +3,7 @@ GO
 
 --用户表
 CREATE TABLE T_User(
-	Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),	--GUID
+	Id UNIQUEIDENTIFIER PRIMARY KEY,							--GUID
 	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),			--创建日期
 	DisplayName NVARCHAR(32) NOT NULL,							--显示名称
 	LastLoginTime DATETIME,										--上次登录时间
@@ -27,7 +27,7 @@ GO
 CREATE TABLE T_EmailAccount(
 	Fk_UserId UNIQUEIDENTIFIER PRIMARY KEY FOREIGN KEY REFERENCES T_User(Id),	--用户Id
 	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),			--创建日期
-	Email VARCHAR(128) NOT NULL,								--Email用户身份的标识
+	Email NVARCHAR(128) NOT NULL,								--Email用户身份的标识
 );
 --创建索引
 CREATE UNIQUE INDEX Index_Email ON T_EmailAccount(Email);
@@ -52,11 +52,6 @@ CREATE TABLE T_Role(
 );
 --创建索引
 CREATE UNIQUE INDEX Index_Name ON T_Role(Name);
-GO
-
-INSERT INTO T_Role(Name,Description) VALUES('BlacklistUser','黑名单用户');
-INSERT INTO T_Role(Name,Description) VALUES('NormalUser','正常用户');
-INSERT INTO T_Role(Name,Description) VALUES('Administrator','管理员');
 GO
 
 --用户角色表
@@ -116,20 +111,26 @@ LEFT JOIN T_EmailAccount AS ea ON u.Id=ea.Fk_UserId
 LEFT JOIN T_VipInfo AS vip ON u.Id=vip.Fk_UserId;
 GO
 
+--创建视图
+CREATE VIEW V_Login AS
+SELECT u.Id AS UserId,rol.Id AS RoleId,rol.Name AS RoleName,u.DisplayName,sa.AccountName,ea.Email FROM T_User AS u
+LEFT JOIN T_StandardAccount AS sa ON u.Id=sa.Fk_UserId
+LEFT JOIN T_EmailAccount AS ea ON u.Id=ea.Fk_UserId
+LEFT JOIN T_UserRole AS urole ON u.Id=urole.Fk_UserId
+LEFT JOIN T_Role AS rol ON urole.Fk_RoleId=rol.Id;
+GO
+
 --Jwt RefreshToken表
 CREATE TABLE T_RefreshToken(
-	Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),		--GUID
+	Id CHAR(64) PRIMARY KEY,										--Refresh Token
 	CreatedUtcDate DATETIME NOT NULL,								--创建日期，Utc 时间
 	Fk_UserId UNIQUEIDENTIFIER FOREIGN KEY REFERENCES T_User(Id),	--用户Id
-	[Value] VARCHAR(512) NOT NULL,									--Refresh Token
-	JwtId VARCHAR(512) UNIQUE NOT NULL,								--使用 JwtId 映射到对应的 token
-	IsUsed BIT NOT NULL DEFAULT 0,									--如果已经使用过它，我们不想使用相同的 refresh token 生成新的 JWT token
+	JwtId UNIQUEIDENTIFIER UNIQUE NOT NULL,							--使用 JwtId 映射到对应的 token
 	IsRevorked BIT NOT NULL DEFAULT 0,								--是否出于安全原因已将其撤销
 	ExpiryDate DATETIME NOT NULL DEFAULT GETDATE(),					--Refresh Token 的生命周期很长，可以长达数月
 );
 --创建索引
 CREATE INDEX Index_Fk_UserId ON T_RefreshToken(Fk_UserId);
-CREATE UNIQUE INDEX Index_Token ON T_RefreshToken([Value]);
 GO
 
 --菜单表
@@ -167,7 +168,7 @@ CREATE TABLE T_Permission(
 --添加约束
 ALTER TABLE T_Permission ADD CONSTRAINT Constraint_1 UNIQUE ([Type],RouteStarts);
 --创建索引
-CREATE UNIQUE INDEX Index_1 ON T_Permission(IsEnabled,[Type],RouteStarts);  
+CREATE UNIQUE INDEX Index_1 ON T_Permission(RouteStarts,[Type],IsEnabled);  
 GO
 
 --角色许可表
@@ -178,3 +179,15 @@ CREATE TABLE T_RolePermission(
 	PRIMARY KEY(Fk_RoleId,Fk_PermissionId)
 );
 GO
+
+
+INSERT INTO T_Role(Name,Description) VALUES('BlacklistUser','黑名单用户');
+INSERT INTO T_Role(Name,Description) VALUES('Administrator','管理员');
+INSERT INTO T_Role(Name,Description) VALUES('NormalUser','正常用户');
+
+INSERT INTO T_User(DisplayName) VALUES('IceCoffee');
+INSERT INTO T_UserRole(Fk_UserId,Fk_RoleId) VALUES((SELECT TOP 1 Id FROM T_User),(SELECT TOP 1 Id FROM T_Role WHERE Name='Administrator'));
+INSERT INTO T_StandardAccount(Fk_UserId,AccountName,PasswordHash,PasswordSalt) VALUES((SELECT TOP 1 Id FROM T_User),'1249993110','GxJMhjYdOybOKbHdP88btkLW61E=','DDdea9hFul2G8J/zBP2WfDoOSJGKOsyb');
+
+INSERT INTO T_Permission(RouteStarts,[Type],IsEnabled) VALUES('/',0,1);
+INSERT INTO T_RolePermission(Fk_RoleId,Fk_PermissionId) VALUES((SELECT TOP 1 Id FROM T_Role WHERE Name='Administrator'),(SELECT TOP 1 Id FROM T_Permission));

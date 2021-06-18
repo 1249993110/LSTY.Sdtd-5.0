@@ -14,7 +14,7 @@ namespace LSTY.Sdtd.WebApi.Data.Entities
         /// <summary>
         /// Id    
         /// </summary>
-        [PrimaryKey, IgnoreInsert]
+        [PrimaryKey]
         public string Id { get; set; }
 
         /// <summary>
@@ -28,20 +28,9 @@ namespace LSTY.Sdtd.WebApi.Data.Entities
         public string Fk_UserId { get; set; }
 
         /// <summary>
-        /// Refresh Token 
-        /// </summary>
-        [Column("[Value]")]
-        public string Value { get; set; }
-
-        /// <summary>
         /// 使用 JwtId 映射到对应的 token  
         /// </summary>
         public string JwtId { get; set; }
-
-        /// <summary>
-        /// 如果已经使用过它，我们不想使用相同的 refresh token 生成新的 JWT token
-        /// </summary>
-        public bool IsUsed { get; set; }
 
         /// <summary>
         /// 是否出于安全原因已将其撤销

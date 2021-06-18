@@ -24,6 +24,8 @@ using IceCoffee.DbCore;
 using IceCoffee.AspNetCore.Permission;
 using LSTY.Sdtd.WebApi.Permission;
 using IceCoffee.AspNetCore.Models.Results;
+using Dapper;
+using LSTY.Sdtd.WebApi.Data.Primitives;
 
 [assembly: ApiController]
 namespace LSTY.Sdtd.WebApi
@@ -146,6 +148,8 @@ namespace LSTY.Sdtd.WebApi
                 // These are the cultures the app supports for UI strings, i.e. we have localized resources for.
                 options.SupportedUICultures = supportedCultures;
             });
+
+            SqlMapper.AddTypeHandler(new StringGuidHandler());
 
             foreach (var type in typeof(ConnectionInfoManager).Assembly.GetExportedTypes())
             {
