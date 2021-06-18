@@ -24,7 +24,7 @@ namespace LSTY.Sdtd.WebApi.Data.Entities
         public DateTime CreatedDate { get; set; }
 
         /// <summary>
-        /// 路由开始部分 
+        /// 路由开始部分, 应以尾随斜杠结尾
         /// </summary>
         public string RouteStarts { get; set; }
 

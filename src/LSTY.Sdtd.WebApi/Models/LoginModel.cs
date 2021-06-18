@@ -14,5 +14,11 @@ namespace LSTY.Sdtd.WebApi.Models
 
         [Required(ErrorMessage = DataAnnotationsResource.RequiredAttribute_ValidationError)]
         public string PasswordHash { get; set; }
+
+        [Required(ErrorMessage = DataAnnotationsResource.RequiredAttribute_ValidationError)]
+        public string CaptchaId { get; set; }
+        
+        [Required(ErrorMessage = DataAnnotationsResource.RequiredAttribute_ValidationError)]
+        public string CaptchaValue { get; set; }
     }
 }

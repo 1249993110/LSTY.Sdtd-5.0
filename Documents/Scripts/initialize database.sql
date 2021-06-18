@@ -3,7 +3,7 @@ GO
 
 --用户表
 CREATE TABLE T_User(
-	Id UNIQUEIDENTIFIER PRIMARY KEY,							--GUID
+	Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),			--GUID
 	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),			--创建日期
 	DisplayName NVARCHAR(32) NOT NULL,							--显示名称
 	LastLoginTime DATETIME,										--上次登录时间
@@ -166,7 +166,8 @@ CREATE TABLE T_Permission(
 	Description NVARCHAR(512)										--说明
 );
 --添加约束
-ALTER TABLE T_Permission ADD CONSTRAINT Constraint_1 UNIQUE ([Type],RouteStarts);
+ALTER TABLE T_Permission ADD CONSTRAINT Check_1 CHECK(RIGHT(RouteStarts,1)='/');
+ALTER TABLE T_Permission ADD CONSTRAINT Check_2 UNIQUE ([Type],RouteStarts);
 --创建索引
 CREATE UNIQUE INDEX Index_1 ON T_Permission(RouteStarts,[Type],IsEnabled);  
 GO

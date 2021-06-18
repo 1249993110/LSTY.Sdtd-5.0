@@ -14,12 +14,10 @@ namespace LSTY.Sdtd.WebApi.Data.Repositories
         {
             try
             {
-                var result = await base.QueryAsync<string>("SELECT Id FROM T_Role WHERE Name=@RoleName", new
+                return await base.ExecuteScalarAsync<string>("SELECT Id FROM T_Role WHERE Name=@RoleName", new
                 {
                     RoleName = roleName
                 });
-
-                return result.FirstOrDefault();
             }
             catch (Exception ex)
             {

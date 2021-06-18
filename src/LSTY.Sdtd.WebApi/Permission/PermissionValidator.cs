@@ -24,7 +24,7 @@ namespace LSTY.Sdtd.WebApi.Permission
 
         public async Task<bool> CheckPermissionAsync(string roleId, string routePattern, PermissionType permissionTypeRequired)
         {
-            routePattern = "/" + routePattern;
+            routePattern = string.IsNullOrEmpty(routePattern) ? "/" : "/" + routePattern + "/";
             string key = roleId + ":" + routePattern;
             if (_cache.TryGetValue(key, out bool cacheEntry) == false)
             {

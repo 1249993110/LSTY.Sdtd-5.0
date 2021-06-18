@@ -1,4 +1,5 @@
-﻿using IceCoffee.AspNetCore;
+﻿using Hei.Captcha;
+using IceCoffee.AspNetCore;
 using IceCoffee.AspNetCore.Authorization;
 using IceCoffee.AspNetCore.Extensions;
 using IceCoffee.AspNetCore.Models;
@@ -7,6 +8,8 @@ using IceCoffee.AspNetCore.Resources;
 using IceCoffee.Common;
 using IceCoffee.Common.Extensions;
 using IceCoffee.Common.Security.Cryptography;
+using IceCoffee.DbCore.UnitWork;
+using LSTY.Sdtd.WebApi.Data;
 using LSTY.Sdtd.WebApi.Data.Entities;
 using LSTY.Sdtd.WebApi.Data.IRepositories;
 using LSTY.Sdtd.WebApi.Data.Primitives;
@@ -16,6 +19,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -29,6 +33,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace LSTY.Sdtd.WebApi.Controllers
@@ -36,6 +41,7 @@ namespace LSTY.Sdtd.WebApi.Controllers
     /// <summary>
     /// AccountController
     /// </summary>
+    [AllowAnonymous]
     [Route("[controller]/[action]")]
     public class AccountController : ControllerBase
     {
@@ -49,6 +55,9 @@ namespace LSTY.Sdtd.WebApi.Controllers
         private readonly IEmailAccountRepository _emailAccountRepository;
         private readonly IUserRoleRepository _userRoleRepository;
         private readonly IRoleRepository _roleRepository;
+        private readonly SecurityCodeHelper _securityCode;
+        private readonly IMemoryCache _memoryCache;
+
         public AccountController(ILogger<AccountController> logger,
             IStringLocalizer<AccountResource> localizer,
             TokenValidationParameters tokenValidationParams,
@@ -57,8 +66,10 @@ namespace LSTY.Sdtd.WebApi.Controllers
             IUserRepository userRepository,
             IStandardAccountRepository standardAccountRepository,
             IEmailAccountRepository emailAccountRepository,
-            IUserRoleRepository userRoleRepository, 
-            IRoleRepository roleRepository)
+            IUserRoleRepository userRoleRepository,
+            IRoleRepository roleRepository,
+            SecurityCodeHelper securityCode, 
+            IMemoryCache memoryCache)
         {
             _logger = logger;
             _localizer = localizer;
@@ -70,51 +81,41 @@ namespace LSTY.Sdtd.WebApi.Controllers
             _emailAccountRepository = emailAccountRepository;
             _userRoleRepository = userRoleRepository;
             _roleRepository = roleRepository;
+            _securityCode = securityCode;
+            _memoryCache = memoryCache;
         }
 
-        private async Task<JwtToken> GenerateJwtToken(UserInfo userInfo)
+
+        /// <summary>
+        /// 获取数字字母组合验证码
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public RespResult<CaptchaModel> Captcha(string lastCaptchaId)
         {
-            var tokenDescriptor = new SecurityTokenDescriptor
+            var code = _securityCode.GetRandomEnDigitalText(4);
+            var imgbyte = _securityCode.GetEnDigitalCodeByte(code);
+
+            CaptchaModel captchaModel = new CaptchaModel()
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(JwtRegisteredClaimNames.Aud, _tokenValidationParams.ValidAudience),
-                    new Claim(JwtRegisteredClaimNames.Iss, _tokenValidationParams.ValidIssuer),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(JwtClaimNames.UserId, userInfo.UserId),
-                    new Claim(JwtClaimNames.RoleId, userInfo.RoleId),
-                    new Claim(JwtClaimNames.DisplayName, userInfo.DisplayName),
-                    new Claim(JwtClaimNames.Email, userInfo.Email ?? string.Empty),
-                    new Claim(JwtClaimNames.AccountName, userInfo.AccountName ?? string.Empty)
-                }),
-                // 比较合理的值为 5~10 分钟
-                Expires = DateTime.UtcNow.AddSeconds(10),
-                SigningCredentials = new SigningCredentials(_tokenValidationParams.IssuerSigningKey, SecurityAlgorithms.HmacSha256Signature)
+                Id = Guid.NewGuid().ToString(),
+                ImageBase64 = "data:image/png;base64," + Convert.ToBase64String(imgbyte)
             };
 
-            var jwtTokenHandler = new JwtSecurityTokenHandler();
-            var token = jwtTokenHandler.CreateToken(tokenDescriptor);
-            var accessToken = jwtTokenHandler.WriteToken(token);
-
-            var utcNow = DateTime.UtcNow;
-            var refreshToken = new T_RefreshToken()
+            if(string.IsNullOrEmpty(lastCaptchaId) == false)
             {
-                Id = Guid.NewGuid().ToString("N") + CommonHelper.GetRandomString(24),
-                JwtId = token.Id,
-                IsRevorked = false,
-                Fk_UserId = userInfo.UserId,
-                CreatedUtcDate = utcNow,
-                ExpiryDate = utcNow.AddMonths(1)
-            };
+                _memoryCache.Remove("Captcha:" + lastCaptchaId);
+            }
 
-            // 如果您只希望用户仅在一台设备上处于活动状态，则无需将多个刷新令牌存储在存储库中
-            await _refreshTokenRepository.DeleteByIdAsync(nameof(T_RefreshToken.Fk_UserId), userInfo.UserId);
-            await _refreshTokenRepository.InsertAsync(refreshToken);
-
-            return new JwtToken()
+            _memoryCache.Set("Captcha:" + captchaModel.Id, code, new MemoryCacheEntryOptions()
             {
-                AccessToken = accessToken,
-                RefreshToken = refreshToken.Id
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(3D)
+            });
+
+            return new RespResult<CaptchaModel>()
+            {
+                Code = CustomStatusCode.Succeeded,
+                Data = captchaModel
             };
         }
 
@@ -123,9 +124,44 @@ namespace LSTY.Sdtd.WebApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [AllowAnonymous]
         public async Task<AuthResult> Login([FromBody] LoginModel model)
         {
+            // 验证码不存在
+            if (string.IsNullOrEmpty(model.CaptchaId))
+            {
+                //return new AuthResult()
+                //{
+                //    Message = _localizer["验证码不存在"]
+                //};
+            }
+            else
+            {
+                string key = "Captcha:" + model.CaptchaId;
+                // 验证码过期
+                if (_memoryCache.TryGetValue(key, out string code) == false)
+                {
+                    //return new AuthResult()
+                    //{
+                    //    Message = _localizer["验证码过期"]
+                    //};
+                }
+                else
+                {
+                    // 验证码错误
+                    if(model.CaptchaValue != code)
+                    {
+                        //return new AuthResult()
+                        //{
+                        //    Message = _localizer["验证码错误"]
+                        //};
+                    }
+                    else
+                    {
+                        _memoryCache.Remove(key);
+                    }
+                }
+            }
+
             // 判断用户是否存在
             var vLogin = await _vLoginRepository.QueryByLoginNameAsync(model.LoginName);
             if(vLogin == null)
@@ -181,11 +217,10 @@ namespace LSTY.Sdtd.WebApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [AllowAnonymous]
         public async Task<AuthResult> RegisterByEmail([FromBody] EmailRegisterModel model)
         {
             // 检查使用相同电子邮箱的用户是否存在
-            bool isExistingEmail = (await _emailAccountRepository.QueryRecordCountAsync("Email=@Email", new { Email = model.Email })) > 0;
+            bool isExistingEmail = await _emailAccountRepository.IsExist(model.Email);
             if (isExistingEmail)
             {
                 return new AuthResult()
@@ -193,9 +228,30 @@ namespace LSTY.Sdtd.WebApi.Controllers
                     Message = "Email already in use"
                 };
             }
+            
+            // 检查账户名是否规范
+            bool accountNameAllow = new Regex(@"^[a-zA-Z0-9]{6,20}$").IsMatch(model.AccountName);
+            if (accountNameAllow == false)
+            {
+                return new AuthResult()
+                {
+                    Message = "账户名不规范"
+                };
+            }
+
+            string password = StringExtension.FormBase64(model.PasswordHash);
+            // 检查密码强度
+            bool passwordAllow = new Regex(@"^[\x21-\x7e]{6,20}$").IsMatch(password);
+            if (passwordAllow == false)
+            {
+                return new AuthResult()
+                {
+                    Message = "密码强度过低"
+                };
+            }
 
             // 检查使用相同标准账户名的用户是否存在
-            bool isExistingAccountName = (await _standardAccountRepository.QueryRecordCountAsync("AccountName=@AccountName", new { AccountName = model.AccountName })) > 0;
+            bool isExistingAccountName = await _standardAccountRepository.IsExist(model.AccountName);
             if (isExistingAccountName)
             {
                 return new AuthResult()
@@ -203,6 +259,8 @@ namespace LSTY.Sdtd.WebApi.Controllers
                     Message = "Account name already in use"
                 };
             }
+
+            string roleId = await _roleRepository.QueryIdByNameAsync(Roles.NormalUser);
 
             var user = new T_User()
             {
@@ -212,22 +270,45 @@ namespace LSTY.Sdtd.WebApi.Controllers
                 LastLoginTime = DateTime.Now
             };
 
-            await _userRepository.InsertAsync(user);
+            CryptoTools.PBKDF2.HashPassword(password, out string passwordHash, out string passwordSalt);
 
-            await _emailAccountRepository.InsertAsync(new T_EmailAccount() 
+            var standardAccount = new T_StandardAccount()
             {
                 Fk_UserId = user.Id,
-                Email = model.Email
-            });
-
-            string roleId = await _roleRepository.QueryIdByNameAsync(Roles.NormalUser);
-            var userRole = new T_UserRole()
-            {
-                Fk_UserId = user.Id,
-                Fk_RoleId = roleId
+                AccountName = model.AccountName,
+                PasswordHash = passwordHash,
+                PasswordSalt = passwordSalt
             };
-            await _userRoleRepository.InsertAsync(userRole);
 
+            var unitOfWork = UnitOfWork.Default.EnterContext(ConnectionInfoManager.DefaultConnectionInfo);
+
+            try
+            {
+                _userRepository.Insert(user);
+
+                _standardAccountRepository.Insert(standardAccount);
+
+                _emailAccountRepository.Insert(new T_EmailAccount()
+                {
+                    Fk_UserId = user.Id,
+                    Email = model.Email
+                });
+
+                var userRole = new T_UserRole()
+                {
+                    Fk_UserId = user.Id,
+                    Fk_RoleId = roleId
+                };
+
+                _userRoleRepository.Insert(userRole);
+
+                unitOfWork.SaveChanges();
+            }
+            catch (Exception)
+            {
+                unitOfWork.Rollback();
+                throw;
+            }
 
             var jwtToken = await GenerateJwtToken(new UserInfo
             {
@@ -251,7 +332,6 @@ namespace LSTY.Sdtd.WebApi.Controllers
         /// <param name="token"></param>
         /// <returns></returns>
         [HttpPost]
-        [AllowAnonymous]
         public async Task<AuthResult> RefreshToken([FromBody] JwtToken token)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
@@ -346,5 +426,50 @@ namespace LSTY.Sdtd.WebApi.Controllers
             }
         }
 
+        private async Task<JwtToken> GenerateJwtToken(UserInfo userInfo)
+        {
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim(JwtRegisteredClaimNames.Aud, _tokenValidationParams.ValidAudience),
+                    new Claim(JwtRegisteredClaimNames.Iss, _tokenValidationParams.ValidIssuer),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(JwtClaimNames.UserId, userInfo.UserId),
+                    new Claim(JwtClaimNames.RoleId, userInfo.RoleId),
+                    new Claim(JwtClaimNames.DisplayName, userInfo.DisplayName),
+                    new Claim(JwtClaimNames.Email, userInfo.Email ?? string.Empty),
+                    new Claim(JwtClaimNames.AccountName, userInfo.AccountName ?? string.Empty)
+                }),
+                // 比较合理的值为 5~10 分钟
+                Expires = DateTime.UtcNow.AddMinutes(10),
+                SigningCredentials = new SigningCredentials(_tokenValidationParams.IssuerSigningKey, SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var jwtTokenHandler = new JwtSecurityTokenHandler();
+            var token = jwtTokenHandler.CreateToken(tokenDescriptor);
+            var accessToken = jwtTokenHandler.WriteToken(token);
+
+            var utcNow = DateTime.UtcNow;
+            var refreshToken = new T_RefreshToken()
+            {
+                Id = Guid.NewGuid().ToString("N") + CommonHelper.GetRandomString(24),
+                JwtId = token.Id,
+                IsRevorked = false,
+                Fk_UserId = userInfo.UserId,
+                CreatedUtcDate = utcNow,
+                ExpiryDate = utcNow.AddMonths(1)
+            };
+
+            // 如果您只希望用户仅在一台设备上处于活动状态，则无需将多个刷新令牌存储在存储库中
+            await _refreshTokenRepository.DeleteByIdAsync(nameof(T_RefreshToken.Fk_UserId), userInfo.UserId);
+            await _refreshTokenRepository.InsertAsync(refreshToken);
+
+            return new JwtToken()
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken.Id
+            };
+        }
     }
 }

@@ -26,6 +26,7 @@ using LSTY.Sdtd.WebApi.Permission;
 using IceCoffee.AspNetCore.Models.Results;
 using Dapper;
 using LSTY.Sdtd.WebApi.Data.Primitives;
+using Hei.Captcha;
 
 [assembly: ApiController]
 namespace LSTY.Sdtd.WebApi
@@ -161,6 +162,10 @@ namespace LSTY.Sdtd.WebApi
             }
 
             services.AddSingleton<IPermissionValidator, PermissionValidator>();
+
+            services.AddHeiCaptcha();
+
+            services.AddMemoryCache();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

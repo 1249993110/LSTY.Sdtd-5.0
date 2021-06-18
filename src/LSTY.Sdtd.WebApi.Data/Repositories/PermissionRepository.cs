@@ -13,20 +13,21 @@ namespace LSTY.Sdtd.WebApi.Data.Repositories
 {
     public class PermissionRepository : DefaultRepository<T_Permission>, IPermissionRepository
     {
-        private const string _permissionValidateSQL = @"SELECT 1 FROM T_Permission WHERE Id IN(SELECT Fk_PermissionId FROM T_RolePermission WHERE Fk_RoleId=@RoleId) AND (@RoutePattern LIKE CONCAT(RouteStarts,'%') AND (DATALENGTH(@RoutePattern)=DATALENGTH(RouteStarts) OR SUBSTRING(@RoutePattern,DATALENGTH(RouteStarts)+1,1)='/')) AND ([Type]=0 OR [Type]=@Type) AND IsEnabled=1";
+        // AND (DATALENGTH(@RoutePattern)=DATALENGTH(RouteStarts) OR SUBSTRING(@RoutePattern,DATALENGTH(RouteStarts)+1,1)='/')
+        private const string _permissionValidateSQL = @"SELECT 1 FROM T_Permission WHERE Id IN(SELECT Fk_PermissionId FROM T_RolePermission WHERE Fk_RoleId=@RoleId) AND (@RoutePattern LIKE CONCAT(RouteStarts,'%')) AND ([Type]=0 OR [Type]=@Type) AND IsEnabled=1";
 
         public async Task<bool> CheckPermissionAsync(string roleId, byte permissionType, string routePattern)
         {
             try
             {
-                var result = await base.QueryAsync<int>(_permissionValidateSQL, new
+                var result = await base.ExecuteScalarAsync<int>(_permissionValidateSQL, new
                 {
                     RoleId = roleId,
                     Type = permissionType,
                     RoutePattern = routePattern
                 });
 
-                return result.FirstOrDefault() == 1;
+                return result == 1;
             }
             catch (Exception ex)
             {

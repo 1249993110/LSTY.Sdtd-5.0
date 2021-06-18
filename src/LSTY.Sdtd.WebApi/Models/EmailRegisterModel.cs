@@ -13,6 +13,7 @@ namespace LSTY.Sdtd.WebApi.Models
         public string AccountName { get; set; }
 
         [Required(ErrorMessage = DataAnnotationsResource.RequiredAttribute_ValidationError)]
+        [DataType( DataType.Password)]
         public string PasswordHash { get; set; }
 
         [Required(ErrorMessage = DataAnnotationsResource.RequiredAttribute_ValidationError)]
@@ -23,6 +24,6 @@ namespace LSTY.Sdtd.WebApi.Models
         public string Email { get; set; }
 
         [Required(ErrorMessage = DataAnnotationsResource.RequiredAttribute_ValidationError)]
-        public string VerificationCode { get; set; }
+        public string Captcha { get; set; }
     }
 }
