@@ -5,23 +5,18 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LSTY.Sdtd.WebApi.Models
+namespace LSTY.Sdtd.WebApi.Models.Account
 {
-    public class EmailRegisterModel
+    public class LoginModelBase
     {
         [Required(ErrorMessage = DataAnnotationsResource.RequiredAttribute_ValidationError)]
-        public string AccountName { get; set; }
+        public string LoginName { get; set; }
+    }
 
+    public class LoginModel : LoginModelBase
+    {
         [Required(ErrorMessage = DataAnnotationsResource.RequiredAttribute_ValidationError)]
-        [DataType( DataType.Password)]
         public string PasswordHash { get; set; }
-
-        [Required(ErrorMessage = DataAnnotationsResource.RequiredAttribute_ValidationError)]
-        public string DisplayName { get; set; }
-
-        [Required(ErrorMessage = DataAnnotationsResource.RequiredAttribute_ValidationError)]
-        [EmailAddress]
-        public string Email { get; set; }
 
         [Required(ErrorMessage = DataAnnotationsResource.RequiredAttribute_ValidationError)]
         public string Captcha { get; set; }

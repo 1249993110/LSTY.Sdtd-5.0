@@ -5,15 +5,18 @@ using IceCoffee.AspNetCore.Extensions;
 using IceCoffee.AspNetCore.Models;
 using IceCoffee.AspNetCore.Models.Results;
 using IceCoffee.AspNetCore.Resources;
+using IceCoffee.AspNetCore.Services;
 using IceCoffee.Common;
 using IceCoffee.Common.Extensions;
 using IceCoffee.Common.Security.Cryptography;
+using IceCoffee.Common.Templates;
 using IceCoffee.DbCore.UnitWork;
 using LSTY.Sdtd.WebApi.Data;
 using LSTY.Sdtd.WebApi.Data.Entities;
 using LSTY.Sdtd.WebApi.Data.IRepositories;
 using LSTY.Sdtd.WebApi.Data.Primitives;
 using LSTY.Sdtd.WebApi.Models;
+using LSTY.Sdtd.WebApi.Models.Account;
 using LSTY.Sdtd.WebApi.Resources;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -26,10 +29,13 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
@@ -41,7 +47,6 @@ namespace LSTY.Sdtd.WebApi.Controllers
     /// <summary>
     /// AccountController
     /// </summary>
-    [AllowAnonymous]
     [Route("[controller]/[action]")]
     public class AccountController : ControllerBase
     {
@@ -57,6 +62,7 @@ namespace LSTY.Sdtd.WebApi.Controllers
         private readonly IRoleRepository _roleRepository;
         private readonly SecurityCodeHelper _securityCode;
         private readonly IMemoryCache _memoryCache;
+        private readonly IEmailService _emailService;
 
         public AccountController(ILogger<AccountController> logger,
             IStringLocalizer<AccountResource> localizer,
@@ -68,8 +74,9 @@ namespace LSTY.Sdtd.WebApi.Controllers
             IEmailAccountRepository emailAccountRepository,
             IUserRoleRepository userRoleRepository,
             IRoleRepository roleRepository,
-            SecurityCodeHelper securityCode, 
-            IMemoryCache memoryCache)
+            SecurityCodeHelper securityCode,
+            IMemoryCache memoryCache, 
+            IEmailService emailService)
         {
             _logger = logger;
             _localizer = localizer;
@@ -83,36 +90,107 @@ namespace LSTY.Sdtd.WebApi.Controllers
             _roleRepository = roleRepository;
             _securityCode = securityCode;
             _memoryCache = memoryCache;
+            _emailService = emailService;
         }
 
+        private string GetRegisterCaptchaKey(string registerName)
+        {
+            return "RegisterCaptcha:" + HttpContext.GetRemoteIpAddress() + ":" + registerName;
+        }
+
+        private string GetLoginCaptchaKey(string loginName)
+        {
+            return "LoginCaptcha:" + HttpContext.GetRemoteIpAddress() + ":" + loginName;
+        }
 
         /// <summary>
-        /// 获取数字字母组合验证码
+        /// 获取注册验证码，纯数字
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
-        public RespResult<CaptchaModel> Captcha(string lastCaptchaId)
+        [HttpPost]
+        [AllowAnonymous]
+        [DevelopmentResponseType(typeof(RegisterCaptchaModel))]
+        public async Task<IRespResult> RegisterCaptcha([FromBody] EmailRegisterModelBase model)
         {
-            var code = _securityCode.GetRandomEnDigitalText(4);
-            var imgbyte = _securityCode.GetEnDigitalCodeByte(code);
-
-            CaptchaModel captchaModel = new CaptchaModel()
+            try
             {
-                Id = Guid.NewGuid().ToString(),
+                string key = GetRegisterCaptchaKey(model.Email);
+                if (_memoryCache.TryGetValue(key, out _))
+                {
+                    return new FailedResult(HttpContext.GetRequestId())
+                    {
+                        Message = "请求过于频繁，请稍后再试"
+                    };
+                }
+
+                RegisterCaptchaModel captchaModel = new RegisterCaptchaModel()
+                {
+                    ValidSeconds = 60,
+                    RequestInterval = 60
+                };
+
+                string captcha = CommonHelper.GetRandomString("0123456789", 6);
+
+                _memoryCache.Set(key, captcha, new MemoryCacheEntryOptions()
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(60D)
+                });
+
+                await _emailService.SendAsync(new EmailSendParams()
+                {
+                    Captcha = captcha,
+                    CurrentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                    FromAddress = "lsty@7daystodie.top",
+                    FromDisplayName = "洛水天依",
+                    IsBodyHtml = true,
+                    Subject = "洛水天依 验证码",
+                    TemplateFilePath = "email-template.zh-CN.html",
+                    ToAddress = model.Email,
+                    ToDisplayName = model.DisplayName,
+                    AccountName = model.AccountName
+                });
+
+                return new RespResult<RegisterCaptchaModel>()
+                {
+                    Code = CustomStatusCode.Succeeded,
+                    Data = captchaModel
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "邮件发送失败");
+                return new FailedResult(HttpContext.GetRequestId())
+                {
+                    Message = "邮件发送失败，请稍后再试"
+                };
+            }
+        }
+
+        /// <summary>
+        /// 获取登录验证码，数字字母组合
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [AllowAnonymous]
+        public RespResult<LoginCaptchaModel> LoginCaptcha([FromBody] LoginModelBase model)
+        {
+            var captcha = _securityCode.GetRandomEnDigitalText(4);
+            var imgbyte = _securityCode.GetEnDigitalCodeByte(captcha);
+
+            LoginCaptchaModel captchaModel = new LoginCaptchaModel()
+            {
+                RequestInterval = 180,
+                ValidSeconds = 180,
                 ImageBase64 = "data:image/png;base64," + Convert.ToBase64String(imgbyte)
             };
 
-            if(string.IsNullOrEmpty(lastCaptchaId) == false)
+            string key = GetLoginCaptchaKey(model.LoginName);
+            _memoryCache.Set(key, captcha, new MemoryCacheEntryOptions()
             {
-                _memoryCache.Remove("Captcha:" + lastCaptchaId);
-            }
-
-            _memoryCache.Set("Captcha:" + captchaModel.Id, code, new MemoryCacheEntryOptions()
-            {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(3D)
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(180D)
             });
 
-            return new RespResult<CaptchaModel>()
+            return new RespResult<LoginCaptchaModel>()
             {
                 Code = CustomStatusCode.Succeeded,
                 Data = captchaModel
@@ -124,41 +202,31 @@ namespace LSTY.Sdtd.WebApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
+        [AllowAnonymous]
         public async Task<AuthResult> Login([FromBody] LoginModel model)
         {
-            // 验证码不存在
-            if (string.IsNullOrEmpty(model.CaptchaId))
+            string key = GetLoginCaptchaKey(model.LoginName);
+            // 验证码过期
+            if (_memoryCache.TryGetValue(key, out string captcha) == false)
             {
                 //return new AuthResult()
                 //{
-                //    Message = _localizer["验证码不存在"]
+                //    Message = _localizer["验证码过期"]
                 //};
             }
             else
             {
-                string key = "Captcha:" + model.CaptchaId;
-                // 验证码过期
-                if (_memoryCache.TryGetValue(key, out string code) == false)
+                // 验证码错误
+                if(model.Captcha != captcha)
                 {
                     //return new AuthResult()
                     //{
-                    //    Message = _localizer["验证码过期"]
+                    //    Message = _localizer["验证码错误"]
                     //};
                 }
                 else
                 {
-                    // 验证码错误
-                    if(model.CaptchaValue != code)
-                    {
-                        //return new AuthResult()
-                        //{
-                        //    Message = _localizer["验证码错误"]
-                        //};
-                    }
-                    else
-                    {
-                        _memoryCache.Remove(key);
-                    }
+                    _memoryCache.Remove(key);
                 }
             }
 
@@ -212,13 +280,49 @@ namespace LSTY.Sdtd.WebApi.Controllers
             };
         }
 
+        ///// <summary>
+        ///// Logout
+        ///// </summary>
+        ///// <returns></returns>
+        //[HttpDelete]
+        //public async Task<AuthResult> Logout()
+        //{
+
+        //}
+
         /// <summary>
         /// RegisterByEmail
         /// </summary>
         /// <returns></returns>
         [HttpPost]
+        [AllowAnonymous]
         public async Task<AuthResult> RegisterByEmail([FromBody] EmailRegisterModel model)
         {
+            string key = GetRegisterCaptchaKey(model.Email);
+            // 验证码过期
+            if (_memoryCache.TryGetValue(key, out string captcha) == false)
+            {
+                //return new AuthResult()
+                //{
+                //    Message = _localizer["验证码过期"]
+                //};
+            }
+            else
+            {
+                // 验证码错误
+                if (model.Captcha != captcha)
+                {
+                    //return new AuthResult()
+                    //{
+                    //    Message = _localizer["验证码错误"]
+                    //};
+                }
+                else
+                {
+                    _memoryCache.Remove(key);
+                }
+            }
+
             // 检查使用相同电子邮箱的用户是否存在
             bool isExistingEmail = await _emailAccountRepository.IsExist(model.Email);
             if (isExistingEmail)
@@ -332,6 +436,7 @@ namespace LSTY.Sdtd.WebApi.Controllers
         /// <param name="token"></param>
         /// <returns></returns>
         [HttpPost]
+        [AllowAnonymous]
         public async Task<AuthResult> RefreshToken([FromBody] JwtToken token)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();

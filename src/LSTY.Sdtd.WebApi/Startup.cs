@@ -166,6 +166,8 @@ namespace LSTY.Sdtd.WebApi
             services.AddHeiCaptcha();
 
             services.AddMemoryCache();
+
+            services.AddEmailService(Configuration.GetSection(nameof(SmtpSettings)));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

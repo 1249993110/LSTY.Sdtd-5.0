@@ -62,38 +62,39 @@ namespace LSTY.Sdtd.PatronsMod.LiveData
         {
             string steamId = clientInfo.playerId;
             
-            var onlinePlayer = OnlinePlayers[steamId];
-
-            onlinePlayer.Update(pdf);
-
-            var lastPos = onlinePlayer.LastPosition;
-            T_Player player = new T_Player()
+            if(OnlinePlayers.TryGetValue(steamId, out var onlinePlayer))
             {
-                SteamId = steamId,
-                EntityId = onlinePlayer.EntityId,
-                IP = onlinePlayer.IP,
-                Level = onlinePlayer.Level,
-                Name = onlinePlayer.Name,
-                LastOnline = DateTime.Now,
-                LastPositionX = lastPos.X,
-                LastPositionY = lastPos.Y,
-                LastPositionZ = lastPos.Z,
-                TotalPlayTime = onlinePlayer.TotalPlayTime,
-                Deaths = onlinePlayer.Deaths,
-                PlayerKills = onlinePlayer.PlayerKills,
-                Score = onlinePlayer.Score,
-                ZombieKills = onlinePlayer.ZombieKills
-            };
+                onlinePlayer.Update(pdf);
 
-            T_Inventory inventory = new T_Inventory()
-            {
-                SteamId = steamId,
-                Content = JsonConvert.SerializeObject(onlinePlayer.GetInventory())
-            };
+                var lastPos = onlinePlayer.LastPosition;
+                T_Player player = new T_Player()
+                {
+                    SteamId = steamId,
+                    EntityId = onlinePlayer.EntityId,
+                    IP = onlinePlayer.IP,
+                    Level = onlinePlayer.Level,
+                    Name = onlinePlayer.Name,
+                    LastOnline = DateTime.Now,
+                    LastPositionX = lastPos.X,
+                    LastPositionY = lastPos.Y,
+                    LastPositionZ = lastPos.Z,
+                    TotalPlayTime = onlinePlayer.TotalPlayTime,
+                    Deaths = onlinePlayer.Deaths,
+                    PlayerKills = onlinePlayer.PlayerKills,
+                    Score = onlinePlayer.Score,
+                    ZombieKills = onlinePlayer.ZombieKills
+                };
 
-            _playerRepository.ReplaceInto(player);
+                T_Inventory inventory = new T_Inventory()
+                {
+                    SteamId = steamId,
+                    Content = JsonConvert.SerializeObject(onlinePlayer.GetInventory())
+                };
 
-            _inventoryRepository.ReplaceInto(inventory);
+                _playerRepository.ReplaceInto(player);
+
+                _inventoryRepository.ReplaceInto(inventory);
+            }
         }
 
         [CatchException("Error in PlayerSpawning")]
