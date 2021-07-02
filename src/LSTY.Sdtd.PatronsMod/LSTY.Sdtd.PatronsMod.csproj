@@ -3,8 +3,9 @@
   <PropertyGroup>
     <Platform>x64</Platform>
     <TargetFramework>net452</TargetFramework>
-    <Version>5.0.0.27</Version>
+    <Version>5.0.0.28</Version>
   </PropertyGroup>
+
   <ItemGroup>
     <None Include="LSTY.Sdtd.PatronsMod.crproj" />
   </ItemGroup>
@@ -19,6 +20,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Lib.Harmony" Version="2.0.4" />
     <PackageReference Include="Nancy" Version="2.0.0" />
     <PackageReference Include="Nancy.Hosting.Self" Version="2.0.0" />
     <PackageReference Include="Nancy.Swagger" Version="2.2.59-alpha" />

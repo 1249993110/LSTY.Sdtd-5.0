@@ -21,7 +21,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
         public int RewardPoints { get; set; } = 10;
 
         [ConfigNode(XmlNodeType.Attribute)]
-        public string RewardPointsTips { get; set; } = "[00FF00]You earn points {2} by killed zombies";
+        public string RewardPointsTips { get; set; } = "[00FF00]You earn points 10 by killed zombies";
 
         private ConcurrentDictionary<string, int> _zombieKill;
 

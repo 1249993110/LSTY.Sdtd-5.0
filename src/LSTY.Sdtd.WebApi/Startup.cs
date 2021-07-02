@@ -33,6 +33,7 @@ namespace LSTY.Sdtd.WebApi
 {
     public class Startup
     {
+        private const string _corsPolicyName = "CorsPolicy_AllowSpecificOrigins";
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
@@ -54,17 +55,15 @@ namespace LSTY.Sdtd.WebApi
                 {
                     options.InvalidModelStateResponseFactory = context =>
                     {
-                        string requestId = context.HttpContext.GetRequestId();
                         string messages = string.Join(Environment.NewLine, 
                             context.ModelState.Values.SelectMany(s => s.Errors).Select(s => s.ErrorMessage));
 
-                        var result = new FailedResult(requestId)
+                        var result = new RespResultBase()
                         {
+                            Code = CustomStatusCode.Failed,
                             Title = "One or more model validation errors occurred",
                             Message = messages
                         };
-
-                        Log.Warning($"Invalid model state, RequestId: {requestId} ErrorMessage: {messages}");
 
                         return (result as IConvertToActionResult).Convert();
                     };
@@ -82,7 +81,7 @@ namespace LSTY.Sdtd.WebApi
                     };
                 });
 
-            services.AddJwtAuthentication(Configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>());
+            services.AddJwtAuthentication(Configuration.GetSection(nameof(JwtOptions)));
             services.AddJwtAuthorization();
 
             if (WebHostEnvironment.IsDevelopment())
@@ -140,7 +139,7 @@ namespace LSTY.Sdtd.WebApi
 
                 // State what the default culture for your application is. This will be used if no specific culture
                 // can be determined for a given request.
-                options.DefaultRequestCulture = new RequestCulture("en");
+                options.DefaultRequestCulture = new RequestCulture("zh");
 
                 // You must explicitly state which cultures your application supports.
                 // These are the cultures the app supports for formatting numbers, dates, etc.
@@ -167,7 +166,21 @@ namespace LSTY.Sdtd.WebApi
 
             services.AddMemoryCache();
 
-            services.AddEmailService(Configuration.GetSection(nameof(SmtpSettings)));
+            services.AddEmailService(Configuration.GetSection(nameof(SmtpOptions)));
+
+            if (WebHostEnvironment.IsDevelopment())
+            {
+                services.AddCors(options =>
+                {
+                    options.AddPolicy(_corsPolicyName, builder =>
+                    {
+                        builder.WithOrigins("http://localhost:8080");
+                        builder.AllowAnyHeader();
+                        builder.AllowAnyMethod();
+                        builder.AllowCredentials();
+                    });
+                });
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -176,11 +189,14 @@ namespace LSTY.Sdtd.WebApi
             // Write streamlined request completion events, instead of the more verbose ones from the framework.
             // To use the default framework request logging instead, remove this line and set the "Microsoft"
             // level in appsettings.json to "Information".
+            
+            app.UseMiddleware<GlobalExceptionHandleMiddleware>();
+
             app.UseSerilogRequestLogging();
 
             if (WebHostEnvironment.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                // app.UseDeveloperExceptionPage();
 
                 // Register the Swagger generator and the Swagger UI middlewares
                 app.UseOpenApi();
@@ -188,14 +204,18 @@ namespace LSTY.Sdtd.WebApi
             }
             else
             {
-                app.UseMiddleware<GlobalExceptionHandleMiddleware>();
-
                 app.UseForwardedHeaders();
             }
 
             app.UseRequestLocalization();
 
             app.UseRouting();
+
+            // UseCors 必须在 UseAuthorization 之前在 UseRouting 之后调用
+            if (WebHostEnvironment.IsDevelopment())
+            {
+                app.UseCors(_corsPolicyName);
+            }
 
             app.UseAuthentication();
             app.UseAuthorization();

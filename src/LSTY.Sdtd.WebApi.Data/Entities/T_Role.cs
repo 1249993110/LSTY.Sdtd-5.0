@@ -6,7 +6,6 @@ using System.Text;
 
 namespace LSTY.Sdtd.WebApi.Data.Entities
 {
-
     /// <summary>
     ///  T_Role    
     /// </summary>

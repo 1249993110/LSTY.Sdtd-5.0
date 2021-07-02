@@ -117,61 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ChangePasswordFailed" xml:space="preserve">
-    <value>Failed to modify the password: the original password is wrong</value>
-  </data>
-  <data name="LoginFailed_BlacklistUser" xml:space="preserve">
-    <value>Login failed: login is not allowed, please contact the system administrator</value>
-  </data>
-  <data name="LoginFailed_InvalidCaptcha" xml:space="preserve">
-    <value>Login failed: invalid captcha</value>
-  </data>
-  <data name="LoginFailed_PasswordError" xml:space="preserve">
-    <value>Login failed: password error</value>
-  </data>
-  <data name="LoginFailed_UserNotFound" xml:space="preserve">
-    <value>Login failed: user does not exist</value>
-  </data>
-  <data name="RefreshTokenFailed_InvalidSignature" xml:space="preserve">
-    <value>Signature validation failed</value>
-  </data>
-  <data name="RefreshTokenFailed_InvalidToken" xml:space="preserve">
-    <value>Invalid tokens</value>
-  </data>
-  <data name="RefreshTokenFailed_TokenExpired" xml:space="preserve">
-    <value>Refresh Token has expired, user needs to re-login</value>
-  </data>
-  <data name="RefreshTokenFailed_TokenHasRevoked" xml:space="preserve">
-    <value>Refresh Token has been revoked</value>
-  </data>
-  <data name="RefreshTokenFailed_TokenNotExist" xml:space="preserve">
-    <value>Refresh Token does not exist</value>
-  </data>
-  <data name="RefreshTokenFailed_TokenNotExpired" xml:space="preserve">
-    <value>Token has not yet expired</value>
-  </data>
-  <data name="RefreshTokenFailed_TokenNotMateched" xml:space="preserve">
-    <value>The token doesn't mateched the saved token</value>
-  </data>
-  <data name="RegisterFailed_AccountNameHasUsed" xml:space="preserve">
-    <value>Register failed: account name already in use</value>
-  </data>
-  <data name="RegisterFailed_EmailHasUsed" xml:space="preserve">
-    <value>Register failed: Email already in use</value>
-  </data>
-  <data name="RegisterFailed_InvalidAccountName" xml:space="preserve">
-    <value>Register failed: invalid account name</value>
-  </data>
-  <data name="RegisterFailed_InvalidCaptcha" xml:space="preserve">
-    <value>Register failed: invalid captcha</value>
-  </data>
-  <data name="RegisterFailed_InvalidPassword" xml:space="preserve">
-    <value>Register failed: password strength is too low</value>
-  </data>
-  <data name="RequestsTooFrequent" xml:space="preserve">
-    <value>Requests are too frequent, please try again later</value>
-  </data>
-  <data name="SendMailFailed" xml:space="preserve">
-    <value>Failed to send mail, please try again later</value>
+  <data name="GetMenuFailed" xml:space="preserve">
+    <value>Failed to get menu: no configuration menu</value>
   </data>
 </root>

@@ -48,14 +48,14 @@ namespace LSTY.Sdtd.PatronsMod
         {
             ModHelper.MainThreadContext = SynchronizationContext.Current;
 
-            Task.Run(InternalInit);
+            Task.Run(InternalEarlyInit);
 
             // Initialize in advance map rendering
             MapRender.Init();
         }
 
         [CatchException("LSTY.Sdtd.PatronsMod internal init error", true)]
-        private static void InternalInit()
+        private static void InternalEarlyInit()
         {
             CustomLogger.Info("Initializing mod LSTY.Sdtd.PatronsMod");
 

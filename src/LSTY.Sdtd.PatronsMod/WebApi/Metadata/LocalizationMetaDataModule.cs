@@ -22,8 +22,8 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
                            .Description("")
                            .Parameters(new Parameter[] 
                            { 
-                               new Parameter() { Name = "itemName", In = ParameterIn.Query, Required = true }, 
-                               new Parameter() { Name = "language", In = ParameterIn.Query, Default = "schinese" } 
+                               new Parameter() { Name = "itemName", In = ParameterIn.Query, Required = false }, 
+                               new Parameter() { Name = "language", In = ParameterIn.Query, Required = false, Default = "schinese" } 
                            })
                            .Response(r => r.Description("Localization string"))));
 

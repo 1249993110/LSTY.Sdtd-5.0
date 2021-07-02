@@ -1,26 +1,24 @@
-﻿using IceCoffee.DbCore.OptionalAttributes;
-using IceCoffee.DbCore.Primitives.Entity;
+﻿using IceCoffee.AspNetCore.Models;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace LSTY.Sdtd.WebApi.Data.Entities
+namespace LSTY.Sdtd.WebApi.Models.SystemManagement
 {
     /// <summary>
-    ///  T_Menu    
+    /// 系统菜单 tree
     /// </summary>
-    public class T_Menu : EntityBase
+    public class MenuTreeModel : TreeNode<MenuTreeModel>
     {
         /// <summary>
         /// Id    
         /// </summary>
-        [PrimaryKey, IgnoreInsert]
         public string Id { get; set; }
 
         /// <summary>
         /// 创建日期 
         /// </summary>
-        [IgnoreUpdate, IgnoreInsert]
         public DateTime CreatedDate { get; set; }
 
         /// <summary>
@@ -47,7 +45,5 @@ namespace LSTY.Sdtd.WebApi.Data.Entities
         /// 说明
         /// </summary>
         public string Description { get; set; }
-
     }
-
 }

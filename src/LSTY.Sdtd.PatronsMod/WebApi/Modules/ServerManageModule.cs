@@ -7,10 +7,12 @@ using Nancy.ModelBinding;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
 {
@@ -133,8 +135,8 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                         Minutes = GameUtils.WorldTimeToMinutes(GameManager.Instance.World.worldTime)
                     },
                     Players = GameManager.Instance.World.Players.Count,
-                    Hostiles = entityList.Count(p => p is EntityEnemy entity && entity != null && entity.IsAlive()),
-                    Animals = entityList.Count(p => p is EntityAnimal entity && entity != null && entity.IsAlive())
+                    Hostiles = entityList.Count(p => p is EntityEnemy entity && entity.IsAlive()),
+                    Animals = entityList.Count(p => p is EntityAnimal entity && entity.IsAlive())
                 };
 
                 return SucceededResult(gameStats);
@@ -147,7 +149,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                     return FailedResult("Server is starting, please wait");
                 }
 
-                var animals = GameManager.Instance.World.Entities.list.Where(p => p is EntityAnimal entity && entity != null && entity.IsAlive());
+                var animals = GameManager.Instance.World.Entities.list.Where(p => p is EntityAnimal entity && entity.IsAlive());
 
                 List<EntityLocation> entityLocations = new List<EntityLocation>();
                 foreach (EntityAlive entity in animals)
@@ -170,7 +172,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                     return FailedResult("Server is starting, please wait");
                 }
 
-                var enemies = GameManager.Instance.World.Entities.list.Where(p => p is EntityEnemy entity && entity != null && entity.IsAlive());
+                var enemies = GameManager.Instance.World.Entities.list.Where(p => p is EntityEnemy entity && entity.IsAlive());
 
                 List<EntityLocation> entityLocations = new List<EntityLocation>();
                 foreach (EntityAlive entity in enemies)
@@ -310,6 +312,62 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 }
 
                 return SucceededResult();
+            });
+
+            HttpGet("/RetrieveAvailableItems", "RetrieveAvailableItems", _ =>
+            {
+                if (ModHelper.GameStartDone == false)
+                {
+                    return FailedResult("Server is starting, please wait");
+                }
+
+                if(ItemClass.list == null)
+                {
+                    // 确保已运行指定类型的类型初始值设定项（也称为静态构造函数）。
+                    System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(WorldStaticData).TypeHandle);
+                }
+                
+                List<GameItems> data = new List<GameItems>();
+                foreach (var item in ItemClass.list)
+                {
+                    if(item != null)
+                    {
+                        data.Add(new GameItems()
+                        {
+                            Id = item.Id,
+                            IsBlock = item.IsBlock(),
+                            Name = item.Name
+                        });
+                    }
+                }
+
+                return SucceededResult(data);
+            });
+
+            HttpGet("/RetrieveAvailableEntitys", "RetrieveAvailableEntitys", _ =>
+            {
+                if (ModHelper.GameStartDone == false)
+                {
+                    return FailedResult("Server is starting, please wait");
+                }
+
+                int num = 1;
+                List<GameEntitys> data = new List<GameEntitys>();
+                foreach (var item in EntityClass.list.Dict)
+                {
+                    if (item.Value.bAllowUserInstantiate)
+                    {
+                        data.Add(new GameEntitys()
+                        {
+                            Id = num,
+                            Name = item.Value.entityClassName
+                        });
+                        
+                        ++num;
+                    }
+                }
+
+                return SucceededResult(data);
             });
         }
     }

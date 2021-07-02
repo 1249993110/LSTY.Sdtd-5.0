@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LSTY.Sdtd.WebApi.Data.IRepositories
 {
-    public interface IVUserRepository : IRepository<V_User>
+    public interface IVUserDetailsRepository : IRepository<V_UserDetails>
     {
 
     }

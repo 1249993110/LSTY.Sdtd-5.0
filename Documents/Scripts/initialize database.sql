@@ -90,7 +90,7 @@ CREATE UNIQUE INDEX Index_DeviceId ON T_ActiveClient(DeviceId);
 GO
 
 --创建视图
-CREATE VIEW V_User AS
+CREATE VIEW V_UserDetails AS
 SELECT u.Id AS UserId,u.DisplayName,u.LastLoginTime,u.LastLoginIpAddress,sa.AccountName,
 ea.Email,rol.Id AS RoleId,rol.Name AS RoleName,vip.ExpiryDate,vip.MaxInstanceCount,vip.SecretKey FROM T_User AS u
 LEFT JOIN T_StandardAccount AS sa ON u.Id=sa.Fk_UserId
@@ -139,12 +139,13 @@ CREATE TABLE T_Menu(
 	CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),				--创建日期
 	ParentId UNIQUEIDENTIFIER ,										--父菜单Id
 	Name NVARCHAR(512) NOT NULL,									--菜单名
-	Icon VARCHAR(512),												--菜单图标
-	Url VARCHAR(512),												--Url
 	Sort INT NOT NULL,												--排序
 	IsEnabled BIT NOT NULL,											--是否启用
 	Description NVARCHAR(512)										--说明
 );
+GO
+--创建索引
+CREATE UNIQUE INDEX Index_1 ON T_Menu(Id,IsEnabled);  
 GO
 
 --角色菜单表
@@ -155,6 +156,7 @@ CREATE TABLE T_RoleMenu(
 	PRIMARY KEY(Fk_RoleId,Fk_MenuId)
 );
 GO
+
 
 --许可表
 CREATE TABLE T_Permission(
@@ -192,3 +194,6 @@ INSERT INTO T_StandardAccount(Fk_UserId,AccountName,PasswordHash,PasswordSalt) V
 
 INSERT INTO T_Permission(RouteStarts,[Type],IsEnabled) VALUES('/',0,1);
 INSERT INTO T_RolePermission(Fk_RoleId,Fk_PermissionId) VALUES((SELECT TOP 1 Id FROM T_Role WHERE Name='Administrator'),(SELECT TOP 1 Id FROM T_Permission));
+
+INSERT INTO T_Menu(ParentId,Name,Sort,IsEnabled,Description) VALUES(null,'profile',0,1,'用户资料');
+INSERT INTO T_Menu(ParentId,Name,Sort,IsEnabled,Description) VALUES(null,'change-password',1,1,'更改密码');

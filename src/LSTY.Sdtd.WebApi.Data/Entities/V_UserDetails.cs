@@ -6,9 +6,9 @@ using System.Text;
 namespace LSTY.Sdtd.WebApi.Data.Entities
 {
     /// <summary>
-    ///  V_User    
+    ///  V_UserDetails    
     /// </summary>
-    public class V_User : EntityBase
+    public class V_UserDetails : EntityBase
     {
         /// <summary>
         /// 无    

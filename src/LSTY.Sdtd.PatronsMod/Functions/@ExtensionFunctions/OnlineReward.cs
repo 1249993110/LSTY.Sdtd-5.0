@@ -30,7 +30,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
         public int RewardPoints { get; set; } = 1;
 
         [ConfigNode(XmlNodeType.Attribute)]
-        public string RewardPointsTips { get; set; } = "[00FF00]You earn points {2} by keep online";
+        public string RewardPointsTips { get; set; } = "[00FF00]You earn points 1 by keep online";
 
         private readonly SubTimer _timer;
 

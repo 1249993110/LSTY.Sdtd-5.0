@@ -4,41 +4,28 @@ using IceCoffee.AspNetCore.Authorization;
 using IceCoffee.AspNetCore.Extensions;
 using IceCoffee.AspNetCore.Models;
 using IceCoffee.AspNetCore.Models.Results;
-using IceCoffee.AspNetCore.Resources;
 using IceCoffee.AspNetCore.Services;
 using IceCoffee.Common;
 using IceCoffee.Common.Extensions;
 using IceCoffee.Common.Security.Cryptography;
-using IceCoffee.Common.Templates;
 using IceCoffee.DbCore.UnitWork;
 using LSTY.Sdtd.WebApi.Data;
 using LSTY.Sdtd.WebApi.Data.Entities;
 using LSTY.Sdtd.WebApi.Data.IRepositories;
 using LSTY.Sdtd.WebApi.Data.Primitives;
-using LSTY.Sdtd.WebApi.Models;
 using LSTY.Sdtd.WebApi.Models.Account;
 using LSTY.Sdtd.WebApi.Resources;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Net;
-using System.Net.Mail;
 using System.Security.Claims;
-using System.Text;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -63,6 +50,8 @@ namespace LSTY.Sdtd.WebApi.Controllers
         private readonly SecurityCodeHelper _securityCode;
         private readonly IMemoryCache _memoryCache;
         private readonly IEmailService _emailService;
+        private readonly UserInfo _userInfo;
+        private readonly IVUserDetailsRepository _vUserDetailsRepository;
 
         public AccountController(ILogger<AccountController> logger,
             IStringLocalizer<AccountResource> localizer,
@@ -75,8 +64,10 @@ namespace LSTY.Sdtd.WebApi.Controllers
             IUserRoleRepository userRoleRepository,
             IRoleRepository roleRepository,
             SecurityCodeHelper securityCode,
-            IMemoryCache memoryCache, 
-            IEmailService emailService)
+            IMemoryCache memoryCache,
+            IEmailService emailService,
+            UserInfo userInfo, 
+            IVUserDetailsRepository vUserDetailsRepository)
         {
             _logger = logger;
             _localizer = localizer;
@@ -91,6 +82,8 @@ namespace LSTY.Sdtd.WebApi.Controllers
             _securityCode = securityCode;
             _memoryCache = memoryCache;
             _emailService = emailService;
+            _userInfo = userInfo;
+            _vUserDetailsRepository = vUserDetailsRepository;
         }
 
         private string GetRegisterCaptchaKey(string registerName)
@@ -119,7 +112,7 @@ namespace LSTY.Sdtd.WebApi.Controllers
                 {
                     return new FailedResult(HttpContext.GetRequestId())
                     {
-                        Message = "请求过于频繁，请稍后再试"
+                        Message = _localizer["RequestsTooFrequent"]
                     };
                 }
 
@@ -161,7 +154,7 @@ namespace LSTY.Sdtd.WebApi.Controllers
                 _logger.LogError(ex, "邮件发送失败");
                 return new FailedResult(HttpContext.GetRequestId())
                 {
-                    Message = "邮件发送失败，请稍后再试"
+                    Message = _localizer["SendMailFailed"]
                 };
             }
         }
@@ -174,7 +167,7 @@ namespace LSTY.Sdtd.WebApi.Controllers
         [AllowAnonymous]
         public RespResult<LoginCaptchaModel> LoginCaptcha([FromBody] LoginModelBase model)
         {
-            var captcha = _securityCode.GetRandomEnDigitalText(4);
+            var captcha = CommonHelper.GetRandomString("0123456789", 4);
             var imgbyte = _securityCode.GetEnDigitalCodeByte(captcha);
 
             LoginCaptchaModel captchaModel = new LoginCaptchaModel()
@@ -209,20 +202,20 @@ namespace LSTY.Sdtd.WebApi.Controllers
             // 验证码过期
             if (_memoryCache.TryGetValue(key, out string captcha) == false)
             {
-                //return new AuthResult()
-                //{
-                //    Message = _localizer["验证码过期"]
-                //};
+                return new AuthResult()
+                {
+                    Message = _localizer["LoginFailed_InvalidCaptcha"]
+                };
             }
             else
             {
                 // 验证码错误
                 if(model.Captcha != captcha)
                 {
-                    //return new AuthResult()
-                    //{
-                    //    Message = _localizer["验证码错误"]
-                    //};
+                    return new AuthResult()
+                    {
+                        Message = _localizer["LoginFailed_InvalidCaptcha"]
+                    };
                 }
                 else
                 {
@@ -280,15 +273,16 @@ namespace LSTY.Sdtd.WebApi.Controllers
             };
         }
 
-        ///// <summary>
-        ///// Logout
-        ///// </summary>
-        ///// <returns></returns>
-        //[HttpDelete]
-        //public async Task<AuthResult> Logout()
-        //{
-
-        //}
+        /// <summary>
+        /// Logout
+        /// </summary>
+        /// <returns></returns>
+        [HttpDelete]
+        public async Task<SucceededNullResult> Logout()
+        {
+            await _refreshTokenRepository.DeleteByIdAsync(nameof(T_RefreshToken.Fk_UserId), _userInfo.UserId);
+            return new SucceededNullResult();
+        }
 
         /// <summary>
         /// RegisterByEmail
@@ -302,20 +296,20 @@ namespace LSTY.Sdtd.WebApi.Controllers
             // 验证码过期
             if (_memoryCache.TryGetValue(key, out string captcha) == false)
             {
-                //return new AuthResult()
-                //{
-                //    Message = _localizer["验证码过期"]
-                //};
+                return new AuthResult()
+                {
+                    Message = _localizer["RegisterFailed_InvalidCaptcha"]
+                };
             }
             else
             {
                 // 验证码错误
                 if (model.Captcha != captcha)
                 {
-                    //return new AuthResult()
-                    //{
-                    //    Message = _localizer["验证码错误"]
-                    //};
+                    return new AuthResult()
+                    {
+                        Message = _localizer["RegisterFailed_InvalidCaptcha"]
+                    };
                 }
                 else
                 {
@@ -329,7 +323,7 @@ namespace LSTY.Sdtd.WebApi.Controllers
             {
                 return new AuthResult()
                 {
-                    Message = "Email already in use"
+                    Message = _localizer["RegisterFailed_EmailHasUsed"]
                 };
             }
             
@@ -339,7 +333,7 @@ namespace LSTY.Sdtd.WebApi.Controllers
             {
                 return new AuthResult()
                 {
-                    Message = "账户名不规范"
+                    Message = _localizer["RegisterFailed_InvalidAccountName"]
                 };
             }
 
@@ -350,7 +344,7 @@ namespace LSTY.Sdtd.WebApi.Controllers
             {
                 return new AuthResult()
                 {
-                    Message = "密码强度过低"
+                    Message = _localizer["RegisterFailed_InvalidPassword"]
                 };
             }
 
@@ -360,7 +354,7 @@ namespace LSTY.Sdtd.WebApi.Controllers
             {
                 return new AuthResult()
                 {
-                    Message = "Account name already in use"
+                    Message = _localizer["RegisterFailed_AccountNameHasUsed"]
                 };
             }
 
@@ -451,7 +445,7 @@ namespace LSTY.Sdtd.WebApi.Controllers
 
                 return new AuthResult()
                 {
-                    Message = "Token has not yet expired"
+                    Message = _localizer["RefreshTokenFailed_TokenNotExpired"]
                 };
             }
             catch (SecurityTokenExpiredException)
@@ -465,7 +459,7 @@ namespace LSTY.Sdtd.WebApi.Controllers
                 {
                     return new AuthResult()
                     {
-                        Message = "Invalid tokens"
+                        Message = _localizer["RefreshTokenFailed_InvalidToken"]
                     };
                 }
 
@@ -477,7 +471,7 @@ namespace LSTY.Sdtd.WebApi.Controllers
                 {
                     return new AuthResult()
                     {
-                        Message = "Refresh Token does not exist"
+                        Message = _localizer["RefreshTokenFailed_TokenNotExist"]
                     };
                 }
 
@@ -487,7 +481,7 @@ namespace LSTY.Sdtd.WebApi.Controllers
                 {
                     return new AuthResult()
                     {
-                        Message = "Refresh Token has expired, user needs to re-login"
+                        Message = _localizer["RefreshTokenFailed_TokenExpired"]
                     };
                 }
 
@@ -497,7 +491,7 @@ namespace LSTY.Sdtd.WebApi.Controllers
                 {
                     return new AuthResult()
                     {
-                        Message = "Refresh Token has been revoked"
+                        Message = _localizer["RefreshTokenFailed_TokenHasRevoked"]
                     };
                 }
 
@@ -507,7 +501,7 @@ namespace LSTY.Sdtd.WebApi.Controllers
                 {
                     return new AuthResult()
                     {
-                        Message = "The token doesn't mateched the saved token"
+                        Message = _localizer["RefreshTokenFailed_TokenNotMateched"]
                     };
                 }
                 
@@ -526,7 +520,7 @@ namespace LSTY.Sdtd.WebApi.Controllers
             {
                 return new AuthResult()
                 {
-                    Message = "Signature validation failed"
+                    Message = _localizer["RefreshTokenFailed_InvalidSignature"]
                 };
             }
         }
@@ -563,7 +557,7 @@ namespace LSTY.Sdtd.WebApi.Controllers
                 IsRevorked = false,
                 Fk_UserId = userInfo.UserId,
                 CreatedUtcDate = utcNow,
-                ExpiryDate = utcNow.AddMonths(1)
+                ExpiryDate = utcNow.AddDays(7)
             };
 
             // 如果您只希望用户仅在一台设备上处于活动状态，则无需将多个刷新令牌存储在存储库中
@@ -574,6 +568,60 @@ namespace LSTY.Sdtd.WebApi.Controllers
             {
                 AccessToken = accessToken,
                 RefreshToken = refreshToken.Id
+            };
+        }
+
+        /// <summary>
+        /// 修改密码
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [DevelopmentResponseType(typeof(SucceededNullResult))]
+        public async Task<IRespResult> ChangePassword([FromBody] ChangePasswordParams model)
+        {
+            var user = (await _standardAccountRepository.QueryByIdAsync(nameof(T_StandardAccount.Fk_UserId), _userInfo.UserId)).FirstOrDefault();
+            if (user == null)
+            {
+                throw new Exception("修改密码异常，用户已被删除或异常访问");
+            }
+
+            string oldPassword = StringExtension.FormBase64(model.OldPasswordHash);
+            string newPassword = StringExtension.FormBase64(model.NewPasswordHash);
+
+            // 检查密码
+            bool right = CryptoTools.PBKDF2.VerifyPassword(oldPassword, user.PasswordHash, user.PasswordSalt);
+
+            if (right == false)
+            {
+                return new FailedResult()
+                {
+                    Message = _localizer["ChangePasswordFailed"]
+                };
+            }
+
+            CryptoTools.PBKDF2.HashPassword(newPassword, out string hashValue, out string saltBase64);
+            user.PasswordHash = hashValue;
+            user.PasswordSalt = saltBase64;
+
+            await _standardAccountRepository.UpdateAsync(user);
+
+            await _refreshTokenRepository.DeleteByIdAsync(nameof(T_RefreshToken.Fk_UserId), _userInfo.UserId);
+            return new SucceededNullResult();
+        }
+
+        /// <summary>
+        /// 获取当前用户资料
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<RespResult<V_UserDetails>> Profile()
+        {
+           var user = (await  _vUserDetailsRepository.QueryByIdAsync(nameof(V_UserDetails.UserId), _userInfo.UserId)).FirstOrDefault();
+            return new RespResult<V_UserDetails>() 
+            { 
+                Code = CustomStatusCode.Succeeded,
+                Data = user
             };
         }
     }

@@ -23,11 +23,6 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 string itemName = Request.Query["itemName"];
                 var dict = Localization.Dictionary;
 
-                if (string.IsNullOrEmpty(itemName) || dict.ContainsKey(itemName) == false)
-                {
-                    return FailedResult(message: "The specified itemName does not exist");
-                }
-
                 string language = Request.Query["language"];
 
                 if (string.IsNullOrEmpty(language))
@@ -36,6 +31,21 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 }
 
                 int languageIndex = Array.LastIndexOf(dict["KEY"], language);
+
+                if(languageIndex < 0)
+                {
+                    return FailedResult(message: "The specified language does not exist");
+                }
+
+                if (string.IsNullOrEmpty(itemName))
+                {
+                    return SucceededResult(dict.ToDictionary(p => p.Key, p => p.Value[languageIndex]));
+                }
+
+                if (dict.ContainsKey(itemName) == false)
+                {
+                    return FailedResult(message: "The specified itemName does not exist");
+                }
 
                 return SucceededResult(dict[itemName][languageIndex]);
             });

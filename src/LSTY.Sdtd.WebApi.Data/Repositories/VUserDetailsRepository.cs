@@ -4,7 +4,7 @@ using LSTY.Sdtd.WebApi.Data.Primitives;
 
 namespace LSTY.Sdtd.WebApi.Data.Repositories
 {
-    public class VUserRepository : DefaultRepository<V_User>, IVUserRepository
+    public class VUserDetailsRepository : DefaultRepository<V_UserDetails>, IVUserDetailsRepository
     {
 
     }

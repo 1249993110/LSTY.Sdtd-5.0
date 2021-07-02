@@ -24,7 +24,11 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
                 typeof(PlayersLocation),
                 typeof(IEnumerable<PlayersLocation>),
                 typeof(ClaimOwner),
-                typeof(LandClaims));
+                typeof(LandClaims),
+                typeof(GameItems),
+                typeof(GameEntitys),
+                typeof(IEnumerable<GameItems>),
+                typeof(IEnumerable<GameEntitys>));
 
             Describe["ExecuteConsoleCommand"] = description => description.AsSwagger(
                 with => with.Operation(
@@ -114,6 +118,24 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
                          .Parameter(new Parameter() { Name = "force", In = ParameterIn.Query, Default = false })
                          .Description("")
                          .Response((int)HttpStatusCode.OK, r => r.Description("result"))));
+
+            Describe["RetrieveAvailableItems"] = description => description.AsSwagger(
+            with => with.Operation(
+                op => op.SecurityRequirement(SecuritySchemes.ApiKey)
+                        .OperationId("RetrieveAvailableItems")
+                        .Tag("ServerManage")
+                        .Summary("获取可用的Items")
+                        .Description("")
+                        .Response((int)HttpStatusCode.OK, r => r.Schema<IEnumerable<GameItems>>(modelCatalog).Description("result"))));
+
+            Describe["RetrieveAvailableEntitys"] = description => description.AsSwagger(
+            with => with.Operation(
+                op => op.SecurityRequirement(SecuritySchemes.ApiKey)
+                        .OperationId("RetrieveAvailableEntitys")
+                        .Tag("ServerManage")
+                        .Summary("获取可用的实体")
+                        .Description("")
+                        .Response((int)HttpStatusCode.OK, r => r.Schema<IEnumerable<GameEntitys>>(modelCatalog).Description("result"))));
 
         }
     }

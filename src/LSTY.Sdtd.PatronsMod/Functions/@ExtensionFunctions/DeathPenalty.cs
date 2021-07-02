@@ -20,7 +20,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
         public int DeductPoints { get; set; } = 1;
 
         [ConfigNode(XmlNodeType.Attribute)]
-        public string DeductPointsTips { get; set; } = "[00FF00]You deduct points {2} by death penalty";
+        public string DeductPointsTips { get; set; } = "[00FF00]You deduct points 1 by death penalty";
 
         [ConfigNode(XmlNodeType.Attribute)]
         public bool AllowNegative { get; set; } = true;

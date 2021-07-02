@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LSTY.Sdtd.WebApi.Resources
+namespace LSTY.Sdtd.WebApi.Controllers.SystemManagement
 {
-    public struct AccountResource
+    public class PermissionController
     {
-
     }
 }
