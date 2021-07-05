@@ -24,13 +24,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                     return new Response() { StatusCode = HttpStatusCode.NotFound };
                 }
 
-                int index = iconName.LastIndexOf("__");
-                string iconColor = null;
-                if (index != -1)
-                {
-                    iconColor = iconName.Substring(index + 2, 6);
-                    iconName = iconName.Remove(index) + ".png";
-                }
+                string iconColor = Request.Query["iconColor"];
 
                 string iconPath = FindIconPath(iconName);
                 if (iconPath == null)
@@ -40,14 +34,24 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
 
                 Stream stream = File.OpenRead(iconPath);
 
-                if (iconColor == null)
+                if (string.IsNullOrEmpty(iconColor))
                 {
                     return Response.FromStream(stream, "image/png");
                 }
 
-                int r = Convert.ToInt32(iconColor.Substring(0, 2), 16);
-                int g = Convert.ToInt32(iconColor.Substring(2, 2), 16);
-                int b = Convert.ToInt32(iconColor.Substring(4, 2), 16);
+                int r, g, b;
+                try
+                {
+                    r = Convert.ToInt32(iconColor.Substring(0, 2), 16);
+                    g = Convert.ToInt32(iconColor.Substring(2, 2), 16);
+                    b = Convert.ToInt32(iconColor.Substring(4, 2), 16);
+                }
+                catch
+                {
+                    CustomLogger.Warn("Error in ItemIconsModule: Base conversion failed");
+                    return new Response() { StatusCode = HttpStatusCode.BadRequest };
+                }
+
 
                 using (var image = SKBitmap.Decode(stream))
                 {

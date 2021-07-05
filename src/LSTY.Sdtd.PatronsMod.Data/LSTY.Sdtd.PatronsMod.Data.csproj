@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net452</TargetFramework>
-    <Version>5.0.0.29</Version>
+    <Version>5.0.0.30</Version>
   </PropertyGroup>
   
   <ItemGroup>

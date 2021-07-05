@@ -12,7 +12,7 @@ namespace LSTY.Sdtd.PatronsMod.HarmonyPatchers
     public class World_SpawnEntityInWorld_Patcher
     {
         [HarmonyPostfix]
-        static void Postfix(Entity _entity)
+        public static void Postfix(Entity _entity)
         {
             CustomModEvents.RaiseEntitySpawnedEvent(_entity);
         }

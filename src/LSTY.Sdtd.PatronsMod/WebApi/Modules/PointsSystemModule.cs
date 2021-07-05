@@ -180,7 +180,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                     return FailedResult(message: "The specified steamId does not exist");
                 }
 
-                return SucceededResult(message: "Successfully reset " + count);
+                return SucceededResult(null, message: "Successfully reset " + count);
             });
 
             HttpPost("/RetrievePlayerPointsPaged", "RetrievePlayerPointsPaged", _ =>

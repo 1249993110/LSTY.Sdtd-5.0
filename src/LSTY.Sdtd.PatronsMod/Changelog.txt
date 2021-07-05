@@ -1,4 +1,9 @@
-5.0.0-alpha.29 (2021-07-02)
+5.0.0-alpha.30 (2021-07-05)
+1. Fix bug: Localization api return a error value
+2. Add parameter iconColor to api itemicons
+3. Add function KillReward related api
+
+5.0.0-alpha.29 (2021-07-05)
 1. *Add route prefix to api
 2. *Repair api RetrieveAvailableVariables
 3. Remove function ZombieKillReward

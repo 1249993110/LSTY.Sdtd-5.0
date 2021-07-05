@@ -19,8 +19,12 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
                     op => op.OperationId("itemicons")
                             .Tag("itemicons")
                             .Summary("获取服务器的图标")
-                            .Description("Get server' icons. You can get tinted icon by use like airConditioner__00FF00.png")
-                            .Parameter(new Parameter() { Name = "iconName", In = ParameterIn.Path, Required = true })
+                            .Description("Get server' icons. You can get tinted icon by use like airConditioner.png")
+                            .Parameters(new Parameter[] 
+                            { 
+                                new Parameter() { Name = "iconName", In = ParameterIn.Path, Required = true },
+                                new Parameter() { Name = "iconColor", In = ParameterIn.Query, Required = false }
+                            })
                             .Response((int)HttpStatusCode.NotFound, r => r.Description("The icon not found"))
                             .Response((int)HttpStatusCode.OK, r => r.Description("The icon"))));
         }
