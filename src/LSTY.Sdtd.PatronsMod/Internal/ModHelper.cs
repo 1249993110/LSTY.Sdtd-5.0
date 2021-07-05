@@ -20,6 +20,7 @@ namespace LSTY.Sdtd.PatronsMod.Internal
         {
             ModPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         }
+
         public static void RestartServer(bool force = false)
         {
             _isRestarting = true;
@@ -67,6 +68,11 @@ namespace LSTY.Sdtd.PatronsMod.Internal
 
         public static void SendMessage(ClientInfo receiver, ClientInfo sender, string message)
         {
+            if (string.IsNullOrEmpty(message))
+            {
+                return;
+            }
+
             string senderId;
             string senderName;
 
@@ -93,6 +99,11 @@ namespace LSTY.Sdtd.PatronsMod.Internal
         /// <param name="message"></param>
         public static void SendGlobalMessage(string message)
         {
+            if (string.IsNullOrEmpty(message))
+            {
+                return;
+            }
+
             GameManager.Instance.ChatMessageServer(null, EChatType.Global, -1, message, FunctionManager.CommonConfig.ServerName, false, null);
         }
 

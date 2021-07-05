@@ -20,7 +20,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
         public OnlineReward OnlineReward { get; set; }
 
         [ConfigNode(XmlNodeType.Element)]
-        public ZombieKillReward ZombieKillReward { get; set; }
+        public AutoRestart AutoRestart { get; set; }
 
         public string FunctionName => nameof(ExtensionFunctions);
 

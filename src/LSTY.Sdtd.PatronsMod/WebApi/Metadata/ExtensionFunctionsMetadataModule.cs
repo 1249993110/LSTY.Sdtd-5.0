@@ -78,32 +78,32 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
                            .Response((int)HttpStatusCode.OK, r => r.Description("Succeeded or failed"))));
             #endregion
 
-            #region ZombieKillReward
-            modelCatalog.AddModel<ZombieKillRewardConfigViewModel>();
+            #region AutoRestart
+            modelCatalog.AddModel<AutoRestartConfigViewModel>();
 
-            Describe["RetrieveZombieKillRewardConfig"] = description => description.AsSwagger(
+            Describe["RetrieveAutoRestartConfig"] = description => description.AsSwagger(
                 with => with.Operation(
                     op => op.SecurityRequirement(SecuritySchemes.ApiKey)
-                            .OperationId("RetrieveZombieKillRewardConfig")
+                            .OperationId("RetrieveAutoRestartConfig")
                             .Tag("ExtensionFunctions")
-                            .Summary("获取击杀僵尸配置")
+                            .Summary("获取自动重启配置")
                             .Description("")
-                            .Response(r => r.Schema<ZombieKillRewardConfigViewModel>().Description("The config of ZombieKillReward"))));
+                            .Response(r => r.Schema<AutoRestartConfigViewModel>().Description("The config of AutoRestart"))));
 
-            Describe["UpdateZombieKillRewardConfig"] = description => description.AsSwagger(
+            Describe["UpdateAutoRestartConfig"] = description => description.AsSwagger(
                 with => with.Operation(
                     op => op.SecurityRequirement(SecuritySchemes.ApiKey)
-                            .OperationId("UpdateZombieKillRewardConfig")
+                            .OperationId("UpdateAutoRestartConfig")
                             .Tag("ExtensionFunctions")
-                            .Summary("更新击杀僵尸配置")
+                            .Summary("更新自动重启配置")
                             .Description("")
-                            .BodyParameter(p => p.Description("A config object").Name(nameof(ZombieKillRewardConfigViewModel)).Schema<ZombieKillRewardConfigViewModel>())
+                            .BodyParameter(p => p.Description("A config object").Name(nameof(AutoRestartConfigViewModel)).Schema<AutoRestartConfigViewModel>())
                             .Response((int)HttpStatusCode.OK, r => r.Description("Succeeded or failed"))));
 
-            Describe["RetrieveAvailableVariables_ZombieKillReward"] = description => description.AsSwagger(
+            Describe["RetrieveAvailableVariables_AutoRestart"] = description => description.AsSwagger(
                with => with.Operation(
                    op => op.SecurityRequirement(SecuritySchemes.ApiKey)
-                           .OperationId("RetrieveAvailableVariables_ZombieKillReward")
+                           .OperationId("RetrieveAvailableVariables_AutoRestart")
                            .Tag("ExtensionFunctions")
                            .Summary("获取可用变量")
                            .Description("Get the availableVariables")

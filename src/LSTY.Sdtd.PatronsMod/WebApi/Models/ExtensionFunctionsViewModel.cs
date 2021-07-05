@@ -20,10 +20,11 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Models
         public string RewardPointsTips { get; set; } 
     }
 
-    public class ZombieKillRewardConfigViewModel : FunctionManageViewModel
+    public class AutoRestartConfigViewModel : FunctionManageViewModel
     {
-        public int TriggerRequiredCount { get; set; }
-        public int RewardPoints { get; set; } 
-        public string RewardPointsTips { get; set; }
+        public int Hours { get; set; }
+        public int Minutes { get; set; }
+        public int Delay { get; set; }
+        public string GlobalTips { get; set; }
     }
 }

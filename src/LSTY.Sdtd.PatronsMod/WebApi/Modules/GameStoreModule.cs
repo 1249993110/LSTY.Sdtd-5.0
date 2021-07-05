@@ -21,7 +21,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
             _goodsRepository = IocContainer.Resolve<IGoodsRepository>();
         }
 
-        public GameStoreModule()
+        public GameStoreModule() : base("/GameStore")
         {
             HttpGet("/RetrieveGameStoreConfig", "RetrieveGameStoreConfig", _ =>
             {
@@ -59,7 +59,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 return SucceededResult();
             });
 
-            HttpGet("/RetrieveAvailableVariables_GameStore", "RetrieveAvailableVariables_GameStore", _ =>
+            HttpGet("/RetrieveAvailableVariables", "RetrieveAvailableVariables_GameStore", _ =>
             {
                 return SucceededResult(FunctionManager.GameStore.AvailableVariables);
             });

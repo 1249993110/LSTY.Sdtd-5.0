@@ -21,7 +21,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
             _lotteryRepository = IocContainer.Resolve<ILotteryRepository>();
         }
 
-        public LotterySystemModule()
+        public LotterySystemModule() : base("/LotterySystem")
         {
             HttpGet("/RetrieveLotterySystemConfig", "RetrieveLotterySystemConfig", _ =>
             {
@@ -63,7 +63,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 return SucceededResult();
             });
 
-            HttpGet("/RetrieveAvailableVariables_LotterySystem", "RetrieveAvailableVariables_LotterySystem", _ =>
+            HttpGet("/RetrieveAvailableVariables", "RetrieveAvailableVariables_LotterySystem", _ =>
             {
                 return SucceededResult(FunctionManager.LotterySystem.AvailableVariables);
             });

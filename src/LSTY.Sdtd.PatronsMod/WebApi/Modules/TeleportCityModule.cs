@@ -21,7 +21,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
             _cityPositionRepository = IocContainer.Resolve<ICityPositionRepository>();
         }
 
-        public TeleportCityModule()
+        public TeleportCityModule() : base("/TeleportCity")
         {
             HttpGet("/RetrieveTeleportCityConfig", "RetrieveTeleportCityConfig", _ =>
             {
@@ -63,7 +63,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 return SucceededResult();
             });
 
-            HttpGet("/RetrieveAvailableVariables_TeleportCity", "RetrieveAvailableVariables_TeleportCity", _ =>
+            HttpGet("/RetrieveAvailableVariables", "RetrieveAvailableVariables_TeleportCity", _ =>
             {
                 return SucceededResult(FunctionManager.TeleportCity.AvailableVariables);
             });

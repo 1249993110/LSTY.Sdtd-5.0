@@ -12,7 +12,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
 {
     public class GameNoticeModule : ApiModuleBase
     {
-        public GameNoticeModule()
+        public GameNoticeModule() : base("/GameNotice")
         {
             HttpGet("/RetrieveGameNoticeConfig", "RetrieveGameNoticeConfig", _ =>
             {
@@ -51,7 +51,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 return SucceededResult();
             });
 
-            HttpGet("/RetrieveAvailableVariables_GameNotice", "RetrieveAvailableVariables_GameNotice", _ =>
+            HttpGet("/RetrieveAvailableVariables", "RetrieveAvailableVariables_GameNotice", _ =>
             {
                 return SucceededResult(FunctionManager.GameNotice.AvailableVariables);
             });

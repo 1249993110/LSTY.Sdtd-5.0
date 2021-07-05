@@ -97,14 +97,21 @@ namespace LSTY.Sdtd.PatronsMod.Functions
 
         private void PlayerSpawnedInWorld(ClientInfo clientInfo, RespawnType respawnType, Vector3i position)
         {
-            switch (respawnType)
+            try
             {
-                // New player spawning
-                case RespawnType.EnterMultiplayer:
-                // Old player spawning
-                case RespawnType.JoinMultiplayer:
-                    ModHelper.SendMessage(clientInfo, null, FormatCmd(WelcomeNotice, LiveDataContainer.OnlinePlayers[clientInfo.playerId]));
-                    break;
+                switch (respawnType)
+                {
+                    // New player spawning
+                    case RespawnType.EnterMultiplayer:
+                    // Old player spawning
+                    case RespawnType.JoinMultiplayer:
+                        ModHelper.SendMessage(clientInfo, null, FormatCmd(WelcomeNotice, LiveDataContainer.OnlinePlayers[clientInfo.playerId]));
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomLogger.Warn(ex, "Error in GameNotice.PlayerSpawnedInWorld");
             }
         }
     }

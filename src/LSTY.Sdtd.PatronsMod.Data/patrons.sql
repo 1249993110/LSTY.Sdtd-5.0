@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS T_Goods(
 	Quality INTEGER,				--品质
 	Price INTEGER,					--售价
 	ContentType TEXT NOT NULL,		--商品类型
-	FOREIGN KEY(ContentType) REFERENCES T_ContentTypes(Name) ON DELETE CASCADE
+	FOREIGN KEY(ContentType) REFERENCES T_ContentTypes(Name)
 );
 --创建索引
 CREATE UNIQUE INDEX IF NOT EXISTS Index_Goods ON T_Goods(BuyCmd);
@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS T_Lottery(
 	[Count] INTEGER,				--数量
 	Quality INTEGER,				--品质
 	ContentType TEXT NOT NULL,		--奖品类型
-	FOREIGN KEY(ContentType) REFERENCES T_ContentTypes(Name) ON DELETE CASCADE
+	FOREIGN KEY(ContentType) REFERENCES T_ContentTypes(Name)
 );
 
 --聊天日志
@@ -135,3 +135,65 @@ CREATE TABLE IF NOT EXISTS T_AntiCheatLog(
 
 CREATE VIEW IF NOT EXISTS V_AntiCheatLog AS
 SELECT _log.Id,_log.CreatedDate,_log.SteamId,_log.MessageEn,_log.MessageZh,player.Name as PlayerName FROM T_AntiCheatLog AS _log LEFT JOIN T_Player AS player ON _log.SteamId = player.SteamId;
+
+--CDKey兑换
+CREATE TABLE IF NOT EXISTS T_CDKey(
+	Id INTEGER PRIMARY KEY AUTOINCREMENT,	
+	CreatedDate TIMESTAMP DEFAULT (DATETIME(CURRENT_TIMESTAMP,'LOCALTIME')),
+	[Key] TEXT NOT NULL,			--key
+	MaxExchangeCount INTEGER,		--最大兑换次数
+	ExpiryDate TIMESTAMP			--到期时间，小于或等于0则永远不会失效
+);
+--创建索引
+CREATE UNIQUE INDEX IF NOT EXISTS Index_Value ON T_CDKey([Key]);
+
+--CDKey兑换记录
+CREATE TABLE IF NOT EXISTS T_CDKeyExchangeLog(
+	Id INTEGER PRIMARY KEY AUTOINCREMENT,	
+	CreatedDate TIMESTAMP DEFAULT (DATETIME(CURRENT_TIMESTAMP,'LOCALTIME')),
+	SteamId TEXT,
+	CDKey TEXT,
+	FOREIGN KEY(CDKey) REFERENCES T_CDKey([Key])
+);
+
+--成就奖励
+CREATE TABLE IF NOT EXISTS T_AchievementReward(
+	Id TEXT PRIMARY KEY,			--唯一ID	
+	CreatedDate TIMESTAMP DEFAULT (DATETIME(CURRENT_TIMESTAMP,'LOCALTIME')),
+	Name TEXT NOT NULL,				--名称
+	TriggerVariable TEXT NOT NULL,	--触发变量
+	TriggerRequiredCount INTEGER,	--触发数量
+	RewardContent TEXT NOT NULL,	--内容 物品/方块/实体/指令/积分
+	RewardCount INTEGER,			--数量
+	RewardQuality INTEGER,			--品质
+	RewardContentType TEXT NOT NULL,--奖品类型
+	FOREIGN KEY(RewardContentType) REFERENCES T_ContentTypes(Name)
+);
+--创建索引
+CREATE UNIQUE INDEX IF NOT EXISTS Index_Name ON T_AchievementReward(Name);
+
+--成就奖励记录
+CREATE TABLE IF NOT EXISTS T_AchievementRewardLog(
+	Id INTEGER PRIMARY KEY AUTOINCREMENT,	
+	CreatedDate TIMESTAMP DEFAULT (DATETIME(CURRENT_TIMESTAMP,'LOCALTIME')),
+	SteamId TEXT,
+	AchievementName TEXT,
+	FOREIGN KEY(AchievementName) REFERENCES T_AchievementReward(Name)
+);
+
+--悬赏名单
+CREATE TABLE IF NOT EXISTS T_KillReward(
+	Id TEXT PRIMARY KEY,			--唯一ID
+	CreatedDate TIMESTAMP DEFAULT (DATETIME(CURRENT_TIMESTAMP,'LOCALTIME')),
+	SteamIdOrEntityName TEXT NOT NULL,	--SteamId或实体名称
+	FriendlyName TEXT NOT NULL,		--友好名称
+	RewardContent TEXT NOT NULL,	--内容 物品/方块/实体/指令/积分
+	RewardCount INTEGER,			--数量
+	RewardQuality INTEGER,			--品质
+	RewardContentType TEXT NOT NULL,--奖品类型
+	SpawnedTips TEXT,				--生成提示
+	KilledTips TEXT,				--击杀提示
+	FOREIGN KEY(RewardContentType) REFERENCES T_ContentTypes(Name)
+);
+--创建索引
+CREATE UNIQUE INDEX IF NOT EXISTS Index_SteamIdOrEntityName ON T_KillReward(SteamIdOrEntityName);

@@ -20,7 +20,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
             _inventoryRepository = IocContainer.Resolve<IInventoryRepository>();
         }
 
-        public PlayersModule()
+        public PlayersModule() : base("/Players")
         {
             HttpGet("/RetrieveOnlinePlayers", "RetrieveOnlinePlayers", _ =>
             {

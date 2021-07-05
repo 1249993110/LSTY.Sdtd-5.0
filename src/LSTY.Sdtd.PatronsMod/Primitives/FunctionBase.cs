@@ -80,11 +80,14 @@ namespace LSTY.Sdtd.PatronsMod.Primitives
         /// </summary>
         private void PrivateDisableFunction()
         {
-            // If the function is not disabled 
-            if (_isRunning)
+            lock (this)
             {
-                _isRunning = false;
-                DisableFunction();
+                // If the function is not disabled 
+                if (_isRunning)
+                {
+                    _isRunning = false;
+                    DisableFunction();
+                }
             }
         }
 
@@ -93,11 +96,20 @@ namespace LSTY.Sdtd.PatronsMod.Primitives
         /// </summary>
         private void PrivateEnableFunction()
         {
-            // If the function is not running
-            if (_isRunning == false && _isEnabled && LiveDataContainer.OnlinePlayers.Count > 0)
+            lock (this)
             {
-                _isRunning = true;
-                EnableFunction();
+                // If the function is not running
+                if (_isRunning == false && _isEnabled)
+                {
+                    _isRunning = EnableFunctionNonePlayer();
+
+                    // only there are players on the server
+                    if (LiveDataContainer.OnlinePlayers.Count > 0)
+                    {
+                        _isRunning = true;
+                        EnableFunction();
+                    }
+                }
             }
         }
 
@@ -118,6 +130,14 @@ namespace LSTY.Sdtd.PatronsMod.Primitives
             {
                 _chatHooks.Add(_onPlayerChatHooked);
             }
+        }
+
+        /// <summary>
+        /// Enabled function, regardless of whether there are players on the server , return value will set to _isRunning
+        /// </summary>
+        protected virtual bool EnableFunctionNonePlayer()
+        {
+            return false;
         }
 
         private static bool ChatMessage(ClientInfo clientInfo, EChatType eChatType, int senderId, string message, string mainName,

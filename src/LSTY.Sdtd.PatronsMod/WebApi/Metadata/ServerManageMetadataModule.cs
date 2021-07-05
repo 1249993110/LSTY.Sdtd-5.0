@@ -25,9 +25,9 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
                 typeof(IEnumerable<PlayersLocation>),
                 typeof(ClaimOwner),
                 typeof(LandClaims),
-                typeof(GameItems),
+                typeof(GameItemBlocks),
                 typeof(GameEntitys),
-                typeof(IEnumerable<GameItems>),
+                typeof(IEnumerable<GameItemBlocks>),
                 typeof(IEnumerable<GameEntitys>));
 
             Describe["ExecuteConsoleCommand"] = description => description.AsSwagger(
@@ -119,21 +119,60 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
                          .Description("")
                          .Response((int)HttpStatusCode.OK, r => r.Description("result"))));
 
-            Describe["RetrieveAvailableItems"] = description => description.AsSwagger(
+            Describe["RetrieveAllAvailableItems"] = description => description.AsSwagger(
             with => with.Operation(
                 op => op.SecurityRequirement(SecuritySchemes.ApiKey)
-                        .OperationId("RetrieveAvailableItems")
+                        .OperationId("RetrieveAllAvailableItems")
                         .Tag("ServerManage")
                         .Summary("获取可用的Items")
                         .Description("")
-                        .Response((int)HttpStatusCode.OK, r => r.Schema<IEnumerable<GameItems>>(modelCatalog).Description("result"))));
+                        .Response((int)HttpStatusCode.OK, r => r.Schema<IEnumerable<GameItemBlocks>>(modelCatalog).Description("result"))));
 
-            Describe["RetrieveAvailableEntitys"] = description => description.AsSwagger(
+            Describe["RetrieveAvailableItemsPaged"] = description => description.AsSwagger(
             with => with.Operation(
                 op => op.SecurityRequirement(SecuritySchemes.ApiKey)
-                        .OperationId("RetrieveAvailableEntitys")
+                        .OperationId("RetrieveAvailableItemsPaged")
+                        .Tag("ServerManage")
+                        .Summary("通过分页参数获取可用的Items")
+                        .BodyParameter(p => p.Description("Query params").Name(nameof(PaginationQueryParams)).Schema<PaginationQueryParams>())
+                        .Description("")
+                        .Response((int)HttpStatusCode.OK, r => r.Schema<IEnumerable<GameItemBlocks>>(modelCatalog).Description("result"))));
+
+            Describe["RetrieveAllAvailableBlocks"] = description => description.AsSwagger(
+            with => with.Operation(
+                op => op.SecurityRequirement(SecuritySchemes.ApiKey)
+                        .OperationId("RetrieveAllAvailableBlocks")
+                        .Tag("ServerManage")
+                        .Summary("获取可用的Blocks")
+                        .Description("")
+                        .Response((int)HttpStatusCode.OK, r => r.Schema<IEnumerable<GameItemBlocks>>(modelCatalog).Description("result"))));
+
+            Describe["RetrieveAvailableBlocksPaged"] = description => description.AsSwagger(
+           with => with.Operation(
+               op => op.SecurityRequirement(SecuritySchemes.ApiKey)
+                       .OperationId("RetrieveAvailableBlocksPaged")
+                       .Tag("ServerManage")
+                       .Summary("通过分页参数获取可用的Blocks")
+                       .BodyParameter(p => p.Description("Query params").Name(nameof(PaginationQueryParams)).Schema<PaginationQueryParams>())
+                       .Description("")
+                       .Response((int)HttpStatusCode.OK, r => r.Schema<IEnumerable<GameItemBlocks>>(modelCatalog).Description("result"))));
+
+            Describe["RetrieveAllAvailableEntitys"] = description => description.AsSwagger(
+            with => with.Operation(
+                op => op.SecurityRequirement(SecuritySchemes.ApiKey)
+                        .OperationId("RetrieveAllAvailableEntitys")
                         .Tag("ServerManage")
                         .Summary("获取可用的实体")
+                        .Description("")
+                        .Response((int)HttpStatusCode.OK, r => r.Schema<IEnumerable<GameEntitys>>(modelCatalog).Description("result"))));
+
+            Describe["RetrieveAvailableEntitysPaged"] = description => description.AsSwagger(
+            with => with.Operation(
+                op => op.SecurityRequirement(SecuritySchemes.ApiKey)
+                        .OperationId("RetrieveAvailableEntitysPaged")
+                        .Tag("ServerManage")
+                        .Summary("通过分页参数获取可用的实体")
+                        .BodyParameter(p => p.Description("Query params").Name(nameof(PaginationQueryParams)).Schema<PaginationQueryParams>())
                         .Description("")
                         .Response((int)HttpStatusCode.OK, r => r.Schema<IEnumerable<GameEntitys>>(modelCatalog).Description("result"))));
 

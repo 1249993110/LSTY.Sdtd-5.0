@@ -16,7 +16,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
     {
         private static readonly IVChatLogRepository _vChatLogRepository = IocContainer.Resolve<IVChatLogRepository>();
 
-        public ChatLogModule()
+        public ChatLogModule() : base("/ChatLog")
         {
             HttpGet("/RetrieveChatLogBySteamId", "RetrieveChatLogBySteamId", _ =>
             {
@@ -77,7 +77,13 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                     "CreatedDate DESC",
                     param);
 
-                return SucceededResult(data);
+                PaginationQueryResult paginationQueryResult = new PaginationQueryResult()
+                {
+                    Items = data,
+                    Total = _vChatLogRepository.QueryRecordCount()
+                };
+
+                return SucceededResult(paginationQueryResult);
             });
         }
     }

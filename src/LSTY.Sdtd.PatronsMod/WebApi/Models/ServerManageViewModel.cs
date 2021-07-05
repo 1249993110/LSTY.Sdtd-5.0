@@ -78,11 +78,10 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Models
         public List<ClaimOwner> ClaimOwners { get; set; }
     }
 
-    public class GameItems
+    public class GameItemBlocks
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public bool IsBlock { get; set; }
     }
 
     public class GameEntitys

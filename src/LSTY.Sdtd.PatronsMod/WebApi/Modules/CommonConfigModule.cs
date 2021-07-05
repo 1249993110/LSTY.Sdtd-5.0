@@ -10,7 +10,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
 {
     public class CommonConfigModule : ApiModuleBase
     {
-        public CommonConfigModule()
+        public CommonConfigModule() : base("/CommonConfig")
         {
             HttpGet("/RetrieveCommonConfig", "RetrieveCommonConfig", _ =>
             {

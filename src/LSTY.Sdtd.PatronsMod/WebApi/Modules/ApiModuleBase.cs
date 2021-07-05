@@ -13,6 +13,10 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
         {
         }
 
+        protected ApiModuleBase(string modulePath) : base("/api" + modulePath)
+        {
+        }
+
         protected void HttpGet(string path, string operationId, Func<dynamic, Response> action)
         {
             Get<Response>(path, action, null, operationId);
@@ -46,14 +50,35 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
         }
 
         #region SucceededResult
-        protected virtual Response SucceededResult(object data = null, string message = null, string title = "OK")
+        protected virtual Response SucceededResult()
+        {
+            ResponseResult responseResult = new ResponseResult()
+            {
+                Code = StatusCode.Succeeded,
+                Title = "OK"
+            };
+
+            return responseResult.ToResponse(HttpStatusCode.OK);
+        }
+        protected virtual Response SucceededResult(object data, string title = "OK")
+        {
+            ResponseResult responseResult = new ResponseResult()
+            {
+                Code = StatusCode.Succeeded,
+                Data = data,
+                Title = title
+            };
+
+            return responseResult.ToResponse(HttpStatusCode.OK);
+        }
+        protected virtual Response SucceededResult(object data, string message, string title = "OK")
         {
             ResponseResult responseResult = new ResponseResult()
             {
                 Code = StatusCode.Succeeded,
                 Data = data,
                 Message = message,
-                Title = title,
+                Title = title
             };
 
             return responseResult.ToResponse(HttpStatusCode.OK);
@@ -61,7 +86,18 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
         #endregion
 
         #region FailedResult
-        protected virtual Response FailedResult(object data = null, string message = null, string title = "Error")
+        protected virtual Response FailedResult(string message, string title = "Error")
+        {
+            ResponseResult responseResult = new ResponseResult()
+            {
+                Code = StatusCode.Failed,
+                Message = message,
+                Title = title,
+            };
+
+            return responseResult.ToResponse(HttpStatusCode.OK);
+        }
+        protected virtual Response FailedResult(object data, string message, string title = "Error")
         {
             ResponseResult responseResult = new ResponseResult()
             {

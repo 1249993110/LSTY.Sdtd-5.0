@@ -12,7 +12,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
 {
     public class TeleportFriendModule : ApiModuleBase
     {
-        public TeleportFriendModule()
+        public TeleportFriendModule() : base("/TeleportFriend")
         {
             HttpGet("/RetrieveTeleportFriendConfig", "RetrieveTeleportFriendConfig", _ =>
             {
@@ -53,7 +53,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 return SucceededResult();
             });
 
-            HttpGet("/RetrieveAvailableVariables_TeleportFriend", "RetrieveAvailableVariables_TeleportFriend", _ =>
+            HttpGet("/RetrieveAvailableVariables", "RetrieveAvailableVariables_TeleportFriend", _ =>
             {
                 return SucceededResult(FunctionManager.TeleportFriend.AvailableVariables);
             });

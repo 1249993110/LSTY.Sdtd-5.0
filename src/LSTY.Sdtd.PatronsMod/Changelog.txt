@@ -1,3 +1,18 @@
+5.0.0-alpha.29 (2021-07-02)
+1. *Add route prefix to api
+2. *Repair api RetrieveAvailableVariables
+3. Remove function ZombieKillReward
+4. Remove api RetrieveAvailableItems
+5. Remove api RetrieveAvailableEntitys
+6. Add function KillReward
+7. Add api RetrieveAllAvailableItems
+8. Add api RetrieveAllAvailableBlocks
+9. Add api RetrieveAllAvailableEntitys
+10. Add api RetrieveAvailableItemsPaged
+11. Add api RetrieveAvailableBlocksPaged
+12. Add api RetrieveAvailableEntitysPaged
+13. Add function AutoRestart
+
 5.0.0-alpha.28 (2021-06-29)
 1. Api RetrieveLocalization: if itemName is null, then return a localization dictionary
 2. Add api RetrieveAvailableItems

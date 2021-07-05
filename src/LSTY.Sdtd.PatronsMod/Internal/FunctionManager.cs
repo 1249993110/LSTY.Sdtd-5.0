@@ -23,6 +23,7 @@ namespace LSTY.Sdtd.PatronsMod.Internal
         public static Functions.GameStore GameStore;
         public static Functions.LotterySystem LotterySystem;
         public static Functions.ExtensionFunctions ExtensionFunctions;
+        public static Functions.KillReward KillReward;
 
 #pragma warning restore 0649
         [CatchException("Error in FunctionManager.Init")]

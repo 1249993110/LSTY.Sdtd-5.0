@@ -21,7 +21,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
             _pointsRepository = IocContainer.Resolve<IPointsRepository>();
         }
 
-        public PointsSystemModule()
+        public PointsSystemModule() : base("/PointsSystem")
         {
             HttpGet("/RetrievePointsSystemConfig", "RetrievePointsSystemConfig", _ =>
             {
@@ -65,7 +65,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 return SucceededResult();
             });
 
-            HttpGet("/RetrieveAvailableVariables_PointsSystem", "RetrieveAvailableVariables_PointsSystem", _ =>
+            HttpGet("/RetrieveAvailableVariables", "RetrieveAvailableVariables_PointsSystem", _ =>
             {
                 var pointsSystem = FunctionManager.PointsSystem;
 
@@ -183,7 +183,6 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 return SucceededResult(message: "Successfully reset " + count);
             });
 
-
             HttpPost("/RetrievePlayerPointsPaged", "RetrievePlayerPointsPaged", _ =>
             {
                 var queryParams = this.Bind<PaginationQueryParams>();
@@ -195,7 +194,13 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                     "CreatedDate DESC",
                     null);
 
-                return SucceededResult(data);
+                PaginationQueryResult paginationQueryResult = new PaginationQueryResult()
+                {
+                    Items = data,
+                    Total = _pointsRepository.QueryRecordCount()
+                };
+
+                return SucceededResult(paginationQueryResult);
             });
         }
     }

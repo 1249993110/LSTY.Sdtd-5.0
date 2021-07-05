@@ -21,7 +21,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
             _homePositionRepository = IocContainer.Resolve<IHomePositionRepository>();
         }
 
-        public TeleportHomeModule()
+        public TeleportHomeModule() : base("/TeleportHome")
         {
             HttpGet("/RetrieveTeleportHomeConfig", "RetrieveTeleportHomeConfig", _ =>
             {
@@ -87,7 +87,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 return SucceededResult();
             });
 
-            HttpGet("/RetrieveAvailableVariables_TeleportHome", "RetrieveAvailableVariables_TeleportHome", _ =>
+            HttpGet("/RetrieveAvailableVariables", "RetrieveAvailableVariables_TeleportHome", _ =>
             {
                 return SucceededResult(FunctionManager.TeleportHome.AvailableVariables);
             });

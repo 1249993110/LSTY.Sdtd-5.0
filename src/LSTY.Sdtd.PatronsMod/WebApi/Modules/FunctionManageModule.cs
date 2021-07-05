@@ -12,7 +12,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
 {
     public class FunctionManageModule : ApiModuleBase
     {
-        public FunctionManageModule()
+        public FunctionManageModule() : base("/FunctionManage")
         {
             HttpGet("/RetrieveFunctionState", "RetrieveFunctionState", _ =>
             {

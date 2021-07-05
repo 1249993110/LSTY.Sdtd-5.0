@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net452</TargetFramework>
-    <Version>5.0.0.28</Version>
+    <Version>5.0.0.29</Version>
   </PropertyGroup>
   
   <ItemGroup>
@@ -14,9 +14,6 @@
     <PackageReference Include="IceCoffee.Common" Version="1.0.0.28" />
     <PackageReference Include="IceCoffee.DbCore" Version="1.0.0.28" />
     <PackageReference Include="PostSharp" Version="6.9.4" />
-  </ItemGroup>
-  
-  <ItemGroup>
   </ItemGroup>
   
 </Project>

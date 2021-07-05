@@ -25,7 +25,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
             _playerRepository = IocContainer.Resolve<IPlayerRepository>();
         }
 
-        public ServerManageModule()
+        public ServerManageModule() : base("/ServerManage")
         {
             HttpGet("/ExecuteConsoleCommand", "ExecuteConsoleCommand", _ =>
             {
@@ -314,61 +314,158 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 return SucceededResult();
             });
 
-            HttpGet("/RetrieveAvailableItems", "RetrieveAvailableItems", _ =>
+            HttpGet("/RetrieveAllAvailableItems", "RetrieveAllAvailableItems", _ =>
             {
                 if (ModHelper.GameStartDone == false)
                 {
                     return FailedResult("Server is starting, please wait");
                 }
 
-                if(ItemClass.list == null)
+                return SucceededResult(GetGameItemBlocks(false));
+            });
+
+            HttpPost("/RetrieveAvailableItemsPaged", "RetrieveAvailableItemsPaged", _ =>
+            {
+                if (ModHelper.GameStartDone == false)
                 {
-                    // 确保已运行指定类型的类型初始值设定项（也称为静态构造函数）。
-                    System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(WorldStaticData).TypeHandle);
+                    return FailedResult("Server is starting, please wait");
                 }
-                
-                List<GameItems> data = new List<GameItems>();
+
+                var queryParams = this.Bind<PaginationQueryParams>();
+
+                var data = GetGameItemBlocks(false);
+
+                PaginationQueryResult paginationQueryResult = new PaginationQueryResult()
+                {
+                    Items = data.Skip((queryParams.PageIndex - 1) * queryParams.PageSize).Take(queryParams.PageSize),
+                    Total = data.Count
+                };
+
+                return SucceededResult(paginationQueryResult);
+            });
+
+            HttpGet("/RetrieveAllAvailableBlocks", "RetrieveAllAvailableBlocks", _ =>
+            {
+                if (ModHelper.GameStartDone == false)
+                {
+                    return FailedResult("Server is starting, please wait");
+                }
+
+                return SucceededResult(GetGameItemBlocks(true));
+            });
+
+            HttpPost("/RetrieveAvailableBlocksPaged", "RetrieveAvailableBlocksPaged", _ =>
+            {
+                if (ModHelper.GameStartDone == false)
+                {
+                    return FailedResult("Server is starting, please wait");
+                }
+
+                var queryParams = this.Bind<PaginationQueryParams>();
+
+                var data = GetGameItemBlocks(true);
+
+                PaginationQueryResult paginationQueryResult = new PaginationQueryResult()
+                {
+                    Items = data.Skip((queryParams.PageIndex - 1) * queryParams.PageSize).Take(queryParams.PageSize),
+                    Total = data.Count
+                };
+
+                return SucceededResult(paginationQueryResult);
+            });
+
+            HttpGet("/RetrieveAllAvailableEntitys", "RetrieveAllAvailableEntitys", _ =>
+            {
+                if (ModHelper.GameStartDone == false)
+                {
+                    return FailedResult("Server is starting, please wait");
+                }
+
+                return SucceededResult(GetGameEntitys());
+            });
+
+            HttpPost("/RetrieveAvailableEntitysPaged", "RetrieveAvailableEntitysPaged", _ =>
+            {
+                if (ModHelper.GameStartDone == false)
+                {
+                    return FailedResult("Server is starting, please wait");
+                }
+
+                var queryParams = this.Bind<PaginationQueryParams>();
+
+                var data = GetGameEntitys();
+
+                PaginationQueryResult paginationQueryResult = new PaginationQueryResult()
+                {
+                    Items = data.Skip((queryParams.PageIndex - 1) * queryParams.PageSize).Take(queryParams.PageSize),
+                    Total = data.Count
+                };
+
+                return SucceededResult(paginationQueryResult);
+            });
+        }
+
+        private static List<GameItemBlocks> GetGameItemBlocks(bool getBlock)
+        {
+            if (ItemClass.list == null)
+            {
+                // 确保已运行指定类型的类型初始值设定项（也称为静态构造函数）。
+                System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(WorldStaticData).TypeHandle);
+            }
+
+            List<GameItemBlocks> data = new List<GameItemBlocks>();
+
+            if (getBlock)
+            {
                 foreach (var item in ItemClass.list)
                 {
-                    if(item != null)
+                    if (item != null && item.IsBlock())
                     {
-                        data.Add(new GameItems()
+                        data.Add(new GameItemBlocks()
                         {
                             Id = item.Id,
-                            IsBlock = item.IsBlock(),
                             Name = item.Name
                         });
                     }
                 }
-
-                return SucceededResult(data);
-            });
-
-            HttpGet("/RetrieveAvailableEntitys", "RetrieveAvailableEntitys", _ =>
+            }
+            else
             {
-                if (ModHelper.GameStartDone == false)
+                foreach (var item in ItemClass.list)
                 {
-                    return FailedResult("Server is starting, please wait");
-                }
-
-                int num = 1;
-                List<GameEntitys> data = new List<GameEntitys>();
-                foreach (var item in EntityClass.list.Dict)
-                {
-                    if (item.Value.bAllowUserInstantiate)
+                    if (item != null && item.IsBlock() == false)
                     {
-                        data.Add(new GameEntitys()
+                        data.Add(new GameItemBlocks()
                         {
-                            Id = num,
-                            Name = item.Value.entityClassName
+                            Id = item.Id,
+                            Name = item.Name
                         });
-                        
-                        ++num;
                     }
                 }
+            }
 
-                return SucceededResult(data);
-            });
+            return data;
+        }
+
+        private static List<GameEntitys> GetGameEntitys()
+        {
+            int num = 1;
+            List<GameEntitys> data = new List<GameEntitys>();
+            foreach (var item in EntityClass.list.Dict.Values)
+            {
+                if (item.bAllowUserInstantiate)
+                {
+                    data.Add(new GameEntitys()
+                    {
+                        Id = num,
+                        Name = item.entityClassName
+                    });
+
+                    ++num;
+                }
+            }
+
+            return data;
         }
     }
 }

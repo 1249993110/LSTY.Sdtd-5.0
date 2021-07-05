@@ -60,7 +60,7 @@ namespace LSTY.Sdtd.PatronsMod
 
         public static void Load<T>(T obj) where T : IFunction
         {
-            if (System.IO.File.Exists(_functionConfigPath) == false)
+            if (File.Exists(_functionConfigPath) == false)
             {
                 return;
             }
@@ -68,7 +68,11 @@ namespace LSTY.Sdtd.PatronsMod
             try
             {
                 XmlDocument doc = new XmlDocument();
-                doc.Load(_functionConfigPath);
+
+                using (FileStream fs = new FileStream(_functionConfigPath, FileMode.Open, FileAccess.Read))
+                {
+                    doc.Load(fs);
+                }
 
                 // Take the class name inherited from FunctionBase as the parent node.
                 XmlNode baseNode = doc.SelectSingleNode(_baseNodeName + "/" + obj.FunctionName);
@@ -80,6 +84,7 @@ namespace LSTY.Sdtd.PatronsMod
                 CustomLogger.Error(ex, "Failed to load configuration of function: " + obj.FunctionName);
             }
         }
+        
         [CatchException("Failed to load configuration")]
         public static void LoadAll()
         {
@@ -92,7 +97,10 @@ namespace LSTY.Sdtd.PatronsMod
             var functions = FunctionManager.Functions;
 
             XmlDocument doc = new XmlDocument();
-            doc.Load(_functionConfigPath);
+            using (FileStream fs = new FileStream(_functionConfigPath, FileMode.Open, FileAccess.Read))
+            {
+                doc.Load(fs);
+            }
 
             XmlNode baseNode = doc.SelectSingleNode(_baseNodeName);
 
@@ -101,7 +109,7 @@ namespace LSTY.Sdtd.PatronsMod
 
             foreach (var function in functions)
             {
-                if(function is ISubFunction)
+                if (function is ISubFunction)
                 {
                     continue;
                 }
@@ -125,7 +133,7 @@ namespace LSTY.Sdtd.PatronsMod
         {
             XmlDocument doc = new XmlDocument();
 
-            if (System.IO.File.Exists(_functionConfigPath) == false)
+            if (File.Exists(_functionConfigPath) == false)
             {
                 XmlDeclaration dec = doc.CreateXmlDeclaration("1.0", "utf-8", null);
                 doc.AppendChild(dec);
@@ -133,7 +141,10 @@ namespace LSTY.Sdtd.PatronsMod
             }
             else
             {
-                doc.Load(_functionConfigPath);
+                using (FileStream fs = new FileStream(_functionConfigPath, FileMode.Open, FileAccess.Read))
+                {
+                    doc.Load(fs);
+                }
             }
 
             return doc;
@@ -144,6 +155,7 @@ namespace LSTY.Sdtd.PatronsMod
             try
             {
                 _fileWatcher.EnableRaisingEvents = false;
+                _fileWatcher.Dispose();
                 _fileWatcher = null;
 
                 XmlDocument contextDoc = GetDocument();
@@ -155,7 +167,10 @@ namespace LSTY.Sdtd.PatronsMod
 
                 XmlHelper.SaveConfig(obj, contextDoc, baseNode);
 
-                contextDoc.Save(_functionConfigPath);
+                using (FileStream fs = new FileStream(_functionConfigPath, FileMode.OpenOrCreate, FileAccess.Write))
+                {
+                    contextDoc.Save(fs);
+                }
             }
             catch (Exception ex)
             {
@@ -208,7 +223,10 @@ namespace LSTY.Sdtd.PatronsMod
                     }
                 }
 
-                doc.Save(_functionConfigPath);
+                using (FileStream fs = new FileStream(_functionConfigPath, FileMode.OpenOrCreate, FileAccess.Write))
+                {
+                    doc.Save(fs);
+                }
 
                 CustomLogger.Info("SaveAll");
             }

@@ -12,9 +12,9 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
     {
         private static MapTileCache _mapTileCache = MapRendering.MapRender.GetTileCache();
 
-        public MapModule()
+        public MapModule() : base("/map")
         {
-            Get("/map/{z}/{x}/{y}", _ =>
+            Get("/{z}/{x}/{y}", _ =>
             {
                 string fileName = MapRendering.Constants.MapDirectory + Request.Path.Substring(4) + ".png";
 

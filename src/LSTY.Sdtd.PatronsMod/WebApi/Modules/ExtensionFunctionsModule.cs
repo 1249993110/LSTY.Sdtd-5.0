@@ -12,7 +12,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
 {
     public class ExtensionFunctionsModule : ApiModuleBase
     {
-        public ExtensionFunctionsModule()
+        public ExtensionFunctionsModule() : base("/ExtensionFunctions")
         {
             #region DeathPenalty
             HttpGet("/RetrieveDeathPenaltyConfig", "RetrieveDeathPenaltyConfig", _ =>
@@ -86,40 +86,78 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
             });
             #endregion
 
-            #region ZombieKillReward
-            HttpGet("/RetrieveZombieKillRewardConfig", "RetrieveZombieKillRewardConfig", _ =>
+            #region AutoRestart
+            HttpGet("/RetrieveAutoRestartConfig", "RetrieveAutoRestartConfig", _ =>
             {
-                var function = FunctionManager.ExtensionFunctions.ZombieKillReward;
-                var data = new ZombieKillRewardConfigViewModel()
+                var function = FunctionManager.ExtensionFunctions.AutoRestart;
+                var data = new AutoRestartConfigViewModel()
                 {
                     FunctionName = function.FunctionName,
                     IsEnabled = function.IsEnabled,
-                    RewardPoints = function.RewardPoints,
-                    RewardPointsTips = function.RewardPointsTips,
-                    TriggerRequiredCount = function.TriggerRequiredCount
+                    Delay = function.Delay,
+                    GlobalTips = function.GlobalTips,
+                    Hours = function.Hours,
+                    Minutes = function.Minutes
                 };
 
                 return SucceededResult(data);
             });
 
-            HttpPost("/UpdateZombieKillRewardConfig", "UpdateZombieKillRewardConfig", _ =>
+            HttpPost("/UpdateAutoRestartConfig", "UpdateAutoRestartConfig", _ =>
             {
-                var data = this.Bind<ZombieKillRewardConfigViewModel>();
-                var function = FunctionManager.ExtensionFunctions.ZombieKillReward;
+                var data = this.Bind<AutoRestartConfigViewModel>();
+                var function = FunctionManager.ExtensionFunctions.AutoRestart;
                 function.IsEnabled = data.IsEnabled;
-                function.RewardPoints = data.RewardPoints;
-                function.RewardPointsTips = data.RewardPointsTips;
-                function.TriggerRequiredCount = data.TriggerRequiredCount;
+                function.Delay = data.Delay;
+                function.GlobalTips = data.GlobalTips;
+                function.Hours = data.Hours;
+                function.Minutes = data.Minutes;
 
                 ConfigManager.Save(function);
 
                 return SucceededResult();
             });
 
-            HttpGet("/RetrieveAvailableVariables_ZombieKillReward", "RetrieveAvailableVariables_ZombieKillReward", _ =>
+            HttpGet("/RetrieveAvailableVariables_AutoRestart", "RetrieveAvailableVariables_AutoRestart", _ =>
             {
-                return SucceededResult(FunctionManager.ExtensionFunctions.ZombieKillReward.AvailableVariables);
+                return SucceededResult(FunctionManager.ExtensionFunctions.AutoRestart.AvailableVariables);
             });
+            #endregion
+
+            #region ZombieKillReward
+            //HttpGet("/RetrieveZombieKillRewardConfig", "RetrieveZombieKillRewardConfig", _ =>
+            //{
+            //    var function = FunctionManager.ExtensionFunctions.ZombieKillReward;
+            //    var data = new ZombieKillRewardConfigViewModel()
+            //    {
+            //        FunctionName = function.FunctionName,
+            //        IsEnabled = function.IsEnabled,
+            //        RewardPoints = function.RewardPoints,
+            //        RewardPointsTips = function.RewardPointsTips,
+            //        TriggerRequiredCount = function.TriggerRequiredCount
+            //    };
+
+            //    return SucceededResult(data);
+            //});
+
+            //HttpPost("/UpdateZombieKillRewardConfig", "UpdateZombieKillRewardConfig", _ =>
+            //{
+            //    var data = this.Bind<ZombieKillRewardConfigViewModel>();
+            //    var function = FunctionManager.ExtensionFunctions.ZombieKillReward;
+            //    function.IsEnabled = data.IsEnabled;
+            //    function.RewardPoints = data.RewardPoints;
+            //    function.RewardPointsTips = data.RewardPointsTips;
+            //    function.TriggerRequiredCount = data.TriggerRequiredCount;
+
+            //    ConfigManager.Save(function);
+
+            //    return SucceededResult();
+            //});
+
+            //HttpGet("/RetrieveAvailableVariables", "RetrieveAvailableVariables_ZombieKillReward", _ =>
+            //{
+            //    return SucceededResult(FunctionManager.ExtensionFunctions.ZombieKillReward.AvailableVariables);
+            //});
             #endregion
         }
     }

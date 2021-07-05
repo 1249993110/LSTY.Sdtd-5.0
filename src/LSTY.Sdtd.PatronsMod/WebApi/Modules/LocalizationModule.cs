@@ -11,7 +11,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
 {
     public class LocalizationModule : ApiModuleBase
     {
-        public LocalizationModule()
+        public LocalizationModule() : base("/Localization")
         {
             HttpGet("/RetrieveLocalization", "RetrieveLocalization", _ =>
             {
