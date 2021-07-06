@@ -52,6 +52,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Metadata
                             .OperationId("RetrieveChatLogPaged")
                             .Tag("ChatLog")
                             .Summary("通过分页参数获取聊天记录")
+                            //.Parameter(new Parameter() { Name = "steamId", In = ParameterIn.Query, Required = false })
                             .BodyParameter(p => p.Description("Query params").Name(nameof(ChatLogQueryParams)).Schema<ChatLogQueryParams>())
                             .Description("If the parameter steamId is optional")
                             .Response(r => r.Schema<IEnumerable<T_ChatLog>>(modelCatalog).Description("Chat logs"))));

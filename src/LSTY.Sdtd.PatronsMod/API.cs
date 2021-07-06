@@ -49,8 +49,15 @@ namespace LSTY.Sdtd.PatronsMod
         {
             ModHelper.MainThreadContext = SynchronizationContext.Current;
 
+            if (LicenseManager.CheckPermission() == false)
+            {
+                return;
+            }
+
             Task.Run(InternalEarlyInit);
             Task.Run(PatchByHarmony);
+
+            RegisterModEventHandlers();
 
             // Initialize in advance map rendering
             MapRender.Init();
@@ -67,11 +74,6 @@ namespace LSTY.Sdtd.PatronsMod
         private static void InternalEarlyInit()
         {
             CustomLogger.Info("Initializing mod LSTY.Sdtd.PatronsMod");
-
-            if (LicenseManager.CheckPermission() == false)
-            {
-                return;
-            }
 
             #region Init directory. Try create directory and copy files
 
@@ -130,10 +132,6 @@ namespace LSTY.Sdtd.PatronsMod
             ConnectionInfoManager.InitializeDatabase(databasePath);
 
             #endregion
-
-            RegisterModEventHandlers();
-
-            CustomLogger.Info("Mod LSTY.Sdtd.PatronsMod initialized successfully");
         }
 
         /// <summary>

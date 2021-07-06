@@ -25,7 +25,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
             _pointsRepository = IocContainer.Resolve<IPointsRepository>();
             _killRewardRepository = IocContainer.Resolve<IKillRewardRepository>();
 
-            _entitySpawnedHooked = (entity) => Task.Run(() => EntitySpawned(entity));
+            _entitySpawnedHooked = EntitySpawned;
             _entityKilledHooked = (entity1, entity2) => Task.Run(() => EntityKilled(entity1, entity2));
 
             availableVariables.Add("{position}");
@@ -112,7 +112,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
 
             if (killReward != null)
             {
-                switch (killReward.RewardContentType)
+                switch (killReward.ContentType)
                 {
                     case ContentTypes.Item:
                         ModHelper.GiveItem(player.EntityId, killReward.RewardContent, killReward.RewardCount, killReward.RewardQuality);
@@ -129,7 +129,10 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                     case ContentTypes.Command:
                         for (int i = 0; i < killReward.RewardCount; ++i)
                         {
-                            SdtdConsole.Instance.ExecuteSync(FormatCmd(killReward.RewardContent, player), null);
+                            foreach (string item in killReward.RewardContent.Split(';'))
+                            {
+                                SdtdConsole.Instance.ExecuteSync(FormatCmd(item, player), null);
+                            }
                         }
 
                         break;

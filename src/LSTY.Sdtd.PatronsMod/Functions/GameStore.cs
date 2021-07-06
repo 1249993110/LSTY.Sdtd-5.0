@@ -135,7 +135,10 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                             case ContentTypes.Command:
                                 for (int i = 0; i < goods.Count; ++i)
                                 {
-                                    SdtdConsole.Instance.ExecuteSync(FormatCmd(goods.Content, player, goods), null);
+                                    foreach (string item in goods.Content.Split(';'))
+                                    {
+                                        SdtdConsole.Instance.ExecuteSync(FormatCmd(item, player, goods), null);
+                                    }
                                 }
                                 break;
                             default:

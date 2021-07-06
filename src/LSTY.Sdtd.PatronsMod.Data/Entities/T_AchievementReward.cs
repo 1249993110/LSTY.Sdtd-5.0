@@ -4,17 +4,19 @@ using System;
 
 namespace LSTY.Sdtd.PatronsMod.Data.Entities
 {
-    public class T_KillReward : EntityBase
+    public class T_AchievementReward : EntityBase
     {
-        [PrimaryKey]
-        public string Id { get; set; }
+        [PrimaryKey, IgnoreUpdate, IgnoreInsert]
+        public int Id { get; set; }
 
         [IgnoreUpdate, IgnoreInsert]
         public DateTime CreatedDate { get; set; }
 
-        public string SteamIdOrEntityName { get; set; }
+        public string Name { get; set; }
 
-        public string FriendlyName { get; set; }
+        public string TriggerVariable { get; set; }
+
+        public int TriggerRequiredCount { get; set; }
 
         public string RewardContent { get; set; }
 
@@ -23,9 +25,5 @@ namespace LSTY.Sdtd.PatronsMod.Data.Entities
         public int RewardQuality { get; set; }
 
         public string ContentType { get; set; }
-
-        public string SpawnedTips { get; set; }
-
-        public string KilledTips { get; set; }
     }
 }

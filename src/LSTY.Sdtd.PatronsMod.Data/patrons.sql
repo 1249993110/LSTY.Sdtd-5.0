@@ -141,20 +141,29 @@ CREATE TABLE IF NOT EXISTS T_CDKey(
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,	
 	CreatedDate TIMESTAMP DEFAULT (DATETIME(CURRENT_TIMESTAMP,'LOCALTIME')),
 	[Key] TEXT NOT NULL,			--key
+	LimitUseOnceEachPlayer INTEGER, --限制每个玩家仅能使用一次
 	MaxExchangeCount INTEGER,		--最大兑换次数
-	ExpiryDate TIMESTAMP			--到期时间，小于或等于0则永远不会失效
+	ExpiryDate TIMESTAMP,			--到期时间，小于或等于0则永远不会失效
+	ItemName TEXT NOT NULL,			--兑换项名
+	ItemContent TEXT NOT NULL,		--内容 物品/方块/实体/指令/积分
+	ItemCount INTEGER,				--数量
+	ItemQuality INTEGER,			--品质
+	ContentType TEXT NOT NULL,		--兑换内容类型
+	FOREIGN KEY(ContentType) REFERENCES T_ContentTypes(Name)
 );
 --创建索引
-CREATE UNIQUE INDEX IF NOT EXISTS Index_Value ON T_CDKey([Key]);
+CREATE UNIQUE INDEX IF NOT EXISTS Index_Key ON T_CDKey([Key]);
 
 --CDKey兑换记录
 CREATE TABLE IF NOT EXISTS T_CDKeyExchangeLog(
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,	
 	CreatedDate TIMESTAMP DEFAULT (DATETIME(CURRENT_TIMESTAMP,'LOCALTIME')),
-	SteamId TEXT,
 	CDKey TEXT,
+	SteamId TEXT,
 	FOREIGN KEY(CDKey) REFERENCES T_CDKey([Key])
 );
+--创建索引
+CREATE UNIQUE INDEX IF NOT EXISTS Index_1 ON T_CDKeyExchangeLog(CDKey,SteamId);
 
 --成就奖励
 CREATE TABLE IF NOT EXISTS T_AchievementReward(
@@ -166,8 +175,8 @@ CREATE TABLE IF NOT EXISTS T_AchievementReward(
 	RewardContent TEXT NOT NULL,	--内容 物品/方块/实体/指令/积分
 	RewardCount INTEGER,			--数量
 	RewardQuality INTEGER,			--品质
-	RewardContentType TEXT NOT NULL,--奖品类型
-	FOREIGN KEY(RewardContentType) REFERENCES T_ContentTypes(Name)
+	ContentType TEXT NOT NULL,		--成就奖励类型
+	FOREIGN KEY(ContentType) REFERENCES T_ContentTypes(Name)
 );
 --创建索引
 CREATE UNIQUE INDEX IF NOT EXISTS Index_Name ON T_AchievementReward(Name);
@@ -180,20 +189,22 @@ CREATE TABLE IF NOT EXISTS T_AchievementRewardLog(
 	AchievementName TEXT,
 	FOREIGN KEY(AchievementName) REFERENCES T_AchievementReward(Name)
 );
+--创建索引
+CREATE UNIQUE INDEX IF NOT EXISTS Index_1 ON T_AchievementRewardLog(AchievementName,SteamId);
 
 --悬赏名单
 CREATE TABLE IF NOT EXISTS T_KillReward(
-	Id TEXT PRIMARY KEY,			--唯一ID
+	Id TEXT PRIMARY KEY,				--唯一ID
 	CreatedDate TIMESTAMP DEFAULT (DATETIME(CURRENT_TIMESTAMP,'LOCALTIME')),
 	SteamIdOrEntityName TEXT NOT NULL,	--SteamId或实体名称
-	FriendlyName TEXT NOT NULL,		--友好名称
-	RewardContent TEXT NOT NULL,	--内容 物品/方块/实体/指令/积分
-	RewardCount INTEGER,			--数量
-	RewardQuality INTEGER,			--品质
-	RewardContentType TEXT NOT NULL,--奖品类型
-	SpawnedTips TEXT,				--生成提示
-	KilledTips TEXT,				--击杀提示
-	FOREIGN KEY(RewardContentType) REFERENCES T_ContentTypes(Name)
+	FriendlyName TEXT NOT NULL,			--友好名称
+	RewardContent TEXT NOT NULL,		--内容 物品/方块/实体/指令/积分
+	RewardCount INTEGER,				--数量
+	RewardQuality INTEGER,				--品质
+	ContentType TEXT NOT NULL,			--悬赏奖励类型
+	SpawnedTips TEXT,					--生成提示
+	KilledTips TEXT,					--击杀提示
+	FOREIGN KEY(ContentType) REFERENCES T_ContentTypes(Name)
 );
 --创建索引
 CREATE UNIQUE INDEX IF NOT EXISTS Index_SteamIdOrEntityName ON T_KillReward(SteamIdOrEntityName);

@@ -84,7 +84,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Models
         public string Name { get; set; }
     }
 
-    public class GameEntitys
+    public class GameEntities
     {
         public int Id { get; set; }
         public string Name { get; set; }

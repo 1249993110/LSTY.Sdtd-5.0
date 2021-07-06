@@ -50,13 +50,21 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
             HttpPost("/CreateKillReward", "CreateKillReward", _ =>
             {
                 var data = this.Bind<KillRewardViewModel>();
+
+                long count = _killRewardRepository.QueryRecordCount("SteamIdOrEntityName=@SteamIdOrEntityName", new { data.SteamIdOrEntityName });
+
+                if (count > 0)
+                {
+                    return FailedResult("The steamIdOrEntityName already exists");
+                }
+
                 _killRewardRepository.Insert(new T_KillReward()
                 {
                     Id = Guid.NewGuid().ToString(),
                     FriendlyName = data.FriendlyName,
                     KilledTips = data.KilledTips,
                     RewardContent = data.RewardContent,
-                    RewardContentType = data.RewardContentType,
+                    ContentType = data.ContentType,
                     RewardCount = data.RewardCount,
                     RewardQuality = data.RewardQuality,
                     SpawnedTips = data.SpawnedTips,
@@ -71,8 +79,8 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 string id = Request.Query["killRewardId"];
                 if (string.IsNullOrEmpty(id))
                 {
-                    var entitys = _killRewardRepository.QueryAll();
-                    return SucceededResult(entitys);
+                    var entities = _killRewardRepository.QueryAll();
+                    return SucceededResult(entities);
                 }
 
                 var data = _killRewardRepository.QueryById(nameof(T_KillReward.Id), id);
@@ -95,7 +103,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                     FriendlyName = data.FriendlyName,
                     KilledTips = data.KilledTips,
                     RewardContent = data.RewardContent,
-                    RewardContentType = data.RewardContentType,
+                    ContentType = data.ContentType,
                     RewardCount = data.RewardCount,
                     RewardQuality = data.RewardQuality,
                     SpawnedTips = data.SpawnedTips,

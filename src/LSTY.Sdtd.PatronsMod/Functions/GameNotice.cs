@@ -17,22 +17,22 @@ namespace LSTY.Sdtd.PatronsMod.Functions
         /// Welcome notice
         /// </summary>
         [ConfigNode(XmlNodeType.Attribute)]
-        public string WelcomeNotice { get; set; } = "Welcome to 7 Days to Die!";
+        public string WelcomeNotice { get; set; } = "[00FF00]Welcome to 7 Days to Die!";
 
         [ConfigNode(XmlNodeType.Attribute)]
-        public string AlternateNotice { get; set; } = "Hello";
+        public string AlternateNotice { get; set; } = "[00FF00]Hello, this is a alternate notice1";
 
         [ConfigNode(XmlNodeType.Attribute)]
-        public string AlternateNotice1 { get; set; } = "Hello1";
+        public string AlternateNotice1 { get; set; } = "[00FF00]Hello, this is a alternate notice2";
 
         [ConfigNode(XmlNodeType.Attribute)]
-        public string AlternateNotice2 { get; set; } = "Hello2";
+        public string AlternateNotice2 { get; set; } = "[00FF00]Hello, this is a alternate notice3";
 
         [ConfigNode(XmlNodeType.Attribute)]
-        public string AlternateNotice3 { get; set; } = "Hello3";
+        public string AlternateNotice3 { get; set; } = "[00FF00]Hello, this is a alternate notice4";
 
         [ConfigNode(XmlNodeType.Attribute)]
-        public string AlternateNotice4 { get; set; } = "Hello4";
+        public string AlternateNotice4 { get; set; } = "[00FF00]Hello, this is a alternate notice5";
 
         /// <summary>
         /// Alternate interval

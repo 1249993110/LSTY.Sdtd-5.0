@@ -1,3 +1,12 @@
+5.0.0-alpha.31 (2021-07-06)
+1. Change api RetrieveAvailableEntitys name to RetrieveAvailableEntities
+2. Change api RetrieveAllAvailableEntitys name to RetrieveAllAvailableEntities
+3. Add function CDKeyExchange and related api
+*Breaking Changes:
+1. You need delete dir: 7 Days to Die Dedicated Server\LSTY
+2. You need delete dir: {save}\LSTY
+3. You need delete dir: 7 Days to Die Dedicated Server\Mods\LSTY.Sdtd.PatronsMod
+
 5.0.0-alpha.30 (2021-07-05)
 1. Fix bug: Localization api return a error value
 2. Add parameter iconColor to api itemicons

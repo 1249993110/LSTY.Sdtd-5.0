@@ -71,6 +71,18 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
             HttpPost("/CreateCityPosition", "CreateCityPosition", _ =>
             {
                 var data = this.Bind<CityPositionViewModel>();
+
+                long count = _cityPositionRepository.QueryRecordCount("Command=@Command",
+                    new
+                    {
+                        data.Command
+                    });
+
+                if (count > 0)
+                {
+                    return FailedResult("The command already exists");
+                }
+
                 _cityPositionRepository.Insert(new T_CityPosition() 
                 {
                     Id = Guid.NewGuid().ToString(),

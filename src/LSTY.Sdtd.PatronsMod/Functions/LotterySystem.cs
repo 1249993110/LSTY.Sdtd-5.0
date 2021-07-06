@@ -209,7 +209,10 @@ namespace LSTY.Sdtd.PatronsMod.Functions
                     case ContentTypes.Command:
                         for (int i = 0; i < lotteryItem.Count; ++i)
                         {
-                            SdtdConsole.Instance.ExecuteSync(FormatCmd(lotteryItem.Content, player, lotteryItem), null);
+                            foreach (string item in lotteryItem.Content.Split(';'))
+                            {
+                                SdtdConsole.Instance.ExecuteSync(FormatCmd(item, player, lotteryItem), null);
+                            }
                         }
                         break;
                     case ContentTypes.Points:

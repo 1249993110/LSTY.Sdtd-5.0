@@ -12,7 +12,10 @@ namespace LSTY.Sdtd.PatronsMod.Internal
 
         public static void RaiseEntitySpawnedEvent(Entity entity)
         {
-            EntitySpawned?.Invoke(entity);
+            Task.Run(() =>
+            {
+                EntitySpawned?.Invoke(entity);
+            });
         }
     }
 }

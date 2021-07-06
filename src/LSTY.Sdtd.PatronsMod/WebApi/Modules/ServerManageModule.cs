@@ -374,17 +374,17 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 return SucceededResult(paginationQueryResult);
             });
 
-            HttpGet("/RetrieveAllAvailableEntitys", "RetrieveAllAvailableEntitys", _ =>
+            HttpGet("/RetrieveAllAvailableEntities", "RetrieveAllAvailableEntities", _ =>
             {
                 if (ModHelper.GameStartDone == false)
                 {
                     return FailedResult("Server is starting, please wait");
                 }
 
-                return SucceededResult(GetGameEntitys());
+                return SucceededResult(GetGameEntities());
             });
 
-            HttpPost("/RetrieveAvailableEntitysPaged", "RetrieveAvailableEntitysPaged", _ =>
+            HttpPost("/RetrieveAvailableEntitiesPaged", "RetrieveAvailableEntitiesPaged", _ =>
             {
                 if (ModHelper.GameStartDone == false)
                 {
@@ -393,7 +393,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
 
                 var queryParams = this.Bind<PaginationQueryParams>();
 
-                var data = GetGameEntitys();
+                var data = GetGameEntities();
 
                 PaginationQueryResult paginationQueryResult = new PaginationQueryResult()
                 {
@@ -447,15 +447,15 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
             return data;
         }
 
-        private static List<GameEntitys> GetGameEntitys()
+        private static List<GameEntities> GetGameEntities()
         {
             int num = 1;
-            List<GameEntitys> data = new List<GameEntitys>();
+            List<GameEntities> data = new List<GameEntities>();
             foreach (var item in EntityClass.list.Dict.Values)
             {
                 if (item.bAllowUserInstantiate)
                 {
-                    data.Add(new GameEntitys()
+                    data.Add(new GameEntities()
                     {
                         Id = num,
                         Name = item.entityClassName

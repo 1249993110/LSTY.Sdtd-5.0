@@ -22,7 +22,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Models
 
         public int RewardQuality { get; set; }
 
-        public string RewardContentType { get; set; }
+        public string ContentType { get; set; }
 
         public string SpawnedTips { get; set; }
 
