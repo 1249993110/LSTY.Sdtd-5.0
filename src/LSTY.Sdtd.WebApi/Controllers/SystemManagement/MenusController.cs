@@ -1,6 +1,6 @@
 ﻿using IceCoffee.AspNetCore;
+using IceCoffee.AspNetCore.Controllers;
 using IceCoffee.AspNetCore.Models;
-using IceCoffee.AspNetCore.Models.Results;
 using LSTY.Sdtd.WebApi.Data.Entities;
 using LSTY.Sdtd.WebApi.Data.IRepositories;
 using LSTY.Sdtd.WebApi.Data.Primitives;
@@ -19,7 +19,7 @@ namespace LSTY.Sdtd.WebApi.Controllers.SystemManagement
     /// MenusController
     /// </summary>
     [Route("SystemManagement/[controller]")]
-    public class MenusController : ControllerBase
+    public class MenusController : ApiControllerBase
     {
         private readonly IMenuRepository _menuRepository;
         private readonly IRoleMenuRepository _roleMenuRepository;
@@ -67,10 +67,7 @@ namespace LSTY.Sdtd.WebApi.Controllers.SystemManagement
                 roleMenuList = await _roleMenuRepository.QueryByIdAsync(nameof(T_RoleMenu.Fk_RoleId), _userInfo.RoleId);
                 if (roleMenuList == null || roleMenuList.Any() == false)
                 {
-                    return new FailedResult() 
-                    {
-                        Message = _localizer["GetMenuFailed"]
-                    };
+                    return FailedResult(_localizer["GetMenuFailed"]) ;
                 }
 
                 // 第2步：获取菜单
@@ -79,17 +76,10 @@ namespace LSTY.Sdtd.WebApi.Controllers.SystemManagement
 
             if (menuList == null || menuList.Any() == false)
             {
-                return new FailedResult()
-                {
-                    Message = _localizer["GetMenuFailed"]
-                };
+                return FailedResult(_localizer["GetMenuFailed"]);
             }
 
-            return new RespResult<IEnumerable<MenuTreeModel>>() 
-            {
-                Code = CustomStatusCode.Succeeded,
-                Data = ToTree(menuList)
-        };
+            return SucceededResult(ToTree(menuList));
         }
 
         #endregion

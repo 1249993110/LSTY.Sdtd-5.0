@@ -23,10 +23,11 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using IceCoffee.DbCore;
 using IceCoffee.AspNetCore.Permission;
 using LSTY.Sdtd.WebApi.Permission;
-using IceCoffee.AspNetCore.Models.Results;
 using Dapper;
 using LSTY.Sdtd.WebApi.Data.Primitives;
 using Hei.Captcha;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using IceCoffee.AspNetCore;
 
 [assembly: ApiController]
 namespace LSTY.Sdtd.WebApi
@@ -58,9 +59,9 @@ namespace LSTY.Sdtd.WebApi
                         string messages = string.Join(Environment.NewLine, 
                             context.ModelState.Values.SelectMany(s => s.Errors).Select(s => s.ErrorMessage));
 
-                        var result = new RespResultBase()
+                        var result = new RespResult()
                         {
-                            Code = CustomStatusCode.Failed,
+                            Code = CustomStatusCode.BadRequest,
                             Title = "One or more model validation errors occurred",
                             Message = messages
                         };
@@ -86,6 +87,8 @@ namespace LSTY.Sdtd.WebApi
 
             if (WebHostEnvironment.IsDevelopment())
             {
+                services.TryAddEnumerable(ServiceDescriptor.Transient<IApplicationModelProvider, DevelopmentResponseTypeModelProvider>());
+
                 // Register the Swagger services
                 services.AddOpenApiDocument(config =>
                 {

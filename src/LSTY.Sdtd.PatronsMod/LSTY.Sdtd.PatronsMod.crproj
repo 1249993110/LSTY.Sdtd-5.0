@@ -22,7 +22,7 @@
       <argument name="renPdb" value="true" />
       <argument name="renXaml" value="false" />
     </protection>
-    <protection id="harden" />
+    <!--<protection id="harden" />-->
     <protection id="ref proxy" />
     <!--<protection id="resources" />-->
     <protection id="typescramble" />

@@ -11,16 +11,13 @@ namespace LSTY.Sdtd.PatronsMod
 {
     public static class ConfigManager
     {
+        private static readonly object _lockObj = new object();
+
         private const string _functionConfigPath = "LSTY/functionConfig.xml";
 
         private const string _baseNodeName = "FunctionConfig";
 
         private static FileSystemWatcher _fileWatcher;
-
-        static ConfigManager()
-        {
-            CreateFileWatcher();
-        }
 
         private static void CreateFileWatcher()
         {
@@ -28,8 +25,7 @@ namespace LSTY.Sdtd.PatronsMod
             {
                 if(_fileWatcher != null)
                 {
-                    _fileWatcher.Changed -= OnConfigFileChanged;
-                    _fileWatcher.Dispose();
+                    DisposeFileWatcher();
                 }
 
                 _fileWatcher = new FileSystemWatcher("LSTY", "functionConfig.xml");
@@ -78,6 +74,8 @@ namespace LSTY.Sdtd.PatronsMod
                 XmlNode baseNode = doc.SelectSingleNode(_baseNodeName + "/" + obj.FunctionName);
 
                 XmlHelper.LoadConfig(obj, baseNode);
+
+                doc.RemoveAll();
             }
             catch (Exception ex)
             {
@@ -127,6 +125,8 @@ namespace LSTY.Sdtd.PatronsMod
                     CustomLogger.Error(ex, "Failed to load configuration of function: " + functionName);
                 }
             }
+
+            doc.RemoveAll();
         }
 
         private static XmlDocument GetDocument()
@@ -152,91 +152,101 @@ namespace LSTY.Sdtd.PatronsMod
 
         public static void Save<T>(T obj) where T : IFunction
         {
-            try
+            lock (_lockObj)
             {
-                _fileWatcher.EnableRaisingEvents = false;
-                _fileWatcher.Dispose();
-                _fileWatcher = null;
-
-                XmlDocument contextDoc = GetDocument();
-
-                XmlNode baseNode = contextDoc.SelectSingleNode(_baseNodeName);
-
-                // Take the class name inherited from FunctionBase as the parent node.
-                baseNode = baseNode.GetSingleChildNode(contextDoc, obj.FunctionName);
-
-                XmlHelper.SaveConfig(obj, contextDoc, baseNode);
-
-                using (FileStream fs = new FileStream(_functionConfigPath, FileMode.OpenOrCreate, FileAccess.Write))
+                try
                 {
-                    contextDoc.Save(fs);
+                    DisposeFileWatcher();
+
+                    XmlDocument contextDoc = GetDocument();
+
+                    XmlNode baseNode = contextDoc.SelectSingleNode(_baseNodeName);
+
+                    // Take the class name inherited from FunctionBase as the parent node.
+                    baseNode = baseNode.GetSingleChildNode(contextDoc, obj.FunctionName);
+
+                    XmlHelper.SaveConfig(obj, contextDoc, baseNode);
+
+                    using (FileStream fs = new FileStream(_functionConfigPath, FileMode.OpenOrCreate, FileAccess.Write))
+                    {
+                        contextDoc.Save(fs);
+                    }
+
+                    contextDoc.RemoveAll();
                 }
-            }
-            catch (Exception ex)
-            {
-                CustomLogger.Error(ex, "Failed to save configuration of function: " + obj.FunctionName);
-            }
-            finally
-            {
-                CreateFileWatcher();
+                catch (Exception ex)
+                {
+                    CustomLogger.Error(ex, "Failed to save configuration of function: " + obj.FunctionName);
+                }
+                finally
+                {
+                    CreateFileWatcher();
+                }
             }
         }
 
-        public static void DisableConfigFileWatcher()
+        public static void DisposeFileWatcher()
         {
             _fileWatcher.EnableRaisingEvents = false;
+            _fileWatcher.Changed -= OnConfigFileChanged;
+            _fileWatcher.Dispose();
+            _fileWatcher = null;
         }
 
         public static void SaveAll()
         {
-            try
+            lock (_lockObj)
             {
-                _fileWatcher.EnableRaisingEvents = false;
-
-                var functions = FunctionManager.Functions;
-
-                XmlDocument doc = GetDocument();
-
-                XmlNode baseNode = doc.SelectSingleNode(_baseNodeName);
-
-                string functionName;
-                XmlNode currentNode;
-
-                foreach (var function in functions)
+                try
                 {
-                    if (function is ISubFunction)
+                    DisposeFileWatcher();
+
+                    var functions = FunctionManager.Functions;
+
+                    XmlDocument doc = GetDocument();
+
+                    XmlNode baseNode = doc.SelectSingleNode(_baseNodeName);
+
+                    string functionName;
+                    XmlNode currentNode;
+
+                    foreach (var function in functions)
                     {
-                        continue;
+                        if (function is ISubFunction)
+                        {
+                            continue;
+                        }
+
+                        functionName = function.FunctionName;
+                        try
+                        {
+                            // Take the class name inherited from FunctionBase as the parent node.
+                            currentNode = baseNode.GetSingleChildNode(doc, functionName);
+
+                            XmlHelper.SaveConfig(function, doc, currentNode);
+                        }
+                        catch (Exception ex)
+                        {
+                            CustomLogger.Error(ex, "Failed to save configuration of function: " + functionName);
+                        }
                     }
 
-                    functionName = function.FunctionName;
-                    try
+                    using (FileStream fs = new FileStream(_functionConfigPath, FileMode.OpenOrCreate, FileAccess.Write))
                     {
-                        // Take the class name inherited from FunctionBase as the parent node.
-                        currentNode = baseNode.GetSingleChildNode(doc, functionName);
+                        doc.Save(fs);
+                    }
 
-                        XmlHelper.SaveConfig(function, doc, currentNode);
-                    }
-                    catch (Exception ex)
-                    {
-                        CustomLogger.Error(ex, "Failed to save configuration of function: " + functionName);
-                    }
+                    doc.RemoveAll();
+                    CustomLogger.Info("SaveAll");
                 }
-
-                using (FileStream fs = new FileStream(_functionConfigPath, FileMode.OpenOrCreate, FileAccess.Write))
+                catch (Exception ex)
                 {
-                    doc.Save(fs);
+                    CustomLogger.Error(ex, "Failed to save configuration");
                 }
-
-                CustomLogger.Info("SaveAll");
-            }
-            catch (Exception ex)
-            {
-                CustomLogger.Error(ex, "Failed to save configuration");
-            }
-            finally
-            {
-                CreateFileWatcher();
+                finally
+                {
+                    CreateFileWatcher();
+                }
             }
         }
     }

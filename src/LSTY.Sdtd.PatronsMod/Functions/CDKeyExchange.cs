@@ -68,6 +68,12 @@ namespace LSTY.Sdtd.PatronsMod.Functions
 
             string steamId = player.SteamId;
 
+            if (cdKey.ExpiryDate != DateTime.MinValue && DateTime.Now > cdKey.ExpiryDate)
+            {
+                ModHelper.SendMessageToPlayer(steamId, InvalidKeyTips);
+                return true;
+            }
+
             long count = _cdKeyExchangeLogRepository.QueryRecordCount("CDKey=@CDKey", new { CDKey = message });
 
             if (count >= cdKey.MaxExchangeCount)

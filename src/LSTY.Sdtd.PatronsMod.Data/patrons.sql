@@ -143,7 +143,7 @@ CREATE TABLE IF NOT EXISTS T_CDKey(
 	[Key] TEXT NOT NULL,			--key
 	LimitUseOnceEachPlayer INTEGER, --限制每个玩家仅能使用一次
 	MaxExchangeCount INTEGER,		--最大兑换次数
-	ExpiryDate TIMESTAMP,			--到期时间，小于或等于0则永远不会失效
+	ExpiryDate TIMESTAMP,			--到期时间，等于0则永远不会失效
 	ItemName TEXT NOT NULL,			--兑换项名
 	ItemContent TEXT NOT NULL,		--内容 物品/方块/实体/指令/积分
 	ItemCount INTEGER,				--数量

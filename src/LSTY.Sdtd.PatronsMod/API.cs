@@ -27,7 +27,7 @@ namespace LSTY.Sdtd.PatronsMod
         private static NancyHost _nancyHost;
         private static WebSocketServer _webSocketServer;
 
-        static API()
+        public API()
         {
             JsonConvert.DefaultSettings = new Func<JsonSerializerSettings>(() =>
             {
@@ -185,7 +185,6 @@ namespace LSTY.Sdtd.PatronsMod
             Logger.Main.LogCallbacks -= LogCallback;
             _webSocketServer.Stop();
 
-            ConfigManager.DisableConfigFileWatcher();
             ConfigManager.SaveAll();
 
             MapRender.Shutdown();
