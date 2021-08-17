@@ -1,9 +1,11 @@
-﻿using Hei.Captcha;
-using IceCoffee.AspNetCore;
+﻿using IceCoffee.AspNetCore;
 using IceCoffee.AspNetCore.Authorization;
 using IceCoffee.AspNetCore.Controllers;
 using IceCoffee.AspNetCore.Extensions;
+using IceCoffee.AspNetCore.Jwt;
 using IceCoffee.AspNetCore.Models;
+using IceCoffee.AspNetCore.Models.Primitives;
+using IceCoffee.AspNetCore.Options;
 using IceCoffee.AspNetCore.Services;
 using IceCoffee.Common;
 using IceCoffee.Common.Extensions;
@@ -15,6 +17,7 @@ using LSTY.Sdtd.WebApi.Data.IRepositories;
 using LSTY.Sdtd.WebApi.Data.Primitives;
 using LSTY.Sdtd.WebApi.Models.Account;
 using LSTY.Sdtd.WebApi.Resources;
+using LSTY.Sdtd.WebApi.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -47,9 +50,9 @@ namespace LSTY.Sdtd.WebApi.Controllers
         private readonly IEmailAccountRepository _emailAccountRepository;
         private readonly IUserRoleRepository _userRoleRepository;
         private readonly IRoleRepository _roleRepository;
-        private readonly SecurityCodeHelper _securityCode;
+        private readonly ICaptchaGenerator _captchaGenerator;
         private readonly IMemoryCache _memoryCache;
-        private readonly IEmailService _emailService;
+        private readonly EmailService _emailService;
         private readonly UserInfo _userInfo;
         private readonly IVUserDetailsRepository _vUserDetailsRepository;
 
@@ -63,9 +66,9 @@ namespace LSTY.Sdtd.WebApi.Controllers
             IEmailAccountRepository emailAccountRepository,
             IUserRoleRepository userRoleRepository,
             IRoleRepository roleRepository,
-            SecurityCodeHelper securityCode,
+            ICaptchaGenerator captchaGenerator,
             IMemoryCache memoryCache,
-            IEmailService emailService,
+            EmailService emailService,
             UserInfo userInfo, 
             IVUserDetailsRepository vUserDetailsRepository)
         {
@@ -79,21 +82,21 @@ namespace LSTY.Sdtd.WebApi.Controllers
             _emailAccountRepository = emailAccountRepository;
             _userRoleRepository = userRoleRepository;
             _roleRepository = roleRepository;
-            _securityCode = securityCode;
+            _captchaGenerator = captchaGenerator;
             _memoryCache = memoryCache;
             _emailService = emailService;
             _userInfo = userInfo;
             _vUserDetailsRepository = vUserDetailsRepository;
         }
 
-        private string GetRegisterCaptchaKey(string registerName)
+        private string GetRegisterCaptchaKey()
         {
-            return "RegisterCaptcha:" + HttpContext.GetRemoteIpAddress() + ":" + registerName;
+            return "RegisterCaptcha:" + HttpContext.Connection.Id;
         }
 
-        private string GetLoginCaptchaKey(string loginName)
+        private string GetLoginCaptchaKey()
         {
-            return "LoginCaptcha:" + HttpContext.GetRemoteIpAddress() + ":" + loginName;
+            return "LoginCaptcha:" + HttpContext.Connection.Id;
         }
 
         /// <summary>
@@ -102,12 +105,12 @@ namespace LSTY.Sdtd.WebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [AllowAnonymous]
-        [DevelopmentResponseType(typeof(RespResult<RegisterCaptchaModel>), StatusCodes.Status200OK)]
-        public async Task<IRespResult> RegisterCaptcha([FromBody] EmailRegisterModelBase model)
+        [DevelopmentResponseType(typeof(ResponseResult<RegisterCaptchaModel>), StatusCodes.Status200OK)]
+        public async Task<IResponseResult> RegisterCaptcha([FromBody] EmailRegisterModelBase model)
         {
             try
             {
-                string key = GetRegisterCaptchaKey(model.Email);
+                string key = GetRegisterCaptchaKey();
                 if (_memoryCache.TryGetValue(key, out _))
                 {
                     return FailedResult(_localizer["RequestsTooFrequent"]);
@@ -126,7 +129,7 @@ namespace LSTY.Sdtd.WebApi.Controllers
                     AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(60D)
                 });
 
-                await _emailService.SendAsync(new EmailSendParams()
+                await _emailService.SendAsync(new EmailSendOptions()
                 {
                     Captcha = captcha,
                     CurrentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
@@ -140,7 +143,7 @@ namespace LSTY.Sdtd.WebApi.Controllers
                     AccountName = model.AccountName
                 });
 
-                return new RespResult<RegisterCaptchaModel>()
+                return new ResponseResult<RegisterCaptchaModel>()
                 {
                     Code = CustomStatusCode.OK,
                     Data = captchaModel
@@ -154,30 +157,30 @@ namespace LSTY.Sdtd.WebApi.Controllers
         }
 
         /// <summary>
-        /// 获取登录验证码，数字字母组合
+        /// 获取登录验证码，纯数字
         /// </summary>
         /// <returns></returns>
-        [HttpPost]
+        [HttpGet]
         [AllowAnonymous]
-        public Task<RespResult<LoginCaptchaModel>> LoginCaptcha([FromBody] LoginModelBase model)
+        public Task<ResponseResult<LoginCaptchaModel>> LoginCaptcha()
         {
-            var captcha = CommonHelper.GetRandomString("0123456789", 4);
-            var imgbyte = _securityCode.GetEnDigitalCodeByte(captcha);
+            var captchaCode = CommonHelper.GetRandomString("0123456789", 4);
+            var imgByte = _captchaGenerator.GenerateImageAsByteArray(captchaCode);
 
             LoginCaptchaModel captchaModel = new LoginCaptchaModel()
             {
                 RequestInterval = 180,
                 ValidSeconds = 180,
-                ImageBase64 = "data:image/png;base64," + Convert.ToBase64String(imgbyte)
+                ImageBase64 = "data:image/png;base64," + Convert.ToBase64String(imgByte)
             };
 
-            string key = GetLoginCaptchaKey(model.LoginName);
-            _memoryCache.Set(key, captcha, new MemoryCacheEntryOptions()
+            string key = GetLoginCaptchaKey();
+            _memoryCache.Set(key, captchaCode, new MemoryCacheEntryOptions()
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(180D)
             });
 
-            return Task.FromResult(new RespResult<LoginCaptchaModel>()
+            return Task.FromResult(new ResponseResult<LoginCaptchaModel>()
             {
                 Code = CustomStatusCode.OK,
                 Data = captchaModel
@@ -190,18 +193,18 @@ namespace LSTY.Sdtd.WebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IRespResult> Login([FromBody] LoginModel model)
+        public async Task<IResponseResult> Login([FromBody] LoginModel model)
         {
-            string key = GetLoginCaptchaKey(model.LoginName);
+            string key = GetLoginCaptchaKey();
             // 验证码过期
-            if (_memoryCache.TryGetValue(key, out string captcha) == false)
+            if (_memoryCache.TryGetValue(key, out string cachedCaptchaCode) == false)
             {
                 return FailedResult(_localizer["LoginFailed_InvalidCaptcha"]);
             }
             else
             {
                 // 验证码错误
-                if(model.Captcha != captcha)
+                if(model.CaptchaCode != cachedCaptchaCode)
                 {
                     return FailedResult(_localizer["LoginFailed_InvalidCaptcha"]);
                 }
@@ -238,8 +241,9 @@ namespace LSTY.Sdtd.WebApi.Controllers
 
             var jwtToken = await GenerateJwtToken(new UserInfo
             {
-                UserId = vLogin.UserId,
-                RoleId = vLogin.RoleId,
+                UserId = vLogin.UserId.ToString(),
+                RoleId = vLogin.RoleId.ToString(),
+                RoleName = vLogin.RoleName,
                 DisplayName = vLogin.DisplayName,
                 Email = vLogin.Email,
                 AccountName = vLogin.AccountName
@@ -253,7 +257,7 @@ namespace LSTY.Sdtd.WebApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpDelete]
-        public async Task<IRespResult> Logout()
+        public async Task<IResponseResult> Logout()
         {
             await _refreshTokenRepository.DeleteByIdAsync(nameof(T_RefreshToken.Fk_UserId), _userInfo.UserId);
             return SucceededResult();
@@ -265,18 +269,18 @@ namespace LSTY.Sdtd.WebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IRespResult> RegisterByEmail([FromBody] EmailRegisterModel model)
+        public async Task<IResponseResult> RegisterByEmail([FromBody] EmailRegisterModel model)
         {
-            string key = GetRegisterCaptchaKey(model.Email);
+            string key = GetRegisterCaptchaKey();
             // 验证码过期
-            if (_memoryCache.TryGetValue(key, out string captcha) == false)
+            if (_memoryCache.TryGetValue(key, out string captchaCode) == false)
             {
                 return FailedResult(_localizer["RegisterFailed_InvalidCaptcha"]);
             }
             else
             {
                 // 验证码错误
-                if (model.Captcha != captcha)
+                if (model.CaptchaCode != captchaCode)
                 {
                     return FailedResult(_localizer["RegisterFailed_InvalidCaptcha"]);
                 }
@@ -315,11 +319,11 @@ namespace LSTY.Sdtd.WebApi.Controllers
                 return FailedResult(_localizer["RegisterFailed_AccountNameHasUsed"]);
             }
 
-            string roleId = await _roleRepository.QueryIdByNameAsync(Roles.NormalUser);
+            Guid roleId = await _roleRepository.QueryIdByNameAsync(Roles.NormalUser);
 
             var user = new T_User()
             {
-                Id = Guid.NewGuid().ToString(),
+                Id = Guid.NewGuid(),
                 DisplayName = model.DisplayName,
                 LastLoginIpAddress = HttpContext.GetRemoteIpAddress(),
                 LastLoginTime = DateTime.Now
@@ -367,8 +371,9 @@ namespace LSTY.Sdtd.WebApi.Controllers
 
             var jwtToken = await GenerateJwtToken(new UserInfo
             {
-                UserId = user.Id,
-                RoleId = roleId,
+                UserId = user.Id.ToString(),
+                RoleId = roleId.ToString(),
+                RoleName = Roles.NormalUser,
                 DisplayName = model.DisplayName,
                 Email = model.Email,
                 AccountName = model.AccountName
@@ -384,7 +389,7 @@ namespace LSTY.Sdtd.WebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IRespResult> RefreshToken([FromBody] JwtToken token)
+        public async Task<IResponseResult> RefreshToken([FromBody] JwtToken token)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
             SecurityToken validatedToken = null;
@@ -435,13 +440,13 @@ namespace LSTY.Sdtd.WebApi.Controllers
 
                 // Validation 7 - validate the id
                 // 根据数据库中保存的 Id 验证收到的 token 的 Id
-                if (storedRefreshToken.JwtId != validatedToken.Id)
+                if (storedRefreshToken.JwtId.ToString() != validatedToken.Id)
                 {
                     return FailedResult(_localizer["RefreshTokenFailed_TokenNotMateched"]);
                 }
                 
                 var userInfo = new UserInfo();
-                JwtAuthorizationHandler.ClaimsToUserInfo(jwtSecurityToken.Claims, userInfo);
+                JwtAuthorizationHandler.ClaimsToUserInfo(jwtSecurityToken.Claims, ref userInfo);
                 // 生成一个新的 token
                 var jwtToken = await GenerateJwtToken(userInfo);
 
@@ -462,8 +467,9 @@ namespace LSTY.Sdtd.WebApi.Controllers
                     new Claim(JwtRegisteredClaimNames.Aud, _tokenValidationParams.ValidAudience),
                     new Claim(JwtRegisteredClaimNames.Iss, _tokenValidationParams.ValidIssuer),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(JwtClaimNames.UserId, userInfo.UserId),
-                    new Claim(JwtClaimNames.RoleId, userInfo.RoleId),
+                    new Claim(JwtClaimNames.UserId, userInfo.UserId.ToString()),
+                    new Claim(JwtClaimNames.RoleId, userInfo.RoleId.ToString()),
+                    new Claim(JwtClaimNames.RoleName, userInfo.RoleName),
                     new Claim(JwtClaimNames.DisplayName, userInfo.DisplayName),
                     new Claim(JwtClaimNames.Email, userInfo.Email ?? string.Empty),
                     new Claim(JwtClaimNames.AccountName, userInfo.AccountName ?? string.Empty)
@@ -481,9 +487,9 @@ namespace LSTY.Sdtd.WebApi.Controllers
             var refreshToken = new T_RefreshToken()
             {
                 Id = Guid.NewGuid().ToString("N") + CommonHelper.GetRandomString(24),
-                JwtId = token.Id,
+                JwtId = Guid.Parse(token.Id),
                 IsRevorked = false,
-                Fk_UserId = userInfo.UserId,
+                Fk_UserId = Guid.Parse(userInfo.UserId),
                 CreatedUtcDate = utcNow,
                 ExpiryDate = utcNow.AddDays(7)
             };
@@ -505,7 +511,7 @@ namespace LSTY.Sdtd.WebApi.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<IRespResult> ChangePassword([FromBody] ChangePasswordParams model)
+        public async Task<IResponseResult> ChangePassword([FromBody] ChangePasswordParams model)
         {
             var user = (await _standardAccountRepository.QueryByIdAsync(nameof(T_StandardAccount.Fk_UserId), _userInfo.UserId)).FirstOrDefault();
             if (user == null)
@@ -539,10 +545,10 @@ namespace LSTY.Sdtd.WebApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IRespResult> Profile()
+        public async Task<IResponseResult> Profile()
         {
            var user = (await  _vUserDetailsRepository.QueryByIdAsync(nameof(V_UserDetails.UserId), _userInfo.UserId)).FirstOrDefault();
-            return new RespResult() 
+            return new ResponseResult() 
             { 
                 Code = CustomStatusCode.OK,
                 Data = user

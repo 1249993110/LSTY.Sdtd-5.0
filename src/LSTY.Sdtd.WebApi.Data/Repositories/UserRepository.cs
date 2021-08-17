@@ -9,7 +9,7 @@ namespace LSTY.Sdtd.WebApi.Data.Repositories
 {
     public class UserRepository : DefaultRepository<T_User>, IUserRepository
     {
-        public async Task<int> UpdateLoginStateAsync(string userId, DateTime lastLoginTime, string lastLoginIpAddress)
+        public async Task<int> UpdateLoginStateAsync(Guid userId, DateTime lastLoginTime, string lastLoginIpAddress)
         {
             try
             {

@@ -15,7 +15,7 @@ namespace LSTY.Sdtd.WebApi.Data.Entities
         /// 用户Id    
         /// </summary>
         [PrimaryKey]
-        public string Fk_UserId { get; set; }
+        public Guid Fk_UserId { get; set; }
 
         /// <summary>
         /// 创建日期  

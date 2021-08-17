@@ -1,6 +1,7 @@
 ﻿using IceCoffee.AspNetCore;
 using IceCoffee.AspNetCore.Controllers;
 using IceCoffee.AspNetCore.Models;
+using IceCoffee.AspNetCore.Models.Primitives;
 using LSTY.Sdtd.WebApi.Data.Entities;
 using LSTY.Sdtd.WebApi.Data.IRepositories;
 using LSTY.Sdtd.WebApi.Data.Primitives;
@@ -47,15 +48,13 @@ namespace LSTY.Sdtd.WebApi.Controllers.SystemManagement
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [DevelopmentResponseType(typeof(RespResult<IEnumerable<MenuTreeModel>>))]
-        public async Task<IRespResult> Get()
+        [DevelopmentResponseType(typeof(ResponseResult<IEnumerable<MenuTreeModel>>))]
+        public async Task<IResponseResult> Get()
         {
-            string userId = _userInfo.UserId;
-
             IEnumerable<T_Menu> menuList = null;
 
             // 系统管理员可直接查看所有菜单
-            if (_userInfo.RoleId == await _roleRepository.QueryIdByNameAsync(Roles.Administrator))
+            if (_userInfo.RoleName == Roles.Administrator)
             {
                 menuList = await _menuRepository.QueryAllAsync();
             }
@@ -99,7 +98,7 @@ namespace LSTY.Sdtd.WebApi.Controllers.SystemManagement
             }
 
             var allMenus = menus;
-            var parentMenus = allMenus.Where(t => string.IsNullOrEmpty(t.ParentId)).OrderBy(m => m.Sort);
+            var parentMenus = allMenus.Where(t => string.IsNullOrEmpty(t.ParentId.ToString())).OrderBy(m => m.Sort);
             foreach (var item in parentMenus)
             {
                 var node = ParseTreeNode(allMenus, item);
@@ -118,13 +117,13 @@ namespace LSTY.Sdtd.WebApi.Controllers.SystemManagement
         {
             var treeNode = new MenuTreeModel()
             {
-                Id = item.Id,
+                Id = item.Id.ToString(),
                 CreatedDate = item.CreatedDate,
                 Description = item.Description,
                 IsEnabled = item.IsEnabled,
                 Name = item.Name,
                 Sort = item.Sort,
-                ParentId = item.ParentId
+                ParentId = item.ParentId.ToString()
             };
 
             var subitems = from m in menus

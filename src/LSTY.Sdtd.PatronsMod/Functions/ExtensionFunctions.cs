@@ -30,7 +30,7 @@ namespace LSTY.Sdtd.PatronsMod.Functions
             foreach (var item in this.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
                 type = item.PropertyType;
-                if (type.IsSubclassOf(typeof(FunctionBase)))
+                if (item.CanWrite && type.IsDefined(typeof(ConfigNodeAttribute), false) && type.IsSubclassOf(typeof(FunctionBase)))
                 {
                     FunctionBase function = Activator.CreateInstance(type) as FunctionBase;
                     item.SetValue(this, function);

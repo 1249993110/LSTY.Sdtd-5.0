@@ -39,7 +39,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 function.DeductPointsTips = data.DeductPointsTips;
                 function.AllowNegative = data.AllowNegative;
 
-                ConfigManager.Save(function);
+                ConfigManager.Save(FunctionManager.ExtensionFunctions);
 
                 return SucceededResult();
             });
@@ -75,7 +75,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 function.RewardPoints = data.RewardPoints;
                 function.RewardPointsTips = data.RewardPointsTips;
                 
-                ConfigManager.Save(function);
+                ConfigManager.Save(FunctionManager.ExtensionFunctions);
 
                 return SucceededResult();
             });
@@ -113,7 +113,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
                 function.Hours = data.Hours;
                 function.Minutes = data.Minutes;
 
-                ConfigManager.Save(function);
+                ConfigManager.Save(FunctionManager.ExtensionFunctions);
 
                 return SucceededResult();
             });
@@ -149,7 +149,7 @@ namespace LSTY.Sdtd.PatronsMod.WebApi.Modules
             //    function.RewardPointsTips = data.RewardPointsTips;
             //    function.TriggerRequiredCount = data.TriggerRequiredCount;
 
-            //    ConfigManager.Save(function);
+            //    ConfigManager.Save(FunctionManager.ExtensionFunctions);
 
             //    return SucceededResult();
             //});

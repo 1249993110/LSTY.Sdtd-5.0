@@ -1,3 +1,9 @@
+5.0.0-alpha.33 (2021-08-01)
+1. Optimize the code
+
+5.0.0-alpha.32 (2021-07-09)
+1. Fix bug: ExtensionFunctions initialization error
+
 5.0.0-alpha.31 (2021-07-06)
 1. Change api RetrieveAvailableEntitys name to RetrieveAvailableEntities
 2. Change api RetrieveAllAvailableEntitys name to RetrieveAllAvailableEntities

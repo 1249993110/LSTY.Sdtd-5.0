@@ -32,7 +32,18 @@ namespace LSTY.Sdtd.PatronsMod.LiveData
             }
         }
         public float TotalPlayTime => _clientInfo.latestPlayerData.totalTimePlayed;
-        public Position LastPosition => new Position(GameManager.Instance.World.Players.dict[_clientInfo.entityId].GetPosition());
+        public Position LastPosition
+        {
+            get
+            {
+                if (GameManager.Instance.World.Players.dict.TryGetValue(_clientInfo.entityId, out var entityPlayer))
+                {
+                    return new Position(entityPlayer.GetPosition());
+                }
+
+                return new Position(-1, -1, -1);
+            }
+        }
         public int Score => _clientInfo.latestPlayerData.score;
         public int ZombieKills => _clientInfo.latestPlayerData.zombieKills;
 

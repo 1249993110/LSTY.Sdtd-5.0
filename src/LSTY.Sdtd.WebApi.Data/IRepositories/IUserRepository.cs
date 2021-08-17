@@ -9,6 +9,6 @@ namespace LSTY.Sdtd.WebApi.Data.IRepositories
 {
     public interface IUserRepository : IRepository<T_User>
     {
-        Task<int> UpdateLoginStateAsync(string userId, DateTime lastLoginTime, string lastLoginIpAddress);
+        Task<int> UpdateLoginStateAsync(Guid userId, DateTime lastLoginTime, string lastLoginIpAddress);
     }
 }

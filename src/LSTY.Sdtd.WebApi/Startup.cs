@@ -25,9 +25,20 @@ using IceCoffee.AspNetCore.Permission;
 using LSTY.Sdtd.WebApi.Permission;
 using Dapper;
 using LSTY.Sdtd.WebApi.Data.Primitives;
-using Hei.Captcha;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using IceCoffee.AspNetCore;
+using IceCoffee.AspNetCore.Options;
+using IceCoffee.AspNetCore.Models.Primitives;
+using Microsoft.AspNetCore.Http;
+using LSTY.Sdtd.WebApi.Utils;
+using NSwag.Generation.Processors.Security;
+using NSwag.Generation.Processors.Contexts;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
+using NSwag.Generation.AspNetCore;
+using Namotion.Reflection;
+using NSwag.Generation.Processors;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 [assembly: ApiController]
 namespace LSTY.Sdtd.WebApi
@@ -51,15 +62,14 @@ namespace LSTY.Sdtd.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers()
-                .ConfigureApiBehaviorOptions(options =>
+            services.AddControllers().ConfigureApiBehaviorOptions(options =>
                 {
                     options.InvalidModelStateResponseFactory = context =>
                     {
                         string messages = string.Join(Environment.NewLine, 
                             context.ModelState.Values.SelectMany(s => s.Errors).Select(s => s.ErrorMessage));
 
-                        var result = new RespResult()
+                        var result = new ResponseResult()
                         {
                             Code = CustomStatusCode.BadRequest,
                             Title = "One or more model validation errors occurred",
@@ -74,7 +84,7 @@ namespace LSTY.Sdtd.WebApi
                     // options.SuppressModelStateInvalidFilter = true;
                     // options.SuppressMapClientErrors = true;
                 })
-                .AddDataAnnotationsLocalization(options =>
+            .AddDataAnnotationsLocalization(options =>
                 {
                     options.DataAnnotationLocalizerProvider = (type, factory) =>
                     {
@@ -82,6 +92,7 @@ namespace LSTY.Sdtd.WebApi
                     };
                 });
 
+            services.AddMemoryCache();
             services.AddJwtAuthentication(Configuration.GetSection(nameof(JwtOptions)));
             services.AddJwtAuthorization();
 
@@ -114,6 +125,16 @@ namespace LSTY.Sdtd.WebApi
 
                     // 可以设置从注释文件加载，但是加载的内容可被 OpenApiTagAttribute 特性覆盖
                     config.UseControllerSummaryAsTagDescription = true;
+
+                    config.AddSecurity("Bearer", new OpenApiSecurityScheme()
+                    {
+                        Type = OpenApiSecuritySchemeType.Http,
+                        Scheme = JwtBearerDefaults.AuthenticationScheme,
+                        BearerFormat = "JWT",
+                        Description = "Type into the textbox: {your JWT token}."
+                    });
+
+                    config.OperationProcessors.Add(new AspNetCoreOperationFallbackPolicyProcessor("Bearer"));
                 });
             }
             else
@@ -152,8 +173,6 @@ namespace LSTY.Sdtd.WebApi
                 options.SupportedUICultures = supportedCultures;
             });
 
-            SqlMapper.AddTypeHandler(new StringGuidHandler());
-
             foreach (var type in typeof(ConnectionInfoManager).Assembly.GetExportedTypes())
             {
                 if (type.FullName.StartsWith("LSTY.Sdtd.WebApi.Data.Repositories"))
@@ -163,11 +182,9 @@ namespace LSTY.Sdtd.WebApi
                 }
             }
 
-            services.AddSingleton<IPermissionValidator, PermissionValidator>();
+            services.TryAddSingleton<IPermissionValidator, PermissionValidator>();
 
-            services.AddHeiCaptcha();
-
-            services.AddMemoryCache();
+            services.TryAddSingleton<ICaptchaGenerator, CaptchaGenerator>();
 
             services.AddEmailService(Configuration.GetSection(nameof(SmtpOptions)));
 
@@ -177,7 +194,7 @@ namespace LSTY.Sdtd.WebApi
                 {
                     options.AddPolicy(_corsPolicyName, builder =>
                     {
-                        builder.WithOrigins("http://localhost:8080");
+                        builder.WithOrigins("http://localhost:3000");
                         builder.AllowAnyHeader();
                         builder.AllowAnyMethod();
                         builder.AllowCredentials();
@@ -192,15 +209,19 @@ namespace LSTY.Sdtd.WebApi
             // Write streamlined request completion events, instead of the more verbose ones from the framework.
             // To use the default framework request logging instead, remove this line and set the "Microsoft"
             // level in appsettings.json to "Information".
-            
-            app.UseMiddleware<GlobalExceptionHandleMiddleware>();
+            if (WebHostEnvironment.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseMiddleware<GlobalExceptionHandleMiddleware>();
+            }
 
             app.UseSerilogRequestLogging();
 
             if (WebHostEnvironment.IsDevelopment())
             {
-                // app.UseDeveloperExceptionPage();
-
                 // Register the Swagger generator and the Swagger UI middlewares
                 app.UseOpenApi();
                 app.UseSwaggerUi3();

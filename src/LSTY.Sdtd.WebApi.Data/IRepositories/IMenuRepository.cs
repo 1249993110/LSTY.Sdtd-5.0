@@ -9,6 +9,6 @@ namespace LSTY.Sdtd.WebApi.Data.IRepositories
 {
     public interface IMenuRepository : IRepository<T_Menu>
     {
-        IEnumerable<T_Menu> QueryByMenuIds(IEnumerable<string> menuIds, bool filterEnabled);
+        IEnumerable<T_Menu> QueryByMenuIds(IEnumerable<Guid> menuIds, bool filterEnabled);
     }
 }

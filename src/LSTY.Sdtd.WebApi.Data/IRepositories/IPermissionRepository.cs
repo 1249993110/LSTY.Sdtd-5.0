@@ -13,9 +13,9 @@ namespace LSTY.Sdtd.WebApi.Data.IRepositories
         /// 检查许可
         /// </summary>
         /// <param name="roleId"></param>
-        /// <param name="routePattern"></param>
+        /// <param name="routeStarts"></param>
         /// <param name="permissionType">要求的许可</param>
         /// <returns></returns>
-        Task<bool> CheckPermissionAsync(string roleId, byte permissionType, string routePattern);
+        Task<bool> CheckPermissionAsync(string roleId, byte permissionType, string routeStarts);
     }
 }

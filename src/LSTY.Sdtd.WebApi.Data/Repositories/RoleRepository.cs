@@ -10,11 +10,11 @@ namespace LSTY.Sdtd.WebApi.Data.Repositories
 {
     public class RoleRepository : DefaultRepository<T_Role>, IRoleRepository
     {
-        public async Task<string> QueryIdByNameAsync(string roleName)
+        public async Task<Guid> QueryIdByNameAsync(string roleName)
         {
             try
             {
-                return await base.ExecuteScalarAsync<string>("SELECT Id FROM T_Role WHERE Name=@RoleName", new
+                return await base.ExecuteScalarAsync<Guid>("SELECT Id FROM T_Role WHERE Name=@RoleName", new
                 {
                     RoleName = roleName
                 });

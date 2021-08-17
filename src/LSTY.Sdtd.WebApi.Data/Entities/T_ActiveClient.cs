@@ -15,7 +15,7 @@ namespace LSTY.Sdtd.WebApi.Data.Entities
         /// Id
         /// </summary>
         [PrimaryKey, IgnoreInsert]
-        public string Id { get; set; }
+        public Guid Id { get; set; }
 
         /// <summary>
         /// 创建日期
@@ -26,7 +26,7 @@ namespace LSTY.Sdtd.WebApi.Data.Entities
         /// <summary>
         /// 用户Id
         /// </summary>
-        public string Fk_UserId { get; set; }
+        public Guid Fk_UserId { get; set; }
 
         /// <summary>
         /// 客户设备Id，由mac地址和进程Id生成

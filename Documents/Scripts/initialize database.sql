@@ -183,6 +183,13 @@ CREATE TABLE T_RolePermission(
 );
 GO
 
+--创建视图
+CREATE VIEW V_RolePermission AS
+SELECT r.Id AS RoleId,r.Name AS RoleName,p.Id AS PermissionId,p.RouteStarts,p.[Type] AS PermissionType,p.IsEnabled FROM T_RolePermission AS rp
+LEFT JOIN T_Role AS r ON r.Id=rp.Fk_RoleId
+LEFT JOIN T_Permission AS p ON p.Id=rp.Fk_PermissionId;
+GO
+
 
 INSERT INTO T_Role(Name,Description) VALUES('BlacklistUser','黑名单用户');
 INSERT INTO T_Role(Name,Description) VALUES('Administrator','管理员');

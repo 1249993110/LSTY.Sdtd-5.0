@@ -27,6 +27,6 @@ namespace LSTY.Sdtd.WebApi.Models.Account
     public class EmailRegisterModel : EmailRegisterModelBase
     {
         [Required(ErrorMessage = DataAnnotationsResource.RequiredAttribute_ValidationError)]
-        public string Captcha { get; set; }
+        public string CaptchaCode { get; set; }
     }
 }

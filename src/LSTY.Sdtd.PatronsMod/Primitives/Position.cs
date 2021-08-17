@@ -12,6 +12,10 @@ namespace LSTY.Sdtd.PatronsMod.Primitives
         public int Y => _y;
         public int Z => _z;
 
+        public Position()
+        {
+        }
+
         public Position(int x, int y, int z)
         {
             this._x = x;

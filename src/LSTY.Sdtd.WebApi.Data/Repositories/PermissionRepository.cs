@@ -14,9 +14,9 @@ namespace LSTY.Sdtd.WebApi.Data.Repositories
     public class PermissionRepository : DefaultRepository<T_Permission>, IPermissionRepository
     {
         // AND (DATALENGTH(@RoutePattern)=DATALENGTH(RouteStarts) OR SUBSTRING(@RoutePattern,DATALENGTH(RouteStarts)+1,1)='/')
-        private const string _permissionValidateSQL = @"SELECT 1 FROM T_Permission WHERE Id IN(SELECT Fk_PermissionId FROM T_RolePermission WHERE Fk_RoleId=@RoleId) AND (@RoutePattern LIKE CONCAT(RouteStarts,'%')) AND ([Type]=0 OR [Type]=@Type) AND IsEnabled=1";
+        private const string _permissionValidateSQL = @"SELECT 1 FROM T_Permission WHERE Id IN(SELECT Fk_PermissionId FROM T_RolePermission WHERE Fk_RoleId=@RoleId) AND (@RouteStarts LIKE CONCAT(RouteStarts,'%')) AND ([Type]=0 OR [Type]=@Type) AND IsEnabled=1";
 
-        public async Task<bool> CheckPermissionAsync(string roleId, byte permissionType, string routePattern)
+        public async Task<bool> CheckPermissionAsync(string roleId, byte permissionType, string routeStarts)
         {
             try
             {
@@ -24,7 +24,7 @@ namespace LSTY.Sdtd.WebApi.Data.Repositories
                 {
                     RoleId = roleId,
                     Type = permissionType,
-                    RoutePattern = routePattern
+                    RouteStarts = routeStarts
                 });
 
                 return result == 1;

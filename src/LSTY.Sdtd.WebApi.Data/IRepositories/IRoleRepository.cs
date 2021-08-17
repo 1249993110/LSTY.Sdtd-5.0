@@ -14,6 +14,6 @@ namespace LSTY.Sdtd.WebApi.Data.IRepositories
         /// </summary>
         /// <param name="roleName"></param>
         /// <returns></returns>
-        Task<string> QueryIdByNameAsync(string roleName);
+        Task<Guid> QueryIdByNameAsync(string roleName);
     }
 }

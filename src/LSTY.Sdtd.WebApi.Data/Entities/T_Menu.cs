@@ -15,7 +15,7 @@ namespace LSTY.Sdtd.WebApi.Data.Entities
         /// Id    
         /// </summary>
         [PrimaryKey, IgnoreInsert]
-        public string Id { get; set; }
+        public Guid Id { get; set; }
 
         /// <summary>
         /// 创建日期 
@@ -26,7 +26,7 @@ namespace LSTY.Sdtd.WebApi.Data.Entities
         /// <summary>
         /// 父菜单Id 
         /// </summary>
-        public string ParentId { get; set; }
+        public Guid ParentId { get; set; }
 
         /// <summary>
         /// 菜单名

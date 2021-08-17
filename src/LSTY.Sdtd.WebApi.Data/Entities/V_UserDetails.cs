@@ -13,7 +13,7 @@ namespace LSTY.Sdtd.WebApi.Data.Entities
         /// <summary>
         /// 无    
         /// </summary>
-        public string UserId { get; set; }
+        public Guid UserId { get; set; }
 
         /// <summary>
         /// 无    
@@ -43,7 +43,7 @@ namespace LSTY.Sdtd.WebApi.Data.Entities
         /// <summary>
         /// 无    
         /// </summary>
-        public string RoleId { get; set; }
+        public Guid RoleId { get; set; }
 
         /// <summary>
         /// 无    

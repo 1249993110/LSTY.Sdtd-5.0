@@ -25,12 +25,12 @@ namespace LSTY.Sdtd.WebApi.Data.Entities
         /// <summary>
         /// 用户Id
         /// </summary>
-        public string Fk_UserId { get; set; }
+        public Guid Fk_UserId { get; set; }
 
         /// <summary>
         /// 使用 JwtId 映射到对应的 token  
         /// </summary>
-        public string JwtId { get; set; }
+        public Guid JwtId { get; set; }
 
         /// <summary>
         /// 是否出于安全原因已将其撤销

@@ -2,13 +2,14 @@
 using LSTY.Sdtd.WebApi.Data.Entities;
 using LSTY.Sdtd.WebApi.Data.IRepositories;
 using LSTY.Sdtd.WebApi.Data.Primitives;
+using System;
 using System.Collections.Generic;
 
 namespace LSTY.Sdtd.WebApi.Data.Repositories
 {
     public class MenuRepository : DefaultRepository<T_Menu>, IMenuRepository
     {
-        public IEnumerable<T_Menu> QueryByMenuIds(IEnumerable<string> menuIds, bool filterEnabled)
+        public IEnumerable<T_Menu> QueryByMenuIds(IEnumerable<Guid> menuIds, bool filterEnabled)
         {
             try
             {

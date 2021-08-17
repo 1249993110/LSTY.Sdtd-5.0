@@ -23,10 +23,7 @@ namespace LSTY.Sdtd.PatronsMod
         {
             try
             {
-                if(_fileWatcher != null)
-                {
-                    DisposeFileWatcher();
-                }
+                DisposeFileWatcher();
 
                 _fileWatcher = new FileSystemWatcher("LSTY", "functionConfig.xml");
 
@@ -91,6 +88,10 @@ namespace LSTY.Sdtd.PatronsMod
                 SaveAll();
                 return;
             }
+            else
+            {
+                CreateFileWatcher();
+            }
 
             var functions = FunctionManager.Functions;
 
@@ -152,6 +153,11 @@ namespace LSTY.Sdtd.PatronsMod
 
         public static void Save<T>(T obj) where T : IFunction
         {
+            if(obj is ISubFunction)
+            {
+                return;
+            }
+
             lock (_lockObj)
             {
                 try
@@ -187,10 +193,13 @@ namespace LSTY.Sdtd.PatronsMod
 
         public static void DisposeFileWatcher()
         {
-            _fileWatcher.EnableRaisingEvents = false;
-            _fileWatcher.Changed -= OnConfigFileChanged;
-            _fileWatcher.Dispose();
-            _fileWatcher = null;
+            if(_fileWatcher != null)
+            {
+                _fileWatcher.EnableRaisingEvents = false;
+                _fileWatcher.Changed -= OnConfigFileChanged;
+                _fileWatcher.Dispose();
+                _fileWatcher = null;
+            }
         }
 
         public static void SaveAll()

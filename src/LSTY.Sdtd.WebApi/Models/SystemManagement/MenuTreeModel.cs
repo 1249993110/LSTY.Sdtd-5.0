@@ -1,4 +1,5 @@
 ﻿using IceCoffee.AspNetCore.Models;
+using IceCoffee.AspNetCore.Models.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
