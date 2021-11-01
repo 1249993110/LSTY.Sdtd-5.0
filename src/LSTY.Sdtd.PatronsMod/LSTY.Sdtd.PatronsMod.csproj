@@ -137,7 +137,7 @@
   </ItemGroup>
   
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
-    <Obfuscate>true</Obfuscate>
+    <Obfuscate>false</Obfuscate>
     <!-- Default values. The following lines can be removed, unless they are changed. -->
     <ConfuserReplaceOutput>true</ConfuserReplaceOutput>
     <ConfuserProject>$(MSBuildProjectDirectory)\$(MSBuildProjectName).crproj</ConfuserProject>
