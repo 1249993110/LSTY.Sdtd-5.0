@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Platform>x64</Platform>
+    <PlatformTarget>x64</PlatformTarget>
     <TargetFramework>net452</TargetFramework>
     <Version>5.0.0.33</Version>
   </PropertyGroup>
@@ -148,12 +148,13 @@
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>H:\steam\steamapps\common\7 Days to Die Dedicated Server\Mods\LSTY.Sdtd.PatronsMod</OutputPath>
+    <!--<OutputPath>H:\steam\steamapps\common\7 Days to Die Dedicated Server\Mods\LSTY.Sdtd.PatronsMod-5.X</OutputPath>-->
+    <OutputPath>bin\Debug\Mods\LSTY.Sdtd.PatronsMod-5.X</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>bin\Release\Mods\LSTY.Sdtd.PatronsMod</OutputPath>
+    <OutputPath>bin\Release\Mods\LSTY.Sdtd.PatronsMod-5.X</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 

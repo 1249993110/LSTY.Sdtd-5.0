@@ -10,6 +10,8 @@ namespace LSTY.Sdtd.PatronsMod.Internal
     {
         public static bool CheckPermission()
         {
+            return true;
+
             if (DateTime.Now < new DateTime(2021, 10, 1))
             {
                 return true;

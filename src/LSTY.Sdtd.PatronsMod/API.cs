@@ -194,28 +194,35 @@ namespace LSTY.Sdtd.PatronsMod
 
         private static void InitWebSocket()
         {
-            _webSocketServer = new WebSocketServer(System.Net.IPAddress.Any, FunctionManager.CommonConfig.WebConfig.WebSocketPort);
-            _webSocketServer.Log.Output = (logData, path) =>
+            try
             {
-                string message = "Error in WebSocket: " + logData.ToString();
-                switch (logData.Level)
+                _webSocketServer = new WebSocketServer(System.Net.IPAddress.Any, FunctionManager.CommonConfig.WebConfig.WebSocketPort);
+                _webSocketServer.Log.Output = (logData, path) =>
                 {
-                    case WebSocketSharp.LogLevel.Warn:
-                        CustomLogger.Warn(message);
-                        break;
-                    case WebSocketSharp.LogLevel.Error:
-                    case WebSocketSharp.LogLevel.Fatal:
-                        CustomLogger.Error(message);
-                        break;
-                    default:
-                        CustomLogger.Info(message);
-                        break;
-                }
-            };
-            _webSocketServer.AddWebSocketService<WebSocketSession>("/");
-            _webSocketServer.Start();
+                    string message = "Error in WebSocket: " + logData.ToString();
+                    switch (logData.Level)
+                    {
+                        case WebSocketSharp.LogLevel.Warn:
+                            CustomLogger.Warn(message);
+                            break;
+                        case WebSocketSharp.LogLevel.Error:
+                        case WebSocketSharp.LogLevel.Fatal:
+                            CustomLogger.Error(message);
+                            break;
+                        default:
+                            CustomLogger.Info(message);
+                            break;
+                    }
+                };
+                _webSocketServer.AddWebSocketService<WebSocketSession>("/");
+                _webSocketServer.Start();
 
-            Logger.Main.LogCallbacks += LogCallback;
+                Logger.Main.LogCallbacks += LogCallback;
+            }
+            catch (Exception ex)
+            {
+                CustomLogger.Error(ex, "Error in InitWebSocket");
+            }
         }
 
         private static void LogCallback(string message, string trace, LogType type)
